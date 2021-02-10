@@ -8,6 +8,7 @@ import random
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+user = os.getenv('USER')
 
 bot = commands.Bot(command_prefix='"')
 
@@ -139,7 +140,7 @@ async def add_link(ctx, *args):
 	 )
 async def debug_arrays(ctx):
 
-	if ctx.message.author.id == 392731404250906634:
+	if ctx.message.author.id == user:
 		await ctx.send("carpLinks array: " + str(len(carplinks)))
 		await ctx.send("rayllumlinks array: "+str(len(rayllumlinks)))
 		await ctx.send("tdplinks array: "+str(len(tdplinks)))
@@ -155,7 +156,7 @@ async def debug_arrays(ctx):
 	)
 async def debug_images(ctx, *arg):
 
-	if ctx.message.author.id == 392731404250906634:
+	if ctx.message.author.id == user:
 		if arg[0] == 'carpincho':
 			temparray = carplinks
 		elif arg[0] == 'rayllum':
