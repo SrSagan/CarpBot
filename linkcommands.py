@@ -5,15 +5,14 @@ from discord.ext import commands
 import data
 
 a = data.datos()
-grupos = a.grupos
 formatos = a.formatos
 gruposText = a.gruposText
 
 class linkcommands(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-
-	@commands.command(
+	
+	@commands.command( #para agregar un link codigo LARGOOOOOOOOOOOOOOOOOOOOOO
 	aliases=['al'],
 	name='addlink',
 	help="Permite agregar un link de imagen al grupo de rayllum o carpincho, uso: addlink (link1 link2 link3 ...)",
@@ -21,151 +20,145 @@ class linkcommands(commands.Cog):
 	)
 	async def add_link(self, ctx, *args):
 		a = data.datos()
+		grupos = a.get_data() #agarra lso datos quu ya estan ;-;
 		print("addlink usado")
-		if len(args) > 0:
-			added=0
-			await ctx.send("En cual queres agregar el link?")
+		if len(args) > 0: #checkea si sikiera se puso algo
+			added=0 #cantidad de links agregados
+			await ctx.send("En cual queres agregar el link?") #se pregunta por grupo
 			embed=discord.Embed(title="Grupos",color=0x3498DB,description=gruposText)
 			await ctx.send(embed=embed)		
-			msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author) 
-			contador = 0
-			for j in a.grupos:
-				if msg.content == a.grupos[j]["name"]:
-					archivo = a.grupos[j]["fileName"]  
-					
-					for arg in args:
+			msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author) #se espera la respuesta del grupo
+			contador = 0 #contador
+			for j in grupos: #se checkea cada grupo
+				if msg.content == grupos[j]["name"]: #checkea si la respuesta de grupo 
+					for arg in args: #checkea los argumentos para ver si hay un link
 						temp = arg.rfind('.')
 						formato = arg[temp:]
 						finFormato = arg.rfind('?')
 						formatoConException = arg[temp:finFormato]
 						youtubeLink = arg.find("youtu")
+						argNewLine =(arg+"\n") #checkea tipo muchas cosas en el archivo y lo guarda en varias variables (capaz la mitad no se si se usan)
 
-						if arg ==' ':
+						if arg ==' ': #checkea ke haya algo porke si no hay nada F
 							await ctx.send("Link invalido")
 							print("link invalido")  
-						elif arg in a.grupos[j]["data"]:
+
+						elif arg in grupos[j]["data"] or argNewLine in grupos[j]["data"]: #checkea is el link ya esta en la lista
 							await ctx.send("El link ya esta en la lista")
-							print("link invalido")  
-						elif args[0] == 'exception':
+							print("link invalido")
+
+						elif args[0] == 'exception': #checkea si hay excepcion
 							if arg != 'exception':
-								if temp > -1:
-									a.grupos[j]["data"].append(arg) 
-									with open(archivo, "w")as txt_file:
-										for line in a.grupos[j]["data"]:
-											txt_file.write("".join(line)+"\n")
-									print("link agregado con exception")
-									added=added+1
-									jact = j
+								if temp > -1: #checkea si tiene un punto
+									a.set_data(j, arg) #lo guarda en el archivo
+									print("link agregado con exception") 
+									added=added+1 #cantidad de links agregados
+									jact = j #nose pake es esto
+
 								else:
-									await ctx.send("Link invalido")
+									await ctx.send("Link invalido") #si no tiene punto es link invalido
 									print("link invalido")
 									break
-							
-						elif args[0] == "continue":
+								
+						elif args[0] == "continue": #checkea si hay continue
 							await ctx.send("Esperando imagenes")
 							while True:
-								imagenes = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author)
-								if imagenes.content == "end":
+								imagenes = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author) #lee msg
+
+								if imagenes.content == "end": #si pone end frena el loop
 									await ctx.send("Terminado")
 									break
-								for b in imagenes.attachments:
+
+								for b in imagenes.attachments: #de vuelta agarra como 20 cosas que no se si sirven para algo
 									img = b.url		
 									temp = img.rfind('.')
-									formato = img[temp:]		
-									if formato in formatos:
-										if img not in a.grupos[j]["data"]:
-											a.grupos[j]["data"].append(img) 
-											with open(archivo, "w") as txt_file:
-												for line in a.grupos[j]["data"]:
-													txt_file.write("".join(line) + "\n")
+									formato = img[temp:]
+									imgNewLine = (img+"\n")		
+
+									if formato in formatos: #checkea si esta en formatos
+										if img not in grupos[j]["data"] or imgNewLine not in grupos[j]["data"]: #checkea que no este ya en la lista
+											a.set_data(j, img) #agrega el link
+											added=added+1
+											jact = j #???? I dunno bruh
 										else:
-											await ctx.send("El link ya esta en la lista")
+											await ctx.send("El link ya esta en la lista") #si ya esta en la lista se informa
 											print("link invalido")		
-										added=added+1
-										jact = j
+										
+
 									else:
 										await ctx.send("formato invalido")
-										await ctx.send("Formatos:"+str(formatos))		
-						elif temp > -1:
-							if formato in formatos or formato in formatoConException or youtubeLink > -1:
-								a = data.datos()
-								a.grupos[j]["data"].append(arg) 
-								with open(archivo, "w") as txt_file:
-									for line in a.grupos[j]["data"]:
-										txt_file.write("".join(line) + "\n")
+										await ctx.send("Formatos:"+str(formatos))
+
+						elif temp > -1: #en caso de que no ke no haya nada especial se checkea formatos y se agrega el link
+
+							if formato in formatos or formato in formatoConException or youtubeLink > -1: #se checkea si es formato o youtube
+								a.set_data(j, arg) #se agrega el link
 								added=added+1
-								jact = j
+								jact = j #ke no se capo NOSE
 							else:
 								await ctx.send("formato invalido")
 								await ctx.send("Formatos:"+str(formatos))
-						else:
+						else: #si nada funciona es porque el link es invalido como tu abuela
 							await ctx.send("Link invalido")
 							print("link invalido")  
-				elif msg.content == "cancel":
+				elif msg.content == "cancel": #para cancelar el grupo
 					await ctx.send("Operacion cancelada")
 					break   
 				else:
-					contador = contador+1
-				if contador >= len(a.grupos):
-					await ctx.send("Grupo Invalido")
+					contador = contador+1 #contador para cantidad de grupos
+				if contador >= len(grupos): #se checkea para la cantidad de grupos
+					await ctx.send("Grupo Invalido") #si es un grupo invalido como tu abuela
 					embed=discord.Embed(title="Grupos validos:",color=0x3498DB,description=gruposText)
 					await ctx.send(embed=embed) 
-			if added == 1:
-				await ctx.send(str(added)+" link agregado a "+"'"+str(a.grupos[jact]["name"])+"'")
-			elif added > 1:
-				await ctx.send(str(added)+" links agregados a "+"'"+str(a.grupos[jact]["name"])+"'")
-		else:
+			if added == 1: #cantidad de links igual a 1
+				await ctx.send(str(added)+" link agregado a "+"'"+str(grupos[jact]["name"])+"'")
+			elif added > 1: #cantidad de links agregados mayor a uno se dice
+				await ctx.send(str(added)+" links agregados a "+"'"+str(grupos[jact]["name"])+"'")
+		else: #si no se escribio nada
 			await ctx.send("Escriba un link junto con el comando")
 
-	@commands.command(
+	@commands.command( #comando de removelink para remover links....
 	aliases=['rl'],
     name='removelink',
     help="Permite eliminar un link de imagen de el grupo rayllum o carpincho, uso: removelink (link1 link2 link3 ...)",
     brief="Permite eliminar un link de imagen"
     )
 	async def removelink(self, ctx, *args):
-		a = data.datos()	
+		a = data.datos()
+		grupos = a.get_data() #agarra la data de grupos
 		removedLinks={
 			"carplinks":0,
 			"rayllumlinks":0,
 			"tdplinks":0,
 			"avatarlinks":0,
 			"memelinks":0,
-			"csmlinks":0
-		}   
+			"csmlinks":0,
+			"owlinks":0,
+		} #contador de links removidos
 		print("removelink usado")
-		for x in args:
-			if len(args) > 0:
+		for x in args: #agarra el argumento
+			if len(args) > 0: #checkea que haya argumentos
 				contador=0
-				for j in a.grupos:
-					if not x in a.grupos[j]["data"]:
+				for j in grupos: #checkea en cada grupo
+					if not x in grupos[j]["data"]: #si no esta entre los links
 						z = (x+"\n")
 					else:
 						z = x	
-					if z in a.grupos[j]["data"]:
-						y = a.grupos[j]["data"].index(z)
-						a.grupos[j]["data"].pop(y)    
-						archivo = a.grupos[j]["fileName"]
-						#elimina el link del archivo
-						with open(archivo, "r") as f:
-							lines = f.readlines()
-						with open(archivo, "w") as f:
-							for line in lines:
-								if line.strip("\n") != x:
-									f.write(line)
-						removedLinks[j]=removedLinks[j]+1
+					if z in grupos[j]["data"]:
+						a.rem_data(j, z, x) #saca la data
+						removedLinks[j]=removedLinks[j]+1 #sube el contador
 						print("link removido")
 					else:
-						contador = contador+1
-					if contador >= len(a.grupos):
+						contador = contador+1 #sube el contador de grupos
+					if contador >= len(grupos): #si todos los grupos son checkeados es porque el link no esta
 						await ctx.send("El link: "+"'"+x+"'"+" no se encuentra en ningun grupo")
 			else:
 				await ctx.send("Escriba el link de la img junto con el comando")
-		for j in a.grupos:
+		for j in grupos: #se escribe cuantos links se eliminaron de que grupos
 			if removedLinks[j] > 0:
 				if removedLinks[j] == 1:
-					await ctx.send(str(removedLinks[j])+" link removido de: "+"'"+str(a.grupos[j]["name"])+"'")
+					await ctx.send(str(removedLinks[j])+" link removido de: "+"'"+str(grupos[j]["name"])+"'")
 				elif removedLinks[j] > 1:
-					await ctx.send(str(removedLinks[j])+" links removidos de: "+"'"+str(a.grupos[j]["name"])+"'") 
+					await ctx.send(str(removedLinks[j])+" links removidos de: "+"'"+str(grupos[j]["name"])+"'") 
 def setup(bot):
     bot.add_cog(linkcommands(bot))

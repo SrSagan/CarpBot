@@ -8,12 +8,11 @@ import random
 
 a = data.datos()
 
-
 class imgcommands(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-	@commands.command(
+	@commands.command( #todos hacen lo mismo
 		aliases=['carp'],
     	name='carpincho',
     	help="Muestra una imagen random de un carpincho",
@@ -21,14 +20,16 @@ class imgcommands(commands.Cog):
     	)
 	async def carpincho(self, ctx):
 		a = data.datos()
+		grupos = a.get_data() #agarra datos
 		print("Carpincho usado")
-		response = random.choice(a.grupos["carplinks"]["data"])
-		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
+		response = random.choice(grupos["carplinks"]["data"]) #agarra un link random
+		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1: # si es mp4 o youtube no le pone marco
 			await ctx.send(response)
 		else:
-			embed=discord.Embed(title="Carpincho",color=0x3498DB)
+			embed=discord.Embed(color=0x3498DB) #si es una img le pone marquito
 			embed.set_image(url=response)
 			await ctx.send(embed=embed)
+
 	@commands.command(
 		name='rayllum',
 		help="Muestra una imagen random de rayllum",
@@ -36,12 +37,13 @@ class imgcommands(commands.Cog):
 		)
 	async def rayllum(self, ctx):
 		a = data.datos()
+		grupos = a.get_data()
 		print("Rayllum usado")
-		response = random.choice(a.grupos["rayllumlinks"]["data"])
+		response = random.choice(grupos["rayllumlinks"]["data"])
 		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
 				await ctx.send(response)
 		else:
-			embed=discord.Embed(title="Rayllum",color=0x3498DB)
+			embed=discord.Embed(color=0x3498DB)
 			embed.set_image(url=response)
 			await ctx.send(embed=embed)
 	@commands.command(
@@ -51,12 +53,13 @@ class imgcommands(commands.Cog):
     	)
 	async def tdp(self, ctx):
 		a = data.datos()
+		grupos = a.get_data()
 		print("tdp usado")
-		response = random.choice(a.grupos["tdplinks"]["data"])
+		response = random.choice(grupos["tdplinks"]["data"])
 		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
 				await ctx.send(response)
 		else:
-			embed=discord.Embed(title="The Dragon Prince",color=0x3498DB)
+			embed=discord.Embed(color=0x3498DB)
 			embed.set_image(url=response)
 			await ctx.send(embed=embed)
 	@commands.command(
@@ -67,12 +70,13 @@ class imgcommands(commands.Cog):
     	)
 	async def avatar(self, ctx):
 		a = data.datos()
+		grupos = a.get_data()
 		print("avatar usado")
-		response = random.choice(a.grupos["avatarlinks"]["data"])
+		response = random.choice(grupos["avatarlinks"]["data"])
 		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
 			await ctx.send(response)
 		else:
-			embed=discord.Embed(title="Avatar la Leyenda de Aang",color=0x3498DB)
+			embed=discord.Embed(color=0x3498DB)
 			embed.set_image(url=response)
 			await ctx.send(embed=embed)
 	@commands.command(
@@ -82,8 +86,9 @@ class imgcommands(commands.Cog):
 		)
 	async def meme(self, ctx):
 		a = data.datos()
+		grupos = a.get_data()
 		print("meme usado")
-		response = random.choice(a.grupos["memelinks"]["data"])
+		response = random.choice(grupos["memelinks"]["data"])
 		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
 				await ctx.send(response)
 		else:
@@ -97,8 +102,9 @@ class imgcommands(commands.Cog):
     	)
 	async def csm(self, ctx):
 		a = data.datos()
+		grupos = a.get_data()
 		print("csm usado")
-		response = random.choice(a.grupos["csmlinks"]["data"])
+		response = random.choice(grupos["csmlinks"]["data"])
 		print(response)
 		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
 				await ctx.send(response)
@@ -106,6 +112,26 @@ class imgcommands(commands.Cog):
 			embed=discord.Embed(color=0x3498DB)
 			embed.set_image(url=response)
 			await ctx.send(embed=embed)
+
+	@commands.command(
+		aliases=['buho'],
+		name='owl',
+		help="Muestra una imagen de un buho random",
+		brief="Muestra una img. de owl"
+    	)
+	async def owl(self, ctx):
+		a = data.datos()
+		grupos = a.get_data()
+		print("owl usado")
+		response = random.choice(grupos["owlinks"]["data"])
+		print(response)
+		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
+				await ctx.send(response)
+		else:
+			embed=discord.Embed(color=0x3498DB)
+			embed.set_image(url=response)
+			await ctx.send(embed=embed)
+
 
 def setup(bot):
 	bot.add_cog(imgcommands(bot))
