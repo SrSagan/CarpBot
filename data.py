@@ -1,3 +1,4 @@
+import random
 class datos:
     def __init__(self):
         formatos = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.JPG', '.JPEG', '.PNG', '.GIF', '.WEBP', '.MP4', '.MOV'] #formatos admitidos
@@ -49,8 +50,10 @@ class datos:
         **owl**: Referiendose a owls/buhos
         """
         #respuestas de 8ball
+        frases=[]
         respuestas8ball=["Confirmo", "Niego", "No", "Si", "Capaz", "Que pregunta boluda eh", "No, creo que no", "Si, creo...", "Puede ser", "Sabes que no", "Sabes que si", "jajaja no", "jajaja si", "Yes", "Não", "Y a vos que te parece?", "Desconfirmo"]
         debugmode = 0 #debugmode
+        self.frases = frases
         self.grupos = grupos
         self.formatos = formatos
         self.gruposText = gruposText
@@ -97,3 +100,87 @@ class datos:
         return self.debugmode
     def set_debugmode(self, state):
         self.debugmode=state
+
+    def set_frase(self, frase): #pone una frase
+        frases = self.frases 
+        frasesFile =[]
+        with open("frases.txt", "r") as f:
+            for line in f:
+                if line != '\n':
+                    frasesFile.append(line)
+        frases = frasesFile #agarra las frases del archivo
+        if (frase+"\n") not in frases: #si la frase no esta ya en el archivo la agrega
+            frases.append(frase)
+            with open("frases.txt", "w")as txt_file:
+                for line in frases:
+                    txt_file.write("".join(line)+"\n")
+            return 1 #si fue exitoso retorna un 1
+        else: return 0 #sino retorna un 0
+
+    def get_frase(self, type, *dato):
+        frases = self.frases
+        frasesFile =[]
+        with open("frases.txt", "r") as f:
+            for line in f:
+                if line != '\n':
+                    frasesFile.append(line)
+        frases = frasesFile #agarra las frases del archivo
+        arrayReturns=[]
+        if type == "none":
+            return random.choice(frases) #si el type es none retorna una frase random
+
+        elif type == "autor": #si el type es autor
+            for texto in frases:
+                x = texto.find('!')
+                y = texto.rfind('!')
+                autor = texto[x+1:y-1] #busca el autor de todas las frases
+                if autor == dato[0]: #si coincide se guarda la fras en una array
+                   arrayReturns.append(texto)
+            if len(arrayReturns) > 0: #si la array tiene algun valor se retorna
+                return arrayReturns
+            else: return -1 #si la array esta vacia se retorna -1
+        
+        elif type == "fecha": #si el type es fecha
+            for texto in frases:
+                x = texto.find('!')
+                y = texto.rfind('!')
+                fecha = texto[y+1:] #se busca la fecha
+                fecha = fecha.replace("\n", '')
+                if fecha == dato[0]: #si es igual se guarda la frase en una array
+                   arrayReturns.append(texto)
+            if len(arrayReturns) > 0: #si la array tiene algun valor se retorna
+                return arrayReturns
+            else: return -1 #si la array esta vacia se retorna -1
+        
+        elif type == "palabra": #si el type es palabra
+            for texto in frases:
+                x = texto.find(dato[0])
+                y = texto[x:].find(" ") #se busca si esta
+                if x > -1:
+                    word = texto[x:x+y] #se compara la palabra encontrada con la palabra dada
+                    if word == dato[0]:
+                        arrayReturns.append(texto) #si coincide se guarda la frase en la array
+            if len(arrayReturns) > 0:
+                return arrayReturns #se retorna la array
+            else: return -1 #si esta vacia se retorna -1
+        else: return 0 #si no es un type invalido se retorna 0
+    
+    def rem_frase(self, frase):
+        frases = self.frases
+        frasesFile =[]
+        with open("frases.txt", "r") as f:
+            for line in f:
+                if line != '\n':
+                    frasesFile.append(line)
+        frases = frasesFile #se cargan las frases del archivo
+        if (frase+"\n") in frases: #se checkea ke la frase ya este
+            x = frases.index(frase+"\n")
+            frases = frases.pop(x)
+            with open("frases.txt", "r") as f:
+        	    lines = f.readlines()
+            with open("frases.txt", "w") as f:
+        	    for line in lines:
+        		    if line.strip("\n") != frase:
+        		    	f.write(line) #se busca y se elimina
+            return 1 #si funciona se retorna 1
+        else: return 0 #sino se retorna 0

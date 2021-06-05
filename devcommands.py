@@ -51,16 +51,15 @@ class devcommands(commands.Cog):
         else:
         	await ctx.send("Solo devs pueden usar este comando")
 
-    '''@commands.command(
+    @commands.command(
     	aliases=["db"],
     	name='debug',
     	help='Comando debug',
     	brief='Comando debug'
     )
     async def debug(self, ctx):
-    	a = data.datos()
-    	grupos = a.get_data()
-    	print(grupos["tdplinks"])'''
+        user_input = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author)
+        await ctx.send(str(user_input))
 		
 def setup(bot):
     bot.add_cog(devcommands(bot))
