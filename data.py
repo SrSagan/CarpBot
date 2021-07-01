@@ -131,10 +131,11 @@ class datos:
 
         elif type == "autor": #si el type es autor
             for texto in frases:
-                x = texto.find('!')
-                y = texto.rfind('!')
-                autor = texto[x+1:y-1] #busca el autor de todas las frases
-                if autor == dato[0]: #si coincide se guarda la fras en una array
+                textolow = texto.lower()
+                x = textolow.find('!')
+                y = textolow.rfind('!')
+                autor = textolow[x+1:y-1] #busca el autor de todas las frases
+                if autor == dato[0].lower(): #si coincide se guarda la fras en una array
                    arrayReturns.append(texto)
             if len(arrayReturns) > 0: #si la array tiene algun valor se retorna
                 return arrayReturns
@@ -142,11 +143,12 @@ class datos:
         
         elif type == "fecha": #si el type es fecha
             for texto in frases:
-                x = texto.find('!')
-                y = texto.rfind('!')
-                fecha = texto[y+1:] #se busca la fecha
+                textolow = texto.lower()
+                x = textolow.find('!')
+                y = textolow.rfind('!')
+                fecha = textolow[y+1:] #se busca la fecha
                 fecha = fecha.replace("\n", '')
-                if fecha == dato[0]: #si es igual se guarda la frase en una array
+                if fecha == dato[0].lower(): #si es igual se guarda la frase en una array
                    arrayReturns.append(texto)
             if len(arrayReturns) > 0: #si la array tiene algun valor se retorna
                 return arrayReturns
@@ -154,11 +156,12 @@ class datos:
         
         elif type == "palabra": #si el type es palabra
             for texto in frases:
-                x = texto.find(dato[0])
-                y = texto[x:].find(" ") #se busca si esta
+                textolow = texto.lower()
+                x = textolow.find(dato[0].lower())
+                y = textolow[x:].find(" ") #se busca si esta
                 if x > -1:
-                    word = texto[x:x+y] #se compara la palabra encontrada con la palabra dada
-                    if word == dato[0]:
+                    word = textolow[x:x+y] #se compara la palabra encontrada con la palabra dada
+                    if word == dato[0].lower():
                         arrayReturns.append(texto) #si coincide se guarda la frase en la array
             if len(arrayReturns) > 0:
                 return arrayReturns #se retorna la array
