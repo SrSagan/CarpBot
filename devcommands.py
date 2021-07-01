@@ -1,4 +1,4 @@
-import os
+import sys, os
 
 import discord
 from discord.ext import commands
@@ -6,7 +6,6 @@ import data
 from dotenv import load_dotenv
 
 a = data.datos()
-
 
 load_dotenv() 
 devuser = os.getenv('DEV_USER') #checkea los los dev users
@@ -48,6 +47,26 @@ class devcommands(commands.Cog):
         		if arg[0] == grupos[j]["name"]:
         			for link in grupos[j]["data"]:
         				await ctx.send(str(link)) #imprime todas las img 1 a 1
+        else:
+        	await ctx.send("Solo devs pueden usar este comando")
+
+    @commands.command( #Muestra la ip
+	name='ip',
+	help="Muestra la ip (solo devs)",
+	brief="Muestra la ip (solo devs)"
+	)
+    async def ip(self, ctx):
+        import subprocess
+        print("ip usado")
+        if ctx.message.author.id == int(devuser) or int(devuser2): #checkeea ke sea un dev
+            command = "dig +short myip.opendns.com @resolver1.opendns.com" #se usa este comando para averiguar la ip
+            subprocess = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE) #se lee la salida del comando
+            ip = subprocess.stdout.read()
+            ip = str(ip)
+            x = ip.find("'")
+            y = ip.find("\\")
+            ip = ip[x+1:y]
+            await ctx.send("IP:"+str(ip))
         else:
         	await ctx.send("Solo devs pueden usar este comando")
 
