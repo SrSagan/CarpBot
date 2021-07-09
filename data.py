@@ -157,6 +157,8 @@ class datos:
         elif type == "palabra": #si el type es palabra
             for texto in frases:
                 textolow = texto.lower()
+                x = textolow.find("!")
+                textolow = textolow[:x]
                 x = textolow.find(dato[0].lower())
                 y = textolow[x:].find(" ") #se busca si esta
                 if x > -1:
