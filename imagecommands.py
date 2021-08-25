@@ -8,7 +8,7 @@ import random
 
 a = data.datos()
 
-class imgcommands(commands.Cog):
+class images(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
@@ -134,4 +134,4 @@ class imgcommands(commands.Cog):
 
 
 def setup(bot):
-	bot.add_cog(imgcommands(bot))
+	bot.add_cog(images(bot))

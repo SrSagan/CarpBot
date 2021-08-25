@@ -14,7 +14,7 @@ a.set_debugmode(0)
 debugmode = a.debugmode
 
 
-class generalcommands(commands.Cog):
+class general(commands.Cog):
     def __init__(self, bot):
         self.bot=bot
     @commands.command( #dado....
@@ -200,4 +200,4 @@ class generalcommands(commands.Cog):
         else: await ctx.send("Escriba una frase para remover")
 
 def setup(bot):
-    bot.add_cog(generalcommands(bot))
+    bot.add_cog(general(bot))

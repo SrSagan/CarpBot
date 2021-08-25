@@ -8,7 +8,7 @@ a = data.datos()
 formatos = a.formatos
 gruposText = a.gruposText
 
-class linkcommands(commands.Cog):
+class links(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 	
@@ -164,4 +164,4 @@ class linkcommands(commands.Cog):
 				elif removedLinks[j] > 1:
 					await ctx.send(str(removedLinks[j])+" links removidos de: "+"'"+str(grupos[j]["name"])+"'") 
 def setup(bot):
-    bot.add_cog(linkcommands(bot))
+    bot.add_cog(links(bot))
