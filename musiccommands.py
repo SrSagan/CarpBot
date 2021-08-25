@@ -25,7 +25,6 @@ class music(commands.Cog):
                       )
     async def play(self, ctx, *url):
         ytlinks = []
-        #await ctx.send("estoy aqui")
         ytlinks.append(url)
 
         for links in ytlinks:
@@ -33,7 +32,7 @@ class music(commands.Cog):
             author = ctx.message.author
             channel = author.voice.channel
             vc = await channel.connect()
-            video = new(links[0])
+            video = links[0]
             audio = video.getbestaudio()
             filename = audio.download()
             vc.play(discord.FFmpegPCMAudio(str(video.title)+'.webm'))
