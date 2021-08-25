@@ -26,14 +26,14 @@ class music(commands.Cog):
                       )
     async def play(self, ctx, *url):
         ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-        ydl=youtube_dl.YoutubeDL(ydl_opts)
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
+        ydl = youtube_dl.YoutubeDL(ydl_opts)
         ytlinks = []
         ytlinks.append(url)
 
