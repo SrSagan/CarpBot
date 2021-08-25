@@ -47,12 +47,10 @@ class music(commands.Cog):
             ydl_opts["outtmpl"] = str(songNum)+".mp3"
             a.set_yld_opts(ydl_opts)
 
-
-            if ctx.is_connected() != None:
-                author = ctx.message.author
-                channel = author.voice.channel
+            author = ctx.message.author
+            channel = author.voice.channel
+            if channel.is_connected() == False:
                 vc = await channel.connect()  # entra en la llamada
-
                 vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
                 vc.is_playing()
 
