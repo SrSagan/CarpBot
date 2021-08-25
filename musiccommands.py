@@ -37,12 +37,12 @@ class music(commands.Cog):
             ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
             ydl = youtube_dl.YoutubeDL(ydl_opts)
             ydl.download([link])
-            os.system("mv "+str(ydl_opts["outtmpl"]) +" "+str(ydl_opts["outtmpl"])+".mp3")
-            songNum = ydl_opts["outtmpl"]
-            songNum = int(songNum)
-            songNum = songNum+1
-            ydl_opts["outtmpl"] = str(songNum)
-            a.set_yld_opts(ydl_opts)
+            #os.system("mv "+str(ydl_opts["outtmpl"]) +" "+str(ydl_opts["outtmpl"])+".mp3")
+            #songNum = ydl_opts["outtmpl"]
+            #songNum = int(songNum)
+            #songNum = songNum+1
+            #ydl_opts["outtmpl"] = str(songNum)
+            #a.set_yld_opts(ydl_opts)
 
         author = ctx.message.author
         channel = author.voice.channel
