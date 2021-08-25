@@ -39,7 +39,7 @@ class music(commands.Cog):
             ydl_opts = a.get_yld_opts() # opciones de descarga guardadas en datos
             ydl = youtube_dl.YoutubeDL(ydl_opts)
             ydl.download([link])
-
+            os.system("mv "+str(ydl_opts["outtmpl"])+" "+str(ydl_opts["outtmpl"])+".mp3")
             songNum = ydl_opts["outtmpl"]
             songNum = int(songNum)
             songNum= songNum+1
@@ -47,7 +47,7 @@ class music(commands.Cog):
             a.set_yld_opts(ydl_opts)
         ydl_opts = a.get_yld_opts()
         file = (ydl_opts["outtmpl"]+".mp3")
-        vc.play(discord.FFmpegPCMAudio(file))
+        vc.play(discord.FFmpegPCMAudio(str(ydl_opts["outtmpl"])))
         vc.is_playing()
 
         '''for link in url:
