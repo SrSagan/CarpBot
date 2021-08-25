@@ -34,15 +34,13 @@ class music(commands.Cog):
             }],
         }
         ydl = youtube_dl.YoutubeDL(ydl_opts)
-        ytlinks = []
-        ytlinks.append(url)
 
-        for links in ytlinks:
-            print(links)
+        for link in url:
+            print(link)
             author = ctx.message.author
             channel = author.voice.channel
             vc = await channel.connect()
-            ydl.download(links[0])
+            ydl.download(link)
             for file in os.listdir("./"):
                 if file.endswith(".mp3"):
                     os.rename(file, 'song.mp3')
