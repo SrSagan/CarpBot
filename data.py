@@ -49,6 +49,7 @@ class datos:
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '320',
+                'outtmpl': '1',
             }],
         }
         # texto para grupos
@@ -129,6 +130,9 @@ class datos:
 
     def get_yld_opts(self):
         return self.yld_opts
+
+    def set_yld_opts(self, options):
+        self.yld_opts = options
 
     def set_frase(self, frase):  # pone una frase
         frases = self.frases

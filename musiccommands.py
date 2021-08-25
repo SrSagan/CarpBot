@@ -26,9 +26,7 @@ class music(commands.Cog):
                       help='Reproduce un link de youtube',
                       brief='Reproduce musica'
                       )
-    async def play(self, ctx, *url):
-        ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
-        ydl = youtube_dl.YoutubeDL(ydl_opts)
+    async def play(self, ctx, *url):  
 
         for link in url:
             a.add_links(link)
@@ -38,11 +36,18 @@ class music(commands.Cog):
         links = a.get_links()
 
         for link in links:
+            ydl_opts = a.get_yld_opts() # opciones de descarga guardadas en datos
+            ydl = youtube_dl.YoutubeDL(ydl_opts)
             ydl.download([link])
-            title = ydl.extract_info(link, download=False)
-        file = (str(title['title'])+".mp3")
-        print(file)
-        vc.play(discord.FFmpegPCMAudio(file))
+
+            songNum = ydl_opts["postprocessors"]["outtmpl"]
+            songNum = int(songNum)
+            songNum= songNum+1
+            ydl_opts["postprocessors"]["outtmpl"] = str(songNum)
+            a.set_yld_opts(ydl_opts)
+        yld_opts = a.get_yld_opts()
+        file = (ydl_opts["postprocessors"]["outtmpl"]+".mp3")
+        vc.play(discord.FFmpegPCMAudio())
         vc.is_playing()
 
         '''for link in url:
