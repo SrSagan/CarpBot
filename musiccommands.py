@@ -6,6 +6,8 @@ import data
 import youtube_dl
 from discord import FFmpegPCMAudio
 
+a = data.datos()
+
 
 class music(commands.Cog):
     def __init__(self, bot):
@@ -19,24 +21,29 @@ class music(commands.Cog):
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
 
-    @commands.command(pass_context=True,
+    @commands.command(pass_context=True,  # reproduce musica
                       name='play',
                       help='Reproduce un link de youtube',
                       brief='Reproduce musica'
                       )
     async def play(self, ctx, *url):
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
-        }
+        ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
         ydl = youtube_dl.YoutubeDL(ydl_opts)
 
         for link in url:
-            print(link)
+            a.add_links(link)
+        author = ctx.message.author
+        channel = author.voice.channel
+        vc = await channel.connect()  # entra en la llamada
+        links = a.get_links()
+
+        for link in links:
+            ydl.download([link])
+            title = ydl.extract_info([link], download=False)
+        vc.play(discord.FFmpegPCMAudio(str(title['title'])+".mp3"))
+        vc.is_playing()
+
+        '''for link in url:
             author = ctx.message.author
             channel = author.voice.channel
             vc = await channel.connect()
@@ -47,19 +54,7 @@ class music(commands.Cog):
             vc.play(discord.FFmpegPCMAudio("song.mp3"))
             vc.is_playing()
             #os.system("rm"+' '+'"'+str(video.title)+'"'+'.webm')
-        await ctx.send("estoy aca")
-
-    '''@commands.command(pass_context=True,
-    	name='queue',
-    	help='Muestra las canciones en la lista de reproduccion',
-    	brief='Muestra la queue'
-    	)
-    async def queue(ctx):
-
-    	for url in ytlinks:
-    		print(url)
-    		v = new(url[0])
-    		await ctx.send(str(v.title))'''
+        await ctx.send("estoy aca")'''
 
 
 def setup(bot):
