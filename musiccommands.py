@@ -43,7 +43,6 @@ class music(commands.Cog):
             songNum = int(songNum[:x])
             print(songNum)
             songNum = songNum+1
-            ydl_opts_old = ydl_opts
             ydl_opts["outtmpl"] = str(songNum)+".mp3"
             a.set_yld_opts(ydl_opts)
 
@@ -54,21 +53,11 @@ class music(commands.Cog):
 
             if voice_client == None:
                 vc = await channel.connect()  # entra en la llamada
-                vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
-                vc.is_playing()
 
-        '''for link in url:
-            author = ctx.message.author
-            channel = author.voice.channel
-            vc = await channel.connect()
-            ydl.download([link])
-            for file in os.listdir("./"):
-                if file.endswith(".mp3"):
-                    os.rename(file, 'song.mp3')
-            vc.play(discord.FFmpegPCMAudio("song.mp3"))
-            vc.is_playing()
-            #os.system("rm"+' '+'"'+str(video.title)+'"'+'.webm')
-        await ctx.send("estoy aca")'''
+            #vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
+            if vc.is_playing() == False:
+                vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
+                
 
 
 def setup(bot):
