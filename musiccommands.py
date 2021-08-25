@@ -40,7 +40,7 @@ class music(commands.Cog):
             author = ctx.message.author
             channel = author.voice.channel
             vc = await channel.connect()
-            ydl.download(link)
+            ydl.download(str(link))
             for file in os.listdir("./"):
                 if file.endswith(".mp3"):
                     os.rename(file, 'song.mp3')
