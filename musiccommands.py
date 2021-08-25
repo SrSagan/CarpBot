@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 import data
 import youtube_dl
+from discord import FFmpegPCMAudio
 
 
 class music(commands.Cog):
@@ -24,6 +25,15 @@ class music(commands.Cog):
                       brief='Reproduce musica'
                       )
     async def play(self, ctx, *url):
+        ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    }
+        ydl=youtube_dl.YoutubeDL(ydl_opts)
         ytlinks = []
         ytlinks.append(url)
 
@@ -32,10 +42,11 @@ class music(commands.Cog):
             author = ctx.message.author
             channel = author.voice.channel
             vc = await channel.connect()
-            video = links[0]
-            audio = video.getbestaudio()
-            filename = audio.download()
-            vc.play(discord.FFmpegPCMAudio(str(video.title)+'.webm'))
+            ydl.download(links[0])
+            for file in os.listdir("./"):
+                if file.endswith(".mp3"):
+                    os.rename(file, 'song.mp3')
+            vc.play(discord.FFmpegPCMAudio("song.mp3"))
             vc.is_playing()
             #os.system("rm"+' '+'"'+str(video.title)+'"'+'.webm')
         await ctx.send("estoy aca")
