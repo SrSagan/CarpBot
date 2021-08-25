@@ -48,7 +48,7 @@ class music(commands.Cog):
             a.set_yld_opts(ydl_opts)
 
 
-            voice = discord.utils.get(ctx.commands.voice_clients, guild=ctx.guild)
+            voice = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
             if voice.isconnected() != None:
                 author = ctx.message.author
                 channel = author.voice.channel
