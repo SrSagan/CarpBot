@@ -25,7 +25,7 @@ class music(commands.Cog):
                       )
     async def play(ctx, *url):
         ytlinks = []
-        await ctx.send("estoy aqui")
+        #await ctx.send("estoy aqui")
         ytlinks.append(url)
 
         for links in ytlinks:
