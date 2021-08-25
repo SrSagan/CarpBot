@@ -37,16 +37,20 @@ class music(commands.Cog):
             ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
             ydl = youtube_dl.YoutubeDL(ydl_opts)
             ydl.download([link])
+
             songNum = ydl_opts["outtmpl"]
             x = songNum.find(".mp3")
             songNum = int(songNum[:x])
+            print(songNum)
             songNum = songNum+1
             ydl_opts_new = ydl_opts
             ydl_opts_new["outtmpl"] = str(songNum)
             a.set_yld_opts(ydl_opts_new)
+
             author = ctx.message.author
             channel = author.voice.channel
             vc = await channel.connect()  # entra en la llamada
+
             vc.play(discord.FFmpegPCMAudio(str(ydl_opts["outtmpl"])))
             vc.is_playing()
 
