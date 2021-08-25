@@ -51,7 +51,7 @@ class music(commands.Cog):
             channel = author.voice.channel
             vc = await channel.connect()  # entra en la llamada
 
-            vc.play(discord.FFmpegPCMAudio(str(songNum)+".mp3"))
+            vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
             vc.is_playing()
 
         '''for link in url:
