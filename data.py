@@ -49,8 +49,9 @@ class datos:
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '320',
-                'outtmpl': '1',
+                
             }],
+            'outtmpl': '1',
         }
         # texto para grupos
         gruposText = """ 

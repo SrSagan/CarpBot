@@ -40,14 +40,14 @@ class music(commands.Cog):
             ydl = youtube_dl.YoutubeDL(ydl_opts)
             ydl.download([link])
 
-            songNum = ydl_opts["postprocessors"]["outtmpl"]
+            songNum = ydl_opts["outtmpl"]
             songNum = int(songNum)
             songNum= songNum+1
-            ydl_opts["postprocessors"]["outtmpl"] = str(songNum)
+            ydl_opts["outtmpl"] = str(songNum)
             a.set_yld_opts(ydl_opts)
-        yld_opts = a.get_yld_opts()
-        file = (ydl_opts["postprocessors"]["outtmpl"]+".mp3")
-        vc.play(discord.FFmpegPCMAudio())
+        ydl_opts = a.get_yld_opts()
+        file = (ydl_opts["outtmpl"]+".mp3")
+        vc.play(discord.FFmpegPCMAudio(file))
         vc.is_playing()
 
         '''for link in url:
