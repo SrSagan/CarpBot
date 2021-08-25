@@ -45,13 +45,12 @@ class datos:
 
         ydl_opts = {
             'format': 'bestaudio/best',
+            'outtmpl': '1',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-                'preferredquality': '320',
-                
-            }],
-            'outtmpl': '1',
+                'preferredquality': '192',
+            }]
         }
         # texto para grupos
         gruposText = """ 

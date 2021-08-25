@@ -26,25 +26,27 @@ class music(commands.Cog):
                       help='Reproduce un link de youtube',
                       brief='Reproduce musica'
                       )
-    async def play(self, ctx, *url):  
+    async def play(self, ctx, *url):
 
         for link in url:
             a.add_links(link)
-        author = ctx.message.author
-        channel = author.voice.channel
-        vc = await channel.connect()  # entra en la llamada
+
         links = a.get_links()
 
         for link in links:
-            ydl_opts = a.get_yld_opts() # opciones de descarga guardadas en datos
+            ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
             ydl = youtube_dl.YoutubeDL(ydl_opts)
             ydl.download([link])
-            os.system("mv "+str(ydl_opts["outtmpl"])+" "+str(ydl_opts["outtmpl"])+".mp3")
+            os.system("mv "+str(ydl_opts["outtmpl"]) +" "+str(ydl_opts["outtmpl"])+".mp3")
             songNum = ydl_opts["outtmpl"]
             songNum = int(songNum)
-            songNum= songNum+1
+            songNum = songNum+1
             ydl_opts["outtmpl"] = str(songNum)
             a.set_yld_opts(ydl_opts)
+
+        author = ctx.message.author
+        channel = author.voice.channel
+        vc = await channel.connect()  # entra en la llamada
         ydl_opts = a.get_yld_opts()
         file = (ydl_opts["outtmpl"]+".mp3")
         vc.play(discord.FFmpegPCMAudio(str(ydl_opts["outtmpl"])))
