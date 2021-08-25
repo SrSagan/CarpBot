@@ -47,11 +47,13 @@ class music(commands.Cog):
             ydl_opts["outtmpl"] = str(songNum)+".mp3"
             a.set_yld_opts(ydl_opts)
 
-            if discord.utils.get(commands.voice_clients, guild=ctx.guild) != None:
+
+            voice = discord.utils.get(ctx.commands.voice_clients, guild=ctx.guild)
+            if voice.isconnected() != None:
                 author = ctx.message.author
                 channel = author.voice.channel
                 vc = await channel.connect()  # entra en la llamada
-    
+
                 vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
                 vc.is_playing()
 
