@@ -39,7 +39,7 @@ class music(commands.Cog):
 
         for link in links:
             ydl.download([link])
-            title = ydl.extract_info([link], download=False)
+            title = ydl.extract_info(link, download=False)
         file = (str(title['title'])+".mp3")
         print(file)
         vc.play(discord.FFmpegPCMAudio(file))
