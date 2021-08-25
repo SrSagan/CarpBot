@@ -48,8 +48,7 @@ class music(commands.Cog):
             a.set_yld_opts(ydl_opts)
 
 
-            voice = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
-            if voice.is_connected() != None:
+            if ctx.is_connected() != None:
                 author = ctx.message.author
                 channel = author.voice.channel
                 vc = await channel.connect()  # entra en la llamada
