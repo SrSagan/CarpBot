@@ -49,7 +49,7 @@ class music(commands.Cog):
 
 
             voice = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
-            if voice.isconnected() != None:
+            if voice.is_connected() != None:
                 author = ctx.message.author
                 channel = author.voice.channel
                 vc = await channel.connect()  # entra en la llamada
