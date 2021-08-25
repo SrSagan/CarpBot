@@ -15,7 +15,7 @@ class music(commands.Cog):
         help='Sale del canal de voz',
         brief='Sale del canal de voz'
     )
-    async def leave(ctx):
+    async def leave(self, ctx):
         await ctx.voice_client.disconnect()
 
     @commands.command(pass_context=True,
@@ -23,7 +23,7 @@ class music(commands.Cog):
                       help='Reproduce un link de youtube',
                       brief='Reproduce musica'
                       )
-    async def play(ctx, *url):
+    async def play(self, ctx, *url):
         ytlinks = []
         #await ctx.send("estoy aqui")
         ytlinks.append(url)
