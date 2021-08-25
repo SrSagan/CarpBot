@@ -42,14 +42,14 @@ class music(commands.Cog):
             songNum = int(songNum[:x])
             songNum = songNum+1
             ydl_opts_new = ydl_opts
-            ydl_opts["outtmpl"] = str(songNum)
-            a.set_yld_opts(ydl_opts)
+            ydl_opts_new["outtmpl"] = str(songNum)
+            a.set_yld_opts(ydl_opts_new)
 
         author = ctx.message.author
         channel = author.voice.channel
         vc = await channel.connect()  # entra en la llamada
         ydl_opts = a.get_yld_opts()
-        vc.play(discord.FFmpegPCMAudio(str(ydl_opts_new["outtmpl"])))
+        vc.play(discord.FFmpegPCMAudio(str(ydl_opts["outtmpl"])))
         vc.is_playing()
 
         '''for link in url:
