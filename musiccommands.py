@@ -49,7 +49,10 @@ class music(commands.Cog):
 
             author = ctx.message.author
             channel = author.voice.channel
-            if channel.is_connected() == False:
+
+            voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
+
+            if voice_client == None:
                 vc = await channel.connect()  # entra en la llamada
                 vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
                 vc.is_playing()
