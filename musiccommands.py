@@ -77,16 +77,16 @@ class music(commands.Cog):
             vc = await channel.connect()  # se copnecta
         vc = ctx.voice_client
 
-        while True:  # loop de reprodduccion de musica
+        while True:  # loop de reproduccion de musica
             index = b.get_index()
             songs = b.get_files()
             song = songs[index]
-            #os.system("rm "+songs[index-1])
 
             if vc.is_playing() == False:
                 print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
                 b.set_index(index+1)
+                os.system("rm "+songs[index-1])
 
             while vc.is_playing() == True:
                 if index >= len(songs):
