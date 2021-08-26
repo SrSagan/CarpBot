@@ -50,7 +50,7 @@ class music(commands.Cog):
             ydl.download([link])
             
             songNum = ydl_opts["outtmpl"]
-            songs.append(str(songNum)+".mp3")
+            songs.append(str(songNum))
             x = songNum.find(".mp3")
             songNum = int(songNum[:x])
             songNum = songNum+1
