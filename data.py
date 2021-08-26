@@ -127,6 +127,9 @@ class datos:
 
     def add_links(self, links):
         self.links.append(links)
+    
+    def reset_links(self):
+        self.links = []
 
     def get_yld_opts(self):
         return self.yld_opts
