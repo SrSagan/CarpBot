@@ -45,7 +45,7 @@ class datos:
 
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': '1.mp3',
+            'outtmpl': '0.mp3',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',

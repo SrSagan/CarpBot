@@ -1,12 +1,14 @@
-class queue:
+class music:
     def __init__(self):
         links = []
         names = []
         files = []
+        index = 0
 
         self.links = links
         self.names = names
         self.files = files
+        self.index = index
 
 #------------------LINKS------------------#
 
@@ -31,3 +33,11 @@ class queue:
 
     def set_files(self, files):
         self.files = files
+
+#------------------INDEX------------------#
+
+    def get_index(self):
+        return self.index
+
+    def set_index(self, index):
+        self.inxdex = index

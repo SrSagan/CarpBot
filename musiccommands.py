@@ -3,12 +3,14 @@ import os
 import discord
 from discord.ext import commands
 import data
+import queue
 import youtube_dl
 from discord import FFmpegPCMAudio
 import time
 import asyncio
 
 a = data.datos()
+b = queue.music()
 
 
 class music(commands.Cog):
@@ -39,46 +41,58 @@ class music(commands.Cog):
         author = ctx.message.author
         channel = author.voice.channel
 
-        links = a.get_links()
+        links = b.get_links()
         songs = []
+
+
         for link in url:
 
             if link in links:
                 await ctx.send("El link ya esta en la lista")
             else:
-                a.add_links(link)
+                links.append(link)
+                b.set_links(links)
 
-        for link in url:
+                ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
+                ydl = youtube_dl.YoutubeDL(ydl_opts)
+                ydl.download([link])
 
-            ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
-            ydl = youtube_dl.YoutubeDL(ydl_opts)
-            ydl.download([link])
+                songNum = ydl_opts["outtmpl"]
+                songs.append(str(songNum))
+                x = songNum.find(".mp3")
+                songNum = int(songNum[:x])
+                songNum = songNum+1
+                ydl_opts["outtmpl"] = str(songNum)+".mp3"
+                
+                songs = b.get_files()
+                songs.append(str(songNum)+".mp3")
+                b.set_files(songs)
 
-            songNum = ydl_opts["outtmpl"]
-            songs.append(str(songNum))
-            x = songNum.find(".mp3")
-            songNum = int(songNum[:x])
-            songNum = songNum+1
-            ydl_opts["outtmpl"] = str(songNum)+".mp3"
 
-            a.set_yld_opts(ydl_opts)
+                a.set_yld_opts(ydl_opts)
 
         voice_client = discord.utils.get(
             ctx.bot.voice_clients, guild=ctx.guild)
+
         if voice_client == None:  # si no esta conectado
-            vc = await channel.connect()
+            vc = await channel.connect() # se copnecta
         vc=ctx.voice_client
-        for song in songs:
-            x = song.find(".mp3")
-            songNum = int(song[:x])
-            songNum = songNum-1
-            os.system("rm "+str(songNum)+".mp3")
+
+        while True: #loop de reprodduccion de musica
+            index = b.get_index()
+            songs = b.get_files()
+            song = songs[index]
+
+            os.system("rm "+songs[index-1])
 
             if vc.is_playing() == False:
                 print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
-            while vc.is_playing() == True:
-                await asyncio.sleep(0.0001)
+                song=song+1
+                b.set_index(index+1)
+            else:
+                if index >= len(songs):
+                    break
 
             # else:
                 #os.system("rm "+str(songNum-1)+".mp3")
