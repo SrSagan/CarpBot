@@ -72,10 +72,10 @@ class music(commands.Cog):
             songNum = songNum-1
             os.system("rm "+str(songNum)+".mp3")
 
-            if vc.is_playing() == False:
+            if voice_client.is_playing() == False:
                 print("playing:", song)
-                vc.play(discord.FFmpegPCMAudio(song))
-            while vc.is_playing() == True:
+                voice_client.play(discord.FFmpegPCMAudio(song))
+            while voice_client.is_playing() == True:
                 await asyncio.sleep(0.001)
                 
 
