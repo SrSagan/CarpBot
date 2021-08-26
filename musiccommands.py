@@ -23,6 +23,7 @@ class music(commands.Cog):
         ydl_opts = a.get_yld_opts() 
         ydl_opts["outtmpl"] = "1.mp3"
         a.set_yld_opts(ydl_opts)
+        os.system("rm *.mp3")
     @commands.command(pass_context=True,  # reproduce musica
                       name='play',
                       help='Reproduce un link de youtube',
@@ -47,24 +48,24 @@ class music(commands.Cog):
             ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
             ydl = youtube_dl.YoutubeDL(ydl_opts)
             ydl.download([link])
-
+            
             songNum = ydl_opts["outtmpl"]
+            songs.append(str(songNum)+".mp3")
             x = songNum.find(".mp3")
             songNum = int(songNum[:x])
             songNum = songNum+1
             ydl_opts["outtmpl"] = str(songNum)+".mp3"
-            songs.append(str(songNum)+".mp3")
-
+            
             a.set_yld_opts(ydl_opts)
             
         voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
         if voice_client == None:  # si no esta conectado
             vc = await channel.connect()
 
-        links = a.get_links()
         
         for song in songs:
             if vc.is_playing() == False:
+                print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
             #else:
                 #os.system("rm "+str(songNum-1)+".mp3")
