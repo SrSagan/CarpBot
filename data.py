@@ -74,7 +74,6 @@ class datos:
         self.respuestas8ball = respuestas8ball
         self.debugmode = debugmode
         self.yld_opts = ydl_opts
-        self.links = links
 
     def get_data(self):
         grupos = self.grupos
