@@ -61,7 +61,9 @@ class music(commands.Cog):
         
         for link in links:
             vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
-            print(vc.is_playing())
+            if vc.is_playing() == False:
+                os.system("rm "+str(songNum-1)+".mp3")
+                await vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
 
 
 def setup(bot):
