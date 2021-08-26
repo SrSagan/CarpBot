@@ -46,7 +46,7 @@ class music(commands.Cog):
             else:
                 a.add_links(link)
 
-        for link in links:
+        for link in url:
 
             ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
             ydl = youtube_dl.YoutubeDL(ydl_opts)
