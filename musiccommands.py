@@ -26,6 +26,7 @@ class music(commands.Cog):
         ydl_opts["outtmpl"] = "1.mp3"
         a.set_yld_opts(ydl_opts)
         os.system("rm *.mp3")
+        a.reset_links()
     @commands.command(pass_context=True,  # reproduce musica
                       name='play',
                       help='Reproduce un link de youtube',
