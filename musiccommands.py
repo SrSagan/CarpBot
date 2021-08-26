@@ -6,6 +6,7 @@ import data
 import youtube_dl
 from discord import FFmpegPCMAudio
 import time
+import asyncio
 
 a = data.datos()
 
@@ -74,7 +75,7 @@ class music(commands.Cog):
                 print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
             while vc.is_playing() == True:
-                time.sleep(x)
+                await asyncio.sleep(0.001)
                 
 
                 
