@@ -60,12 +60,13 @@ class music(commands.Cog):
                 songs.append(str(songNum))
                 x = songNum.find(".mp3")
                 songNum = int(songNum[:x])
-                songNum = songNum+1
-                ydl_opts["outtmpl"] = str(songNum)+".mp3"
-
                 songs = b.get_files()
                 songs.append(str(songNum)+".mp3")
                 b.set_files(songs)
+                songNum = songNum+1
+                ydl_opts["outtmpl"] = str(songNum)+".mp3"
+
+                
 
                 a.set_yld_opts(ydl_opts)
 
