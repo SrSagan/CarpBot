@@ -5,6 +5,7 @@ from discord.ext import commands
 import data
 import youtube_dl
 from discord import FFmpegPCMAudio
+import time
 
 a = data.datos()
 
@@ -72,6 +73,11 @@ class music(commands.Cog):
             if vc.is_playing() == False:
                 print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
+            while vc.is_playing() == True:
+                time.sleep(x)
+                
+
+                
             #else:
                 #os.system("rm "+str(songNum-1)+".mp3")
                 
