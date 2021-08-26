@@ -63,9 +63,9 @@ class music(commands.Cog):
         
         for song in songs:
             if vc.is_playing() == False:
-                await vc.play(discord.FFmpegPCMAudio(song))
-            else:
-                os.system("rm "+str(songNum-1)+".mp3")
+                vc.play(discord.FFmpegPCMAudio(song))
+            #else:
+                #os.system("rm "+str(songNum-1)+".mp3")
                 
 
 
