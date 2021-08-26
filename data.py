@@ -64,7 +64,6 @@ class datos:
         """
         # respuestas de 8ball
         frases = []
-        links = []
         respuestas8ball = ["Confirmo", "Niego", "No", "Si", "Capaz", "Que pregunta boluda eh", "No, creo que no", "Si, creo...",
                            "Puede ser", "Sabes que no", "Sabes que si", "jajaja no", "jajaja si", "Yes", "Não", "Y a vos que te parece?", "Desconfirmo"]
         debugmode = 0  # debugmode
@@ -121,15 +120,6 @@ class datos:
 
     def set_debugmode(self, state):
         self.debugmode = state
-
-    def get_links(self):
-        return self.links
-
-    def add_links(self, links):
-        self.links.append(links)
-    
-    def reset_links(self):
-        self.links = []
 
     def get_yld_opts(self):
         return self.yld_opts
