@@ -44,7 +44,6 @@ class music(commands.Cog):
         links = b.get_links()
         songs = []
 
-
         for link in url:
 
             if link in links:
@@ -68,30 +67,28 @@ class music(commands.Cog):
                 songs.append(str(songNum)+".mp3")
                 b.set_files(songs)
 
-
                 a.set_yld_opts(ydl_opts)
 
         voice_client = discord.utils.get(
             ctx.bot.voice_clients, guild=ctx.guild)
 
         if voice_client == None:  # si no esta conectado
-            vc = await channel.connect() # se copnecta
-        vc=ctx.voice_client
+            vc = await channel.connect()  # se copnecta
+        vc = ctx.voice_client
 
-        while True: #loop de reprodduccion de musica
+        while True:  # loop de reprodduccion de musica
             index = b.get_index()
             songs = b.get_files()
             song = songs[index]
-
-            os.system("rm "+songs[index-1])
+            #os.system("rm "+songs[index-1])
 
             if vc.is_playing() == False:
                 print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
                 b.set_index(index+1)
-            else:
-                if index >= len(songs):
-                    break
+
+            if index >= len(songs):
+                break
 
             # else:
                 #os.system("rm "+str(songNum-1)+".mp3")
