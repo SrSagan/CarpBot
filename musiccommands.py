@@ -74,7 +74,7 @@ class music(commands.Cog):
 
             if vc.is_playing() == False:
                 print("playing:", song)
-                voice_client.play(discord.FFmpegPCMAudio(song))
+                vc.play(discord.FFmpegPCMAudio(song))
             while vc.is_playing() == True:
                 await asyncio.sleep(0)
                 
