@@ -22,12 +22,14 @@ class music(commands.Cog):
     )
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
-        ydl_opts = a.get_yld_opts() 
+        ydl_opts = a.get_yld_opts()
         ydl_opts["outtmpl"] = "1.mp3"
         a.set_yld_opts(ydl_opts)
         os.system("rm *.mp3")
         a.reset_links()
+
     @commands.command(pass_context=True,  # reproduce musica
+                      aliases=['p', 'pl'],
                       name='play',
                       help='Reproduce un link de youtube',
                       brief='Reproduce musica'
@@ -51,21 +53,21 @@ class music(commands.Cog):
             ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
             ydl = youtube_dl.YoutubeDL(ydl_opts)
             ydl.download([link])
-            
+
             songNum = ydl_opts["outtmpl"]
             songs.append(str(songNum))
             x = songNum.find(".mp3")
             songNum = int(songNum[:x])
             songNum = songNum+1
             ydl_opts["outtmpl"] = str(songNum)+".mp3"
-            
+
             a.set_yld_opts(ydl_opts)
-            
-        voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
+
+        voice_client = discord.utils.get(
+            ctx.bot.voice_clients, guild=ctx.guild)
         if voice_client == None:  # si no esta conectado
             vc = await channel.connect()
 
-        
         for song in songs:
             x = song.find(".mp3")
             songNum = int(song[:x])
@@ -76,13 +78,10 @@ class music(commands.Cog):
                 print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
             while vc.is_playing() == True:
-                await asyncio.sleep(0)
-                
+                await asyncio.sleep(0.000001)
 
-                
-            #else:
+            # else:
                 #os.system("rm "+str(songNum-1)+".mp3")
-                
 
 
 def setup(bot):
