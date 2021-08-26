@@ -88,8 +88,9 @@ class music(commands.Cog):
                 vc.play(discord.FFmpegPCMAudio(song))
                 b.set_index(index+1)
 
-            if index >= len(songs):
-                break
+            while vc.is_playing() == True:
+                if index >= len(songs):
+                    break
 
             # else:
                 #os.system("rm "+str(songNum-1)+".mp3")
