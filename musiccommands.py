@@ -32,6 +32,7 @@ class music(commands.Cog):
         channel = author.voice.channel
 
         links = a.get_links()
+        songs = []
         for link in url:
 
             if link in links:
@@ -50,6 +51,7 @@ class music(commands.Cog):
             songNum = int(songNum[:x])
             songNum = songNum+1
             ydl_opts["outtmpl"] = str(songNum)+".mp3"
+            songs.append(str(songNum)+".mp3")
 
             a.set_yld_opts(ydl_opts)
             
@@ -59,11 +61,12 @@ class music(commands.Cog):
 
         links = a.get_links()
         
-        for link in links:
-            vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
+        for song in songs:
             if vc.is_playing() == False:
+                await vc.play(discord.FFmpegPCMAudio(song))
+            else:
                 os.system("rm "+str(songNum-1)+".mp3")
-                await vc.play(discord.FFmpegPCMAudio(str(songNum-1)+".mp3"))
+                
 
 
 def setup(bot):
