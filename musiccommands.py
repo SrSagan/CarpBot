@@ -3,14 +3,14 @@ import os
 import discord
 from discord.ext import commands
 import data
-import queue
+import music
 import youtube_dl
 from discord import FFmpegPCMAudio
 import time
 import asyncio
 
 a = data.datos()
-b = queue.music()
+b = music.music()
 
 
 class music(commands.Cog):
@@ -63,7 +63,7 @@ class music(commands.Cog):
                 songNum = int(songNum[:x])
                 songNum = songNum+1
                 ydl_opts["outtmpl"] = str(songNum)+".mp3"
-                
+
                 songs = b.get_files()
                 songs.append(str(songNum)+".mp3")
                 b.set_files(songs)
