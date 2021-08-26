@@ -64,6 +64,11 @@ class music(commands.Cog):
 
         
         for song in songs:
+            x = song.find(".mp3")
+            songNum = song[:x]
+            songNum = songNum-1
+            os.system("rm "+str(songNum)+".mp3")
+            
             if vc.is_playing() == False:
                 print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
