@@ -28,7 +28,7 @@ class music(commands.Cog):
         ydl_opts["outtmpl"] = "1.mp3"
         a.set_yld_opts(ydl_opts)
         os.system("rm *.mp3")
-        a.reset_links()
+        b.set_links([])
 
     @commands.command(pass_context=True,  # reproduce musica
                       aliases=['p', 'pl'],
@@ -88,7 +88,6 @@ class music(commands.Cog):
             if vc.is_playing() == False:
                 print("playing:", song)
                 vc.play(discord.FFmpegPCMAudio(song))
-                song=song+1
                 b.set_index(index+1)
             else:
                 if index >= len(songs):
