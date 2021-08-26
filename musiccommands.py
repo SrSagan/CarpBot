@@ -20,7 +20,9 @@ class music(commands.Cog):
     )
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
-
+        ydl_opts = a.get_yld_opts() 
+        ydl_opts["outtmpl"] = "1.mp3"
+        a.set_yld_opts(ydl_opts)
     @commands.command(pass_context=True,  # reproduce musica
                       name='play',
                       help='Reproduce un link de youtube',
