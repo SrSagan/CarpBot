@@ -67,7 +67,7 @@ class music(commands.Cog):
             ctx.bot.voice_clients, guild=ctx.guild)
         if voice_client == None:  # si no esta conectado
             vc = await channel.connect()
-
+        vc=ctx.voice_client
         for song in songs:
             x = song.find(".mp3")
             songNum = int(song[:x])
