@@ -1,3 +1,11 @@
+import os
+import discord
+from discord.ext import commands
+from discord import FFmpegPCMAudio
+import time
+import asyncio
+
+
 class music:
     def __init__(self):
         links = []
@@ -50,3 +58,22 @@ class music:
         self.files = []
         self.index = 0
 
+#--------------MUSIC PLAYER---------------#
+
+    async def play(self, vc, ctx):
+
+        while True:
+
+            while True:
+                if vc.is_playing() == False:
+                    break
+                await asyncio.sleep(0.25)
+
+            if self.index+1 > len(self.links):
+                await ctx.send("Queue over")
+                break
+
+            await ctx.send("Now playing: "+str(self.files[self.index]))
+            vc.play(discord.FFmpegPCMAudio(self.files[self.index]))
+            os.system("rm "+self.files[self.index-1])
+            self.index = self.index+1

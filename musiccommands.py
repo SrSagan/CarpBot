@@ -6,7 +6,6 @@ import data
 import music
 import youtube_dl
 from discord import FFmpegPCMAudio
-import time
 import asyncio
 
 a = data.datos()
@@ -75,10 +74,15 @@ class music(commands.Cog):
                     ydl_opts["outtmpl"] = str(songNum)+".mp3"
 
                     a.set_yld_opts(ydl_opts)
+        
+            vc = ctx.voice_client
+            await ctx.send(str(vc.is_playing()))
+            if vc.is_playing() == False:
+                await b.play(vc, ctx)
 
-        #SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:((((((((((
+        #SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:(((((((((( uuh acabo de caer si esta conectado y no esta reproduciendo si ;-;
+        #WENO SE ARREGLA DESPOIS
         else:
-            await channel.connect()
 
             for link in url:
                 if link in links:
@@ -100,37 +104,13 @@ class music(commands.Cog):
                     ydl_opts["outtmpl"] = str(songNum)+".mp3"
                     a.set_yld_opts(ydl_opts)
 
+                    
+            await channel.connect()
+
             vc = ctx.voice_client
+            if vc.is_playing() == False:
+                await b.play(vc, ctx)
 
-            index = b.get_index()
-            songs = b.get_files()
-
-
-        '''while True:
-            if index <= len(songs)-1:
-                while vc.is_playing() == False:  # loop de reprodduccion de musica
-                    index = b.get_index()
-                    songs = b.get_files()
-                    song = songs[index]
-                    await ctx.send("Index: "+str(index))
-                    await ctx.send("Song: "+str(song))
-
-                    await ctx.send("Inside is playing=false")
-                    print("playing:", song)
-                    vc.play(discord.FFmpegPCMAudio(song))
-                    setIndex=index+1
-                    lessIndex=index-1
-                    b.set_index(setIndex)
-                    await ctx.send("Newindex:"+str(setIndex))
-                    await ctx.send("Deleting song:"+str(songs[index-1]))
-                    await ctx.send("lensongs:"+str(len(songs)))
-                    #os.system("rm "+songs[lessIndex])
-
-                    if index >= len(songs)-1:
-                        await ctx.send("It got to the end of the playlist")
-                        break
-            else:
-                break'''
 
     @commands.command(
         aliases=['q'],
