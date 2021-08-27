@@ -37,7 +37,7 @@ class music:
 #------------------FILES------------------#
 
     def get_files(self):
-        return self.names
+        return self.files
 
     def set_files(self, files):
         self.files = files
@@ -62,18 +62,26 @@ class music:
 
     async def play(self, vc, ctx):
 
-        while True:
+        while True:  # comienza el loop de reproduccion
 
-            while True:
+            while True:  # si esta reproduciendo no hace nada y espera
                 if vc.is_playing() == False:
                     break
                 await asyncio.sleep(0.25)
 
+            # si termina la queue frena el loop
             if self.index+1 > len(self.links):
                 await ctx.send("Queue over")
                 break
 
-            await ctx.send("Now playing: "+str(self.files[self.index]))
-            vc.play(discord.FFmpegPCMAudio(self.files[self.index]))
-            os.system("rm "+self.files[self.index-1])
-            self.index = self.index+1
+            embed = discord.Embed(
+                title="Now Playing", color=0x3498DB, description=str(self.names[self.index]))
+            await ctx.send(embed=embed)  # muestra que esta reproduciendo
+
+            vc.play(discord.FFmpegPCMAudio(
+                self.files[self.index]))  # reproduce
+
+            # elimina el archivo anterior para ahorrar espacio
+            if self.index != 0:
+                os.system("rm "+self.files[self.index-1])
+            self.index = self.index+1  # sube el contador

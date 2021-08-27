@@ -40,9 +40,9 @@ class music(commands.Cog):
 
         author = ctx.message.author
         channel = author.voice.channel
+        songs = []
 
         links = b.get_links()
-        songs = []
 
         # SI ESTA CONECTADO SOLO agrega el link a la queue
 
@@ -63,6 +63,12 @@ class music(commands.Cog):
                     ydl = youtube_dl.YoutubeDL(ydl_opts)
                     ydl.download([link])
 
+                    info_dict = ydl.extract_info(
+                        link, download=False)  # guarda el nombre
+                    names = b.get_names()
+                    names.append(info_dict.get('title', None))
+                    b.set_names(names)
+
                     songNum = ydl_opts["outtmpl"]
                     songs.append(str(songNum))
                     x = songNum.find(".mp3")
@@ -71,17 +77,17 @@ class music(commands.Cog):
                     songs.append(str(songNum)+".mp3")
                     b.set_files(songs)
                     songNum = songNum+1
+                    # descarga todos los links y cambia el nombre del proximo archivo a descargar
                     ydl_opts["outtmpl"] = str(songNum)+".mp3"
 
                     a.set_yld_opts(ydl_opts)
-        
-            vc = ctx.voice_client
-            await ctx.send(str(vc.is_playing()))
+
+            vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
             if vc.is_playing() == False:
                 await b.play(vc, ctx)
 
-        #SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:(((((((((( uuh acabo de caer si esta conectado y no esta reproduciendo si ;-;
-        #WENO SE ARREGLA DESPOIS
+        # SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:(((((((((( uuh acabo de caer si esta conectado y no esta reproduciendo si ;-;
+        # WENO SE ARREGLA DESPOIS
         else:
 
             for link in url:
@@ -93,6 +99,13 @@ class music(commands.Cog):
                     ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
                     ydl = youtube_dl.YoutubeDL(ydl_opts)
                     ydl.download([link])
+
+                    info_dict = ydl.extract_info(
+                        link, download=False)  # guarda el nombre
+                    names = b.get_names()
+                    names.append(info_dict.get('title', None))
+                    b.set_names(names)
+
                     songNum = ydl_opts["outtmpl"]
                     songs.append(str(songNum))
                     x = songNum.find(".mp3")
@@ -104,13 +117,11 @@ class music(commands.Cog):
                     ydl_opts["outtmpl"] = str(songNum)+".mp3"
                     a.set_yld_opts(ydl_opts)
 
-                    
             await channel.connect()
 
             vc = ctx.voice_client
-            if vc.is_playing() == False:
+            if vc.is_playing() == False:  # si no esta reproduciendo comienza a reproducir (no hace falta pero weno)
                 await b.play(vc, ctx)
-
 
     @commands.command(
         aliases=['q'],
@@ -119,9 +130,57 @@ class music(commands.Cog):
         brief='Muestra la queue'
     )
     async def queue(self, ctx):
-        files = b.get_files()
-        for file in files:
-            await ctx.send(file)
+        names = b.get_names()
+        index = b.get_index()
+        number = 1
+        data=''
+        for name in names:
+            if number == index:
+                data = data+"\n**"+(str(number)+") "+str(name)+"**")
+            else:
+                data = data+"\n**"+(str(number)+")** "+str(name))
+            number = number+1
+        embed = discord.Embed(
+            title="Queue", color=0x3498DB, description=data)
+        await ctx.send(embed=embed)
+    
+    @commands.command(
+        aliases=['s'],
+        name='stop',
+        help='Para la musica',
+        brief='Para la musica'
+    )
+    async def stop(self, ctx):
+        vc = ctx.voice_client
+        vc.stop()
+    
+    @commands.command(
+        aliases=['ps'],
+        name='pause',
+        help='Pausa la musica',
+        brief='Pausa la musica'
+    )
+    async def pause(self, ctx):
+        vc = ctx.voice_client
+        if vc.is_paused() == True:
+            await ctx.send("Audio already paused")
+        else:
+            vc.pause()
+
+    @commands.command(
+        aliases=['r'],
+        name='resume',
+        help='Resume la musica',
+        brief='Resume la musica'
+    )
+    async def resume(self, ctx):
+        vc = ctx.voice_client
+        if vc.is_paused() == True:
+            vc.stop()
+        else:
+            await ctx.send("Audio not paused")
+    
+    
 
 
 def setup(bot):
