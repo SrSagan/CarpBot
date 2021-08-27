@@ -41,3 +41,12 @@ class music:
 
     def set_index(self, index):
         self.inxdex = index
+
+#-----------------GENERAL-----------------#
+
+    def reset_all(self):
+        self.links = []
+        self.names = []
+        self.files = []
+        self.index = 0
+
