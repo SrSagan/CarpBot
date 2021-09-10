@@ -2,11 +2,11 @@ import os
 
 import discord
 from discord.ext import commands
+from discord.flags import alias_flag_value
 import data
 import music
-import youtube_dl
-from discord import FFmpegPCMAudio
-import asyncio
+import datetime
+import time
 
 a = data.datos()
 b = music.music()
@@ -15,6 +15,9 @@ b = music.music()
 class music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+
+#---------------------------------------------------------LEAVE----------------------------------------------------------#
 
     @commands.command(
         aliases=['l', 'lv'],
@@ -27,7 +30,6 @@ class music(commands.Cog):
         ydl_opts = a.get_yld_opts()
         ydl_opts["outtmpl"] = "0.mp3"
         a.set_yld_opts(ydl_opts)
-        os.system("rm *.mp3")
         b.reset_all()
 
 #---------------------------------------------------------PLAY----------------------------------------------------------#
@@ -38,22 +40,22 @@ class music(commands.Cog):
                       help='Reproduce un link de youtube',
                       brief='Reproduce musica'
                       )
-    async def play(self, ctx, *url):
+    async def play(self, ctx, *request):
 
         author = ctx.message.author
         channel = author.voice.channel
-        songs = []
-
-        links = b.get_links()
 
         # SI ESTA CONECTADO SOLO agrega el link a la queue
 
         voice_client = discord.utils.get(
             ctx.bot.voice_clients, guild=ctx.guild)
 
+        texto = ""
+        for word in request:
+            texto = (texto+" "+word)
         if voice_client != None:
 
-            await b.youtube_download(ctx, url)
+            await b.music_queuer(ctx, texto)
 
             vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
             if vc.is_playing() == False:
@@ -63,36 +65,8 @@ class music(commands.Cog):
         # SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:(((((((((( uuh acabo de caer si esta conectado y no esta reproduciendo si ;-;
         # WENO SE ARREGLA DESPOIS
         else:
-            
-            await b.youtube_download(ctx, url)
-            '''
-            for link in url:
-                if link in links:
-                    await ctx.send("El link ya esta en la lista")
-                else:
-                    links.append(link)
-                    b.set_links(links)
-                    ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
-                    ydl = youtube_dl.YoutubeDL(ydl_opts)
-                    ydl.download([link])
 
-                    info_dict = ydl.extract_info(
-                        link, download=False)  # guarda el nombre
-                    names = b.get_names()
-                    names.append(info_dict.get('title', None))
-                    b.set_names(names)
-
-                    songNum = ydl_opts["outtmpl"]
-                    songs.append(str(songNum))
-                    x = songNum.find(".mp3")
-                    songNum = int(songNum[:x])
-                    songs = b.get_files()
-                    songs.append(str(songNum)+".mp3")
-                    b.set_files(songs)
-                    songNum = songNum+1
-                    ydl_opts["outtmpl"] = str(songNum)+".mp3"
-                    a.set_yld_opts(ydl_opts)'''
-
+            await b.music_queuer(ctx, texto)
             await channel.connect()
 
             vc = ctx.voice_client
@@ -111,18 +85,42 @@ class music(commands.Cog):
     async def queue(self, ctx):
         names = b.get_names()
         index = b.get_index()
+        lengths = b.get_lenghts()
+        start_time = b.get_time()
+
+        x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
+        # convierte el timepo comienzo a segundos
+        start_time = datetime.timedelta(
+            hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+        x = time.strptime(lengths[index-1].split(',')[0], '%H:%M:%S')
+        # lo mismo pero del largo del video
+        length = datetime.timedelta(
+            hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
+        t = time.localtime()
+        current_time = time.strftime("%H:%M:%S", t)
+        # checkeea tiempo actual
+        x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
+        current_time = datetime.timedelta(
+            hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
+        time_elapsed = current_time - start_time  # resta los tiempos
+        time_left = time.strftime("%H:%M:%S", time.gmtime(
+        length-time_elapsed)) 
+
         number = 1
-        data=''
+        data = ''
         for name in names:
             if number == index:
-                data = data+"\n**"+(str(number)+") "+str(name)+"**")
+                data = data+"\n**"+(str(number)+") "+str(name)+"**")+"Time Left: "+time_left
             else:
-                data = data+"\n**"+(str(number)+")** "+str(name))
+                data = data+"\n**"+(str(number)+")** " +
+                                    str(name))+" Lenght: "+lengths[number-1]
             number = number+1
         embed = discord.Embed(
             title="Queue", color=0x3498DB, description=data)
         await ctx.send(embed=embed)
-    
+
 #---------------------------------------------------------STOP----------------------------------------------------------#
 
     @commands.command(
@@ -165,7 +163,7 @@ class music(commands.Cog):
             vc.resume()
         else:
             await ctx.send("Audio not paused")
-    
+
 #---------------------------------------------------------NEXT----------------------------------------------------------#
 
     @commands.command(
@@ -195,8 +193,61 @@ class music(commands.Cog):
         index = index-2
         b.set_index(index)
         vc.stop()
-    
-    
+
+#---------------------------------------------------------SONG----------------------------------------------------------#
+
+    @commands.command(
+        name='song',
+        help='Muestra que cancion se esta reproduciendo',
+        brief='Song playing'
+    )
+    async def song(self, ctx):
+        start_time = b.get_time()
+        lengths = b.get_lenghts()
+        names = b.get_names()
+        index = b.get_index()
+
+        x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
+        # convierte el timepo comienzo a segundos
+        start_time = datetime.timedelta(
+            hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+        x = time.strptime(lengths[index-1].split(',')[0], '%H:%M:%S')
+        # lo mismo pero del largo del video
+        length = datetime.timedelta(
+            hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
+        t = time.localtime()
+        current_time = time.strftime("%H:%M:%S", t)
+        # checkeea tiempo actual
+        x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
+        current_time = datetime.timedelta(
+            hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
+        time_elapsed = current_time - start_time  # resta los tiempos
+
+        time_left = time.strftime("%H:%M:%S", time.gmtime(
+            length-time_elapsed))  # lo conviernet
+        # amigo alto bardo hacer la pija esta
+
+        embed = discord.Embed(
+            title="Now playing", color=0x3498DB, description=str(names[index-1]))
+        embed.set_footer(text="Length: "+str(lengths[index-1]))
+        embed.set_footer(text="Time Left: "+time_left)
+        await ctx.send(embed=embed)
+
+#---------------------------------------------------------CLEAR----------------------------------------------------------#
+
+    @commands.command(
+        aliases=['c'],
+        name='clear',
+        help='Limpia la queue',
+        brief='Limpia la queue'
+    )
+    async def clear(self, ctx):
+        vc = ctx.voice_client
+        b.set_status(False)
+        vc.stop()
+        b.reset_all()
 
 
 def setup(bot):

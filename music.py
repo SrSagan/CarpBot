@@ -6,6 +6,7 @@ import time
 import asyncio
 import youtube_dl
 import data
+from requests import get
 
 a = data.datos()
 
@@ -17,12 +18,18 @@ class music:
         files = []
         index = 0
         status = False
+        thumbnails = []
+        lengths = []
+        time = ""
 
         self.links = links
         self.names = names
         self.files = files
         self.index = index
         self.status = status
+        self.thumbnails = thumbnails
+        self.lengths = lengths
+        self.time = time
 
 #------------------LINKS------------------#
 
@@ -48,6 +55,16 @@ class music:
     def set_files(self, files):
         self.files = files
 
+#------------------FILES------------------#
+
+    def get_lenghts(self):
+        return self.lengths
+
+#------------------FILES------------------#
+
+    def get_time(self):
+        return self.time
+
 #------------------INDEX------------------#
 
     def get_index(self):
@@ -71,36 +88,45 @@ class music:
         self.names = []
         self.files = []
         self.index = 0
+        self.thumbnails = []
+        self.lengths = []
+        self.time = ""
 
-#------------YOUTUBE DOWNLOAD-------------#
+#------------YOUTUBE QUEUER-------------#
 
-    async def youtube_download(self, ctx, url):
-        for link in url:
+    async def music_queuer(self, ctx, reqest):
 
-            if link in self.links:
-                await ctx.send("El link ya esta en la lista")
-            else:
-                self.links.append(link)
+        ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
+        ydl = youtube_dl.YoutubeDL(ydl_opts)
+        try:
+            get(reqest)
+        except:
+            video = ydl.extract_info(f"ytsearch:{reqest}", download=False)[
+                'entries'][0]
+        else:
+            video = ydl.extract_info(reqest, download=False)
+        # agarra distinta info del video
+        vid_name = video.get('title', None)
+        self.names.append(vid_name)
 
-                ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
-                ydl = youtube_dl.YoutubeDL(ydl_opts)
-                ydl.download([link])
+        vid_length = video.get('duration')
+        vid_length = time.strftime("%H:%M:%S", time.gmtime(vid_length))
+        self.lengths.append(vid_length)
 
-                info_dict = ydl.extract_info(
-                    link, download=False)  # guarda el nombre
-                    
-                self.names.append(info_dict.get('title', None))
+        vid_thumbnail = video.get('thumbnail', None)
+        self.thumbnails.append(vid_thumbnail)
 
-                songNum = ydl_opts["outtmpl"]
-                x = songNum.find(".mp3")
-                songNum = int(songNum[:x])
-                self.files.append(str(songNum)+".mp3")
+        vid_link = video.get('url', None)
+        if vid_link in self.links:
+            await ctx.send("El link ya esta en la lista")
+        else:
+            self.links.append(vid_link)
 
-                songNum = songNum+1
-                # descarga todos los links y cambia el nombre del proximo archivo a descargar
-                ydl_opts["outtmpl"] = str(songNum)+".mp3"
-
-                a.set_yld_opts(ydl_opts)
+        embed = discord.Embed(
+            title="Queued", color=0x3498DB, description=str(vid_name))
+        embed.set_image(url=vid_thumbnail)
+        embed.set_footer(text="Length "+str(vid_length))
+        await ctx.send(embed=embed)
 
 
 #--------------MUSIC PLAYER---------------#
@@ -123,12 +149,16 @@ class music:
 
             embed = discord.Embed(
                 title="Now Playing", color=0x3498DB, description=str(self.names[self.index]))
+            embed.set_image(url=self.thumbnails[self.index])
             await ctx.send(embed=embed)  # muestra que esta reproduciendo
-            await ctx.send("playing index:"+str(self.index))
-            vc.play(discord.FFmpegPCMAudio(
-                self.files[self.index]))  # reproduce
 
-            # elimina el archivo anterior para ahorrar espacio
-            if self.index >= 2:
-                os.system("rm "+self.files[self.index-2])
+            ydl = youtube_dl.YoutubeDL()
+            r = ydl.extract_info(self.links[self.index], download=False)
+
+            t = time.localtime()
+            self.time = time.strftime("%H:%M:%S", t)
+
+            vc.play(discord.FFmpegPCMAudio(
+                r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'))  # reproduce
+
             self.index = self.index+1  # sube el contador
