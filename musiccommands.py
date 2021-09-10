@@ -1,8 +1,10 @@
 import os
+import re
 
 import discord
 from discord.ext import commands
 from discord.flags import alias_flag_value
+from requests.models import RequestEncodingMixin
 import data
 import music
 import datetime
@@ -18,6 +20,7 @@ class music(commands.Cog):
 
 
 #---------------------------------------------------------LEAVE----------------------------------------------------------#
+
 
     @commands.command(
         aliases=['l', 'lv'],
@@ -52,7 +55,11 @@ class music(commands.Cog):
 
         texto = ""
         for word in request:
-            texto = (texto+" "+word)
+            if len(request) == 1:
+                texto = request[0]
+            else:
+                texto = (texto+" "+word)
+
         if voice_client != None:
 
             await b.music_queuer(ctx, texto)
@@ -106,13 +113,14 @@ class music(commands.Cog):
 
         time_elapsed = current_time - start_time  # resta los tiempos
         time_left = time.strftime("%H:%M:%S", time.gmtime(
-        length-time_elapsed)) 
+            length-time_elapsed))
 
         number = 1
         data = ''
         for name in names:
             if number == index:
-                data = data+"\n**"+(str(number)+") "+str(name)+"**")+"Time Left: "+time_left
+                data = data+"\n**"+(str(number)+") " +
+                                    str(name)+"**")+" Time Left: "+time_left
             else:
                 data = data+"\n**"+(str(number)+")** " +
                                     str(name))+" Lenght: "+lengths[number-1]
