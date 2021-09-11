@@ -30,9 +30,6 @@ class music(commands.Cog):
     )
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
-        ydl_opts = a.get_yld_opts()
-        ydl_opts["outtmpl"] = "0.mp3"
-        a.set_yld_opts(ydl_opts)
         b.reset_all()
 
 #---------------------------------------------------------PLAY----------------------------------------------------------#
@@ -121,12 +118,12 @@ class music(commands.Cog):
             if number >= index-1:
                 if number == index:
                     data = data+"\n**"+(str(number)+") " +
-                                        str(name)+"**")+" Time Left: "+time_left
+                                        str(name)+"**")+" *Time Left: "+time_left+"*"
                 else:
                     data = data+"\n**"+(str(number)+")** " +
-                                        str(name))+" Lenght: "+lengths[number-1]
+                                        str(name))+" *Lenght: "+lengths[number-1]+"*"
             number = number+1
-            if number==index+9:
+            if number == index+9:
                 data = data+"\n\n**"+str(len(names)-index-8)+" Songs more**"
                 break
         embed = discord.Embed(
@@ -184,12 +181,23 @@ class music(commands.Cog):
         help='Salta la cancion',
         brief='Salta la musica'
     )
-    async def next(self, ctx):
+    async def next(self, ctx, *args):
+        songs = b.get_links()
         vc = ctx.voice_client
-        index = b.get_index()
-        index = index
-        b.set_index(index)
-        vc.stop()
+
+        if args != []:
+            if args[0].isnumeric():
+                if int(args[0]) <= len(songs):
+                    index = int(args[0])-1
+                    b.set_index(index)
+                    vc.stop()
+                else: await ctx.send("Song out of range")
+            else: await ctx.send("Specify the number of a song")
+        else:
+            index = b.get_index()
+            index = index
+            b.set_index(index)
+            vc.stop()
 
 #---------------------------------------------------------BACK----------------------------------------------------------#
 

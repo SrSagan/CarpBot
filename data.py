@@ -43,15 +43,6 @@ class datos:
             },
         }
 
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'outtmpl': '0.mp3',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }]
-        }
         # texto para grupos
         gruposText = """ 
         **avatar**: Refiriendose a Avatar la Leyenda de Aang
@@ -73,7 +64,6 @@ class datos:
         self.gruposText = gruposText
         self.respuestas8ball = respuestas8ball
         self.debugmode = debugmode
-        self.yld_opts = ydl_opts
 
     def get_data(self):
         grupos = self.grupos
@@ -119,12 +109,6 @@ class datos:
 
     def set_debugmode(self, state):
         self.debugmode = state
-
-    def get_yld_opts(self):
-        return self.yld_opts
-
-    def set_yld_opts(self, options):
-        self.yld_opts = options
 
     def set_frase(self, frase):  # pone una frase
         frases = self.frases

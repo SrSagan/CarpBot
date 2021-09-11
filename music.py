@@ -93,11 +93,16 @@ class music:
         self.lengths = []
         self.time = ""
 
-#------------YOUTUBE QUEUER-------------#
+# ------------YOUTUBE QUEUER-------------#
 
     async def music_queuer(self, ctx, reqest):
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'extract_flat': 'in_playlist',
+            'forcethumbnail': 'best',
+        }
+        type = "none"
 
-        ydl_opts = a.get_yld_opts()  # opciones de descarga guardadas en datos
         ydl = youtube_dl.YoutubeDL(ydl_opts)
         try:
             get(reqest)
@@ -106,50 +111,59 @@ class music:
                 'entries'][0]
         else:
             video = ydl.extract_info(reqest, download=False)
-        json_object = json.dumps(video, indent = 4)
-  
+
+        json_object = json.dumps(video, indent=4)
+
         # Writing to sample.json
         with open("sample.json", "w") as outfile:
             outfile.write(json_object)
 
         if "_type" in video:
             if video.get("_type", None) == "playlist":
-                await ctx.send("Still working on it")
-                counter=0
-                for entrie in video["entries"]:
-                    vid_name = video["entries"][counter]['title']
+                type = "playlist"
+            else:
+                type = "none"
+        else:
+            type = "link"
 
-                    vid_length = video["entries"][counter]['duration']
-                    vid_length = time.strftime("%H:%M:%S", time.gmtime(vid_length))
+        await ctx.send("Type: "+type)
 
-                    vid_thumbnail = video["entries"][counter]['thumbnail']
-
-                    vid_link = video["entries"][counter]['webpage_url']
-
-                    if vid_link in self.links:
-                        await ctx.send("El link ya esta en la lista")
-                    else:
-                        self.links.append(vid_link)
-                        self.names.append(vid_name)
-                        self.lengths.append(vid_length)
-                        self.thumbnails.append(vid_thumbnail)
-                    counter=counter+1
-
-                embed = discord.Embed(
-                        title="Queued", color=0x3498DB, description=str(len(video["entries"]))+" songs")
-                await ctx.send(embed=embed)
+        if type == "playlist":
+            counter = 0
+            for entrie in video["entries"]:
+                vid_name = video["entries"][counter]['title']
+                vid_length = video["entries"][counter]['duration']
+                vid_length = time.strftime(
+                    "%H:%M:%S", time.gmtime(vid_length))
+                vid_link = video["entries"][counter]['url']
+                if vid_link in self.links:
+                    await ctx.send("El link ya esta en la lista")
+                else:
+                    self.links.append(vid_link)
+                    self.names.append(vid_name)
+                    self.lengths.append(vid_length)
+                counter = counter+1
+            embed = discord.Embed(
+                title="Queued", color=0x3498DB, description=str(len(video["entries"]))+" songs")
+            await ctx.send(embed=embed)
 
         else:
 
             # agarra distinta info del video
             vid_name = video.get('title', None)
-
             vid_length = video.get('duration')
             vid_length = time.strftime("%H:%M:%S", time.gmtime(vid_length))
 
-            vid_thumbnail = video.get('thumbnail', None)
+            if type == 'none':
+                ydl = youtube_dl.YoutubeDL({
+                    'format': 'bestaudio/best', 'forcethumbnail': 'best', })
+                vid_link = video.get('url', None)
+                vid_thumbnail = ydl.extract_info(vid_link, download=False)
+                vid_thumbnail = vid_thumbnail.get('thumbnail', None)
 
-            vid_link = video.get('webpage_url', None)
+            elif type == 'link':
+                vid_link = video.get('webpage_url', None)
+                vid_thumbnail = video.get('thumbnail', None)
 
             if vid_link in self.links:
                 await ctx.send("El link ya esta en la lista")
@@ -157,14 +171,11 @@ class music:
                 self.links.append(vid_link)
                 self.names.append(vid_name)
                 self.lengths.append(vid_length)
-                self.thumbnails.append(vid_thumbnail)
-
                 embed = discord.Embed(
                     title="Queued", color=0x3498DB, description=str(vid_name))
                 embed.set_image(url=vid_thumbnail)
                 embed.set_footer(text="Length "+str(vid_length))
                 await ctx.send(embed=embed)
-
 
 #--------------MUSIC PLAYER---------------#
 
@@ -183,13 +194,14 @@ class music:
                 await ctx.send("Queue over")
                 break
 
-            embed = discord.Embed(
-                title="Now Playing", color=0x3498DB, description=str(self.names[self.index]))
-            embed.set_image(url=self.thumbnails[self.index])
-            await ctx.send(embed=embed)  # muestra que esta reproduciendo
-
             ydl = youtube_dl.YoutubeDL()
             r = ydl.extract_info(self.links[self.index], download=False)
+            vid_thumbnail = r.get('thumbnail', None)
+
+            embed = discord.Embed(
+                title="Now Playing", color=0x3498DB, description=str(self.names[self.index]))
+            embed.set_image(url=vid_thumbnail)
+            await ctx.send(embed=embed)  # muestra que esta reproduciendo
 
             t = time.localtime()
             self.time = time.strftime("%H:%M:%S", t)
