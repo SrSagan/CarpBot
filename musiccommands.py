@@ -185,7 +185,7 @@ class music(commands.Cog):
         songs = b.get_links()
         vc = ctx.voice_client
 
-        if args != []:
+        if len(args) != 0:
             if args[0].isnumeric():
                 if int(args[0]) <= len(songs):
                     index = int(args[0])-1

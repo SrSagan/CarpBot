@@ -126,8 +126,6 @@ class music:
         else:
             type = "link"
 
-        await ctx.send("Type: "+type)
-
         if type == "playlist":
             counter = 0
             for entrie in video["entries"]:
