@@ -118,13 +118,17 @@ class music(commands.Cog):
         number = 1
         data = ''
         for name in names:
-            if number == index:
-                data = data+"\n**"+(str(number)+") " +
-                                    str(name)+"**")+" Time Left: "+time_left
-            else:
-                data = data+"\n**"+(str(number)+")** " +
-                                    str(name))+" Lenght: "+lengths[number-1]
+            if number >= index-1:
+                if number == index:
+                    data = data+"\n**"+(str(number)+") " +
+                                        str(name)+"**")+" Time Left: "+time_left
+                else:
+                    data = data+"\n**"+(str(number)+")** " +
+                                        str(name))+" Lenght: "+lengths[number-1]
             number = number+1
+            if number==index+9:
+                data = data+"\n\n**"+str(len(names)-index-8)+" Songs more**"
+                break
         embed = discord.Embed(
             title="Queue", color=0x3498DB, description=data)
         await ctx.send(embed=embed)
