@@ -103,22 +103,22 @@ class music:
         }
         type = "none"
 
-        ydl = youtube_dl.YoutubeDL(ydl_opts)
+        ydl = youtube_dl.YoutubeDL(ydl_opts) 
         try:
             get(reqest)
         except:
-            video = ydl.extract_info(f"ytsearch:{reqest}", download=False)[
+            video = ydl.extract_info(f"ytsearch:{reqest}", download=False)[ #busca que es por nombre
                 'entries'][0]
         else:
-            video = ydl.extract_info(reqest, download=False)
+            video = ydl.extract_info(reqest, download=False) #si no es nombre busca la url
 
         json_object = json.dumps(video, indent=4)
 
         # Writing to sample.json
-        with open("sample.json", "w") as outfile:
-            outfile.write(json_object)
+        #with open("sample.json", "w") as outfile:
+        #    outfile.write(json_object)
 
-        if "_type" in video:
+        if "_type" in video: #diferencia que tipo de dato le fue dado (playlist, link, nombre)
             if video.get("_type", None) == "playlist":
                 type = "playlist"
             else:
@@ -126,7 +126,7 @@ class music:
         else:
             type = "link"
 
-        if type == "playlist":
+        if type == "playlist": # si es una playlist agrega cada cancion por separado
             counter = 0
             for entrie in video["entries"]:
                 vid_name = video["entries"][counter]['title']
@@ -145,7 +145,8 @@ class music:
                 title="Queued", color=0x3498DB, description=str(len(video["entries"]))+" songs")
             await ctx.send(embed=embed)
 
-        else:
+        else: #si es un link o nombre guarda tambien los datos 
+            #titulo, duracion, url, thumbnail*, url 
 
             # agarra distinta info del video
             vid_name = video.get('title', None)
@@ -195,6 +196,9 @@ class music:
             ydl = youtube_dl.YoutubeDL()
             r = ydl.extract_info(self.links[self.index], download=False)
             vid_thumbnail = r.get('thumbnail', None)
+
+            #check if last message was a "Now Playing" from carpbot
+            #if it is it should be deleted
 
             embed = discord.Embed(
                 title="Now Playing", color=0x3498DB, description=str(self.names[self.index]))

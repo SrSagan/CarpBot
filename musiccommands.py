@@ -42,6 +42,9 @@ class music(commands.Cog):
                       )
     async def play(self, ctx, *request):
 
+        #cosas a hacer:
+        #Se tiene que checkear por problemas, checkear si el client esta en un canal de voz
+
         author = ctx.message.author
         channel = author.voice.channel
 
@@ -139,6 +142,7 @@ class music(commands.Cog):
         brief='Para la musica'
     )
     async def stop(self, ctx):
+        #chekear si el client esta en canal de voz sino no usar
         vc = ctx.voice_client
         b.set_status(False)
         vc.stop()
@@ -152,6 +156,7 @@ class music(commands.Cog):
         brief='Pausa la musica'
     )
     async def pause(self, ctx):
+        #chekear si el client esta en canal de voz sino no usar
         vc = ctx.voice_client
         if vc.is_paused() == True:
             await ctx.send("Audio already paused")
@@ -167,6 +172,7 @@ class music(commands.Cog):
         brief='Resume la musica'
     )
     async def resume(self, ctx):
+        #chekear si el client esta en canal de voz sino no usar
         vc = ctx.voice_client
         if vc.is_paused() == True:
             vc.resume()
@@ -182,6 +188,7 @@ class music(commands.Cog):
         brief='Salta la musica'
     )
     async def next(self, ctx, *args):
+        #chekear si el client esta en canal de voz sino no usar
         songs = b.get_links()
         vc = ctx.voice_client
 
@@ -208,6 +215,7 @@ class music(commands.Cog):
         brief='Vuelve la musica'
     )
     async def back(self, ctx):
+        #chekear si el client esta en canal de voz sino no usar
         vc = ctx.voice_client
         index = b.get_index()
         index = index-2
