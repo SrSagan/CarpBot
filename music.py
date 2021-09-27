@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord import FFmpegPCMAudio
 import time
 import asyncio
+from requests.sessions import merge_setting
 import youtube_dl
 import data
 from requests import get
@@ -18,27 +19,29 @@ class music:
         time = ""
 
         servers = []
-
-
         servers_id = []
 
-        #self.server = server
         self.servers = servers
         self.servers_id = servers_id
 
         self.status = status
         self.time = time
 
-
 #-----------------SERVERS-----------------#
 
     def get_servers(self):
         return self.servers
 
+    def set_servers(self, servers):
+        self.servers = servers
+
 #----------------SERVERS_ID---------------#
 
     def get_servers_id(self):
         return self.servers_id
+
+    def set_servers_id(self, servers_id):
+        self.servers_id = servers_id
 
 #------------------LINKS------------------#
 
@@ -94,17 +97,15 @@ class music:
 
     def reset_all(self, ctx):
         id = ctx.message.guild.id
-        for i in self.servers_id:
-            if i == int(id):
-                self.servers.pop(self.servers_id.index(int(id)))
-                self.servers_id.pop(self.servers_id.index(int(id)))
-
+        if int(id) in self.servers_id:
+            self.servers.pop(self.servers_id.index(int(id)))
+            self.servers_id.pop(self.servers_id.index(int(id)))
 
         json_object = json.dumps(self.servers, indent=4)
 
         # Writing to sample.json
         with open("sample.json", "w") as outfile:
-           outfile.write(json_object)
+            outfile.write(json_object)
 
 # ------------YOUTUBE QUEUER--------------#
 
@@ -126,8 +127,6 @@ class music:
             # si no es nombre busca la url
             video = ydl.extract_info(reqest, download=False)
 
-
-
         # diferencia que tipo de dato le fue dado (playlist, link, nombre)
         if "_type" in video:
             if video.get("_type", None) == "playlist":
@@ -141,38 +140,40 @@ class music:
             "id": 0,
             "playlist":
             {
-            
+                "cplaying": 0,
+                "time": None,
+                "status": False,
+                "tlenght": 0,
                 "songs":
                 [{
                     "name": None,
                     "link": None,
                     "length": None,
                 }],
-                "cplaying": 0,
-                "time": None,
-                "status": False,
             }
-            }
+        }
 
         if type == "playlist":  # si es una playlist agrega cada cancion por separado
+            totalLenght=0
             counter = 0
             for entrie in video["entries"]:
                 vid_name = video["entries"][counter]['title']
                 vid_length = video["entries"][counter]['duration']
+                totalLenght= totalLenght+vid_length
                 vid_length = time.strftime(
                     "%H:%M:%S", time.gmtime(vid_length))
                 vid_link = video["entries"][counter]['url']
 
                 id = ctx.message.guild.id
 
-
                 if int(id) in self.servers_id:
-                    song={
-                        "name":vid_name,
-                        "length":vid_length,
-                        "link":vid_link,
+                    song = {
+                        "name": vid_name,
+                        "length": vid_length,
+                        "link": vid_link,
                     }
-                    self.servers[self.servers_id.index(int(id))]["playlist"]["songs"].append(song)
+                    self.servers[self.servers_id.index(
+                        int(id))]["playlist"]["songs"].append(song)
 
                 else:
                     self.servers_id.append(int(id))
@@ -185,6 +186,9 @@ class music:
                 counter = counter+1
             embed = discord.Embed(
                 title="Queued", color=0x3498DB, description=str(len(video["entries"]))+" songs")
+            totalLenght=time.strftime(
+                    "%H:%M:%S", time.gmtime(totalLenght))
+            embed.set_footer(text="Length "+str(totalLenght))
             await ctx.send(embed=embed)
 
         else:  # si es un link o nombre guarda tambien los datos
@@ -209,12 +213,13 @@ class music:
             id = ctx.message.guild.id
 
             if int(id) in self.servers_id:
-                song={
-                    "name":vid_name,
-                    "length":vid_length,
-                    "link":vid_link,
+                song = {
+                    "name": vid_name,
+                    "length": vid_length,
+                    "link": vid_link,
                 }
-                self.servers[self.servers_id.index(int(id))]["playlist"]["songs"].append(song)
+                self.servers[self.servers_id.index(
+                    int(id))]["playlist"]["songs"].append(song)
 
             else:
                 self.servers_id.append(int(id))
@@ -233,51 +238,75 @@ class music:
 
         # Writing to sample.json
         with open("sample.json", "w") as outfile:
-           outfile.write(json_object)
+            outfile.write(json_object)
 
 #--------------MUSIC PLAYER---------------#
 
     async def play(self, vc, ctx):
         id = ctx.message.guild.id
+        msg_sent=False
 
-        for i in self.servers_id:
-            if i == int(id):
-                j = self.servers[self.servers_id.index(i)]
+        while True:  # comienza el loop de reproduccion
+            if int(id) in self.servers_id:
+
+                j = self.servers[self.servers_id.index(int(id))]
+                j["playlist"]["status"] = True
+                index = j["playlist"]["cplaying"]
+                json_object = json.dumps(self.servers, indent=4)
+                # Writing to sample.json
+                with open("sample.json", "w") as outfile:
+                    outfile.write(json_object)
+
+               #--------------------------REPRODUCIENDO---------------------------#
+                while True:  # si esta reproduciendo no hace nada y espera
+                    if vc.is_playing() == False:
+                        if vc.is_paused() == False:
+                            break
+                    await asyncio.sleep(0.25)
+                #--------------------------REPRODUCIENDO---------------------------#
 
                 index = j["playlist"]["cplaying"]
 
-                while True:  # comienza el loop de reproduccion
-                    while True:  # si esta reproduciendo no hace nada y espera
-                        if vc.is_playing() == False:
-                            if vc.is_paused() == False:
-                                break
-                        await asyncio.sleep(0.25)
-                    # si termina la queue frena el loop
-
-                    if index+1 > len(j["playlist"]["songs"]) or self.status == False:
-                        await ctx.send("Queue over")
-                        break
-
-                    ydl = youtube_dl.YoutubeDL()
-
-                    r = ydl.extract_info(
-                        j["playlist"]["songs"][index]["link"], download=False)
-                    vid_thumbnail = r.get('thumbnail', None)
-
-                    # check if last message was a "Now Playing" from carpbot
-                    # if it is it should be deleted
-
+                # si termina la queue frena el loop
+                if j["playlist"]["cplaying"]+1 > len(j["playlist"]["songs"]) or j["playlist"]["status"] == False or int(id) not in self.servers_id:
+                    j["playlist"]["status"] = False
                     embed = discord.Embed(
-                        title="Now Playing", color=0x3498DB, description=str(j["playlist"]["songs"][index]["name"]))
-                    embed.set_image(url=vid_thumbnail)
-
-                    # muestra que esta reproduciendo
+                        title="Queue over", color=0x3498DB)
                     await ctx.send(embed=embed)
 
-                    t = time.localtime()
-                    self.time = time.strftime("%H:%M:%S", t)
-                    vc.play(discord.FFmpegPCMAudio(
-                        r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'))  # reproduce
-                    j["playlist"]["cplaying"] = index+1
-                    index = index+1  # sube el contador
-                break
+                    json_object = json.dumps(self.servers, indent=4)
+                    # Writing to sample.json
+                    with open("sample.json", "w") as outfile:
+                        outfile.write(json_object)
+                    break
+
+                ydl = youtube_dl.YoutubeDL()
+                r = ydl.extract_info(
+                    j["playlist"]["songs"][index]["link"], download=False)
+                vid_thumbnail = r.get('thumbnail', None)
+                # check if last message was a "Now Playing" from carpbot
+
+                if(msg_sent==True): await msg.delete()
+
+                # if it is it should be deleted
+
+                embed = discord.Embed(
+                    title="Now Playing", color=0x3498DB, description=str(j["playlist"]["songs"][index]["name"]))
+                embed.set_image(url=vid_thumbnail)
+                # muestra que esta reproduciendo
+                msg = await ctx.send(embed=embed)
+                msg_sent=True
+
+                t = time.localtime()
+                self.time = time.strftime("%H:%M:%S", t)
+                vc.play(discord.FFmpegPCMAudio(
+                    r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'))  # reproduce
+
+                index = index+1  # sube el contador
+                j["playlist"]["cplaying"] = index
+
+                json_object = json.dumps(self.servers, indent=4)
+
+                # Writing to sample.json
+                with open("sample.json", "w") as outfile:
+                    outfile.write(json_object)
