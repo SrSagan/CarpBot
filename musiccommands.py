@@ -50,10 +50,10 @@ class music(commands.Cog):
             author = ctx.message.author
             try:
                 channel = author.voice.channel
-                status=True
+                status = True
             except:
                 await ctx.send("You're not in any voice channel")
-                status=True
+                status = False
 
             # SI ESTA CONECTADO SOLO agrega el link a la queue
 
@@ -77,7 +77,7 @@ class music(commands.Cog):
 
             # SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:(((((((((( uuh acabo de caer si esta conectado y no esta reproduciendo si ;-;
             # WENO SE ARREGLA DESPOIS
-            elif status==True:
+            elif status == True:
 
                 await b.music_queuer(ctx, texto)
                 await channel.connect()
@@ -100,6 +100,7 @@ class music(commands.Cog):
         servers = b.get_servers()
         servers_id = b.get_servers_id()
         id = ctx.message.guild.id
+        vc = ctx.voice_client
 
         if int(id) in servers_id:
             playlist = servers[servers_id.index(int(id))]
@@ -111,22 +112,33 @@ class music(commands.Cog):
                 lengths.append(j["length"])
                 names.append(j["name"])
 
-            start_time = b.get_time()
+            start_time = playlist["playlist"]["time"]
             x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
             # convierte el timepo comienzo a segundos
+
             start_time = datetime.timedelta(
                 hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
             x = time.strptime(lengths[index-1].split(',')[0], '%H:%M:%S')
             # lo mismo pero del largo del video
+
             length = datetime.timedelta(
                 hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-            t = time.localtime()
-            current_time = time.strftime("%H:%M:%S", t)
             # checkeea tiempo actual
-            x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
-            current_time = datetime.timedelta(
-                hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+            if vc.is_paused() == True and playlist["playlist"]["status"] == True:
+                x = time.strptime(
+                    playlist["playlist"]["ptime"].split(',')[0], '%H:%M:%S')
+                current_time = datetime.timedelta(
+                    hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+            else:
+                t = time.localtime()
+                current_time = time.strftime("%H:%M:%S", t)
+
+                x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
+                current_time = datetime.timedelta(
+                    hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
             time_elapsed = current_time - start_time  # resta los tiempos
+
             time_left = time.strftime("%H:%M:%S", time.gmtime(
                 length-time_elapsed))
             number = 1
@@ -170,19 +182,18 @@ class music(commands.Cog):
 
         try:
             channel = author.voice.channel
-            status=True
+            status = True
         except:
             await ctx.send("You're not in any voice channel")
-            status=False
+            status = False
 
-        if int(id) in servers_id and status==True:
+        if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
             vc = ctx.voice_client
             playlist["playlist"]["status"] = False
             vc.stop()
 
 #---------------------------------------------------------PAUSE----------------------------------------------------------#
-
 
     @commands.command(
         aliases=['ps'],
@@ -192,20 +203,27 @@ class music(commands.Cog):
     )
     async def pause(self, ctx):
         # chekear si el client esta en canal de voz sino no usar
+        servers = b.get_servers()
+        servers_id = b.get_servers_id()
         vc = ctx.voice_client
-        author = ctx.message.author        
+        author = ctx.message.author
+        id = ctx.message.guild.id
 
-        try:
-            channel = author.voice.channel
-            status=True
-        except:
-            await ctx.send("You're not in any voice channel")
-            status=False
+        if int(id) in servers_id:
+            playlist = servers[servers_id.index(int(id))]
+            try:
+                channel = author.voice.channel
+                status = True
+            except:
+                await ctx.send("You're not in any voice channel")
+                status = False
 
-        if vc.is_paused() == True and status==True:
-            await ctx.send("Audio already paused")
-        else:
-            vc.pause()
+            if vc.is_paused() == True and status == True:
+                await ctx.send("Audio already paused")
+            else:
+                t = time.localtime()
+                playlist["playlist"]["ptime"] = time.strftime("%H:%M:%S", t)
+                vc.pause()
 
 #---------------------------------------------------------RESUME----------------------------------------------------------#
 
@@ -217,20 +235,46 @@ class music(commands.Cog):
     )
     async def resume(self, ctx):
         # chekear si el client esta en canal de voz sino no usar
-        author = ctx.message.author        
+        servers = b.get_servers()
+        servers_id = b.get_servers_id()
+        author = ctx.message.author
+        id = ctx.message.guild.id
+        if int(id) in servers_id:
+            playlist = servers[servers_id.index(int(id))]
 
-        try:
-            channel = author.voice.channel
-            status=True
-        except:
-            await ctx.send("You're not in any voice channel")
-            status=False
+            try:
+                channel = author.voice.channel
+                status = True
+            except:
+                await ctx.send("You're not in any voice channel")
+                status = False
 
-        vc = ctx.voice_client
-        if vc.is_paused() == True and status==True:
-            vc.resume()
-        else:
-            await ctx.send("Audio not paused")
+            vc = ctx.voice_client
+            if vc.is_paused() == True and status == True:
+                vc.resume()
+
+                t = time.localtime()
+                resume_time = time.strftime("%H:%M:%S", t)
+                x = time.strptime(resume_time.split(',')[0], '%H:%M:%S')
+                resume_time = datetime.timedelta(
+                    hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
+                x = time.strptime(
+                    playlist["playlist"]["time"].split(',')[0], '%H:%M:%S')
+                tiempo = datetime.timedelta(
+                    hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
+                x = time.strptime(
+                    playlist["playlist"]["ptime"].split(',')[0], '%H:%M:%S')
+                ptime = datetime.timedelta(
+                    hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
+                time_paused = resume_time-ptime
+                playlist["playlist"]["time"] = time.strftime("%H:%M:%S", time.gmtime(
+                    tiempo+time_paused))
+
+            else:
+                await ctx.send("Audio not paused")
 
 #---------------------------------------------------------NEXT----------------------------------------------------------#
 
@@ -245,15 +289,15 @@ class music(commands.Cog):
         servers = b.get_servers()
         servers_id = b.get_servers_id()
         id = ctx.message.guild.id
-        author = ctx.message.author        
+        author = ctx.message.author
 
         try:
             channel = author.voice.channel
-            status=True
+            status = True
         except:
             await ctx.send("You're not in any voice channel")
-            status=False
-        if int(id) in servers_id and status==True:
+            status = False
+        if int(id) in servers_id and status == True:
 
             playlist = servers[servers_id.index(int(id))]
             songs = playlist["playlist"]["songs"]
@@ -293,16 +337,16 @@ class music(commands.Cog):
         servers = b.get_servers()
         servers_id = b.get_servers_id()
         id = ctx.message.guild.id
-        author = ctx.message.author        
+        author = ctx.message.author
 
         try:
             channel = author.voice.channel
-            status=True
+            status = True
         except:
             await ctx.send("You're not in any voice channel")
-            status=False
+            status = False
 
-        if int(id) in servers_id and status==True:
+        if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
             vc = ctx.voice_client
 
@@ -322,14 +366,14 @@ class music(commands.Cog):
         brief='Song playing'
     )
     async def song(self, ctx):
-        start_time = b.get_time()
         servers = b.get_servers()
         servers_id = b.get_servers_id()
         id = ctx.message.guild.id
+        vc = ctx.voice_client
 
         if int(id) in servers_id:
             playlist = servers[servers_id.index(int(id))]
-
+            start_time = playlist["playlist"]["time"]
             lengths = []
             names = []
             index = playlist["playlist"]["cplaying"]
@@ -347,17 +391,26 @@ class music(commands.Cog):
             # lo mismo pero del largo del video
             length = datetime.timedelta(
                 hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-            t = time.localtime()
 
-            current_time = time.strftime("%H:%M:%S", t)
             # checkeea tiempo actual
-            x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
 
-            current_time = datetime.timedelta(
-                hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+            if vc.is_paused() == True and playlist["playlist"]["status"] == True:
+                x = time.strptime(
+                    playlist["playlist"]["ptime"].split(',')[0], '%H:%M:%S')
+                current_time = datetime.timedelta(
+                    hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+            else:
+                t = time.localtime()
+                current_time = time.strftime("%H:%M:%S", t)
+
+                x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
+                current_time = datetime.timedelta(
+                    hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+
             time_elapsed = current_time - start_time  # resta los tiempos
             time_left = time.strftime("%H:%M:%S", time.gmtime(
                 length-time_elapsed))
+
             # lo conviernet
             # amigo alto bardo hacer la pija esta
             embed = discord.Embed(
@@ -379,16 +432,16 @@ class music(commands.Cog):
         servers = b.get_servers()
         servers_id = b.get_servers_id()
         id = ctx.message.guild.id
-        author = ctx.message.author        
+        author = ctx.message.author
 
         try:
             channel = author.voice.channel
-            status=True
+            status = True
         except:
             await ctx.send("You're not in any voice channel")
-            status=False
+            status = False
 
-        if int(id) in servers_id and status==True:
+        if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
             playlist["playlist"]["status"] = False
             vc.stop()
@@ -402,21 +455,21 @@ class music(commands.Cog):
         help='Removes a song from the queue, use: remove <number>',
         brief='Removes a song'
     )
-    async def clear(self, ctx, *args):
+    async def remove(self, ctx, *args):
         vc = ctx.voice_client
         servers = b.get_servers()
         servers_id = b.get_servers_id()
         id = ctx.message.guild.id
-        author = ctx.message.author        
+        author = ctx.message.author
 
         try:
             channel = author.voice.channel
-            status=True
+            status = True
         except:
             await ctx.send("You're not in any voice channel")
-            status=False
+            status = False
 
-        if int(id) in servers_id and status==True:
+        if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
             if len(args) != 0:
                 if args[0].isnumeric():
@@ -432,10 +485,62 @@ class music(commands.Cog):
                     else:
                         await ctx.send("Song out of range")
                 else:
-                    await ctx.send("Specify the number of a song")
+                    if args[0] == "last":
+                        embed = discord.Embed(
+                            title="Removed:", color=0x3498DB, description=str(playlist["playlist"]["songs"][len(playlist["playlist"]["songs"])-1]["name"]))
+                        embed.set_footer(
+                            text="Length: "+str(playlist["playlist"]["songs"][len(playlist["playlist"]["songs"])-1]["length"]))
+                        await ctx.send(embed=embed)
+
+                        playlist["playlist"]["songs"].pop(len(playlist["playlist"]["songs"])-1)
+                    else:
+                        await ctx.send("Specify the number of a song")
             else:
                 await ctx.send("Specify the number of a song to remove. remove <number>")
 
+#---------------------------------------------------------MOVE----------------------------------------------------------#
+
+    @commands.command(
+            aliases=['m'],
+            name='move',
+            help='Moves a song in the queue',
+            brief='Moves a song'
+        )
+    async def remove(self, ctx, *args):
+        vc = ctx.voice_client
+        servers = b.get_servers()
+        servers_id = b.get_servers_id()
+        id = ctx.message.guild.id
+        author = ctx.message.author
+
+        try:
+            channel = author.voice.channel
+            status = True
+        except:
+            await ctx.send("You're not in any voice channel")
+            status = False
+
+        if int(id) in servers_id and status == True:
+            playlist = servers[servers_id.index(int(id))]
+            if len(args) > 0:
+                if args[0].isnumeric():
+                    if int(args[0]) <= len(playlist["playlist"]["songs"]) and int(args[1]) <= len(playlist["playlist"]["songs"]):
+                        moving_song=playlist["playlist"]["songs"][int(args[0])-1]
+                        if args[1].isnumeric():
+                            playlist["playlist"]["songs"].pop(int(args[0])-1)
+                            playlist["playlist"]["songs"].insert(int(args[1])-1 ,moving_song)
+                            embed=discord.Embed(title="Song moved",color=0x3498DB,description=str(playlist["playlist"]["songs"][int(args[1])-1]["name"])+" moved to position "+str(args[1]))
+                            await ctx.send(embed=embed)
+
+                        else:
+                            await ctx.send("Specify where to move the song")
+                    else:
+                        await ctx.send("Song out of range")
+                else:
+                    await ctx.send("Specify what song to move and where to move it")
+            else:
+                await ctx.send("Specify song and place. Use: move <song> <place to move>")
+        
 
 def setup(bot):
     bot.add_cog(music(bot))

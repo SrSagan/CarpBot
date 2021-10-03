@@ -111,9 +111,11 @@ class music:
 
     async def music_queuer(self, ctx, reqest):
         ydl_opts = {
+            'quiet' : False,
             'format': 'bestaudio/best',
             'extract_flat': 'in_playlist',
             'forcethumbnail': 'best',
+            'youtube_include_dash_manifest': False,
         }
         type = "none"
 
@@ -141,6 +143,7 @@ class music:
             "playlist":
             {
                 "cplaying": 0,
+                "ptime": None,
                 "time": None,
                 "status": False,
                 "tlenght": 0,
@@ -298,7 +301,7 @@ class music:
                 msg_sent=True
 
                 t = time.localtime()
-                self.time = time.strftime("%H:%M:%S", t)
+                j["playlist"]["time"] = time.strftime("%H:%M:%S", t)
                 vc.play(discord.FFmpegPCMAudio(
                     r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'))  # reproduce
 
