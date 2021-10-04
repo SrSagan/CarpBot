@@ -9,6 +9,7 @@ import youtube_dl
 import data
 from requests import get
 import json
+import random
 
 a = data.datos()
 
@@ -107,6 +108,30 @@ class music:
         with open("sample.json", "w") as outfile:
             outfile.write(json_object)
 
+#----------------SHUFFLER-----------------#
+
+    def shuffler(self, ctx):
+        id = ctx.message.guild.id
+
+        if int(id) in self.servers_id:
+            j = self.servers[self.servers_id.index(int(id))]
+            
+            final=[]
+
+            cplaying = j["playlist"]["cplaying"]
+            y=range(0,cplaying)
+
+            for n in y:
+                final.append(j["playlist"]["songs"][n])
+            
+            out=j["playlist"]["songs"]
+            for n in y:
+                out.pop(0)
+            random.shuffle(out)
+            final+=out
+
+            j["playlist"]["songs"]=final
+
 # ------------YOUTUBE QUEUER--------------#
 
     async def music_queuer(self, ctx, reqest):
@@ -147,6 +172,7 @@ class music:
                 "time": None,
                 "status": False,
                 "tlenght": 0,
+                'looping':0,
                 "songs":
                 [{
                     "name": None,
@@ -260,7 +286,7 @@ class music:
                 with open("sample.json", "w") as outfile:
                     outfile.write(json_object)
 
-               #--------------------------REPRODUCIENDO---------------------------#
+                #--------------------------REPRODUCIENDO---------------------------#
                 while True:  # si esta reproduciendo no hace nada y espera
                     if vc.is_playing() == False:
                         if vc.is_paused() == False:
@@ -269,19 +295,25 @@ class music:
                 #--------------------------REPRODUCIENDO---------------------------#
 
                 index = j["playlist"]["cplaying"]
+                if j["playlist"]["looping"]==2:
+                    index=index-1
 
                 # si termina la queue frena el loop
                 if j["playlist"]["cplaying"]+1 > len(j["playlist"]["songs"]) or j["playlist"]["status"] == False or int(id) not in self.servers_id:
-                    j["playlist"]["status"] = False
-                    embed = discord.Embed(
-                        title="Queue over", color=0x3498DB)
-                    await ctx.send(embed=embed)
+                    if j["playlist"]["looping"] != 1 or int(id) not in self.servers_id:
+                        j["playlist"]["status"] = False
+                        embed = discord.Embed(
+                            title="Queue over", color=0x3498DB)
+                        await ctx.send(embed=embed)
 
-                    json_object = json.dumps(self.servers, indent=4)
-                    # Writing to sample.json
-                    with open("sample.json", "w") as outfile:
-                        outfile.write(json_object)
-                    break
+                        json_object = json.dumps(self.servers, indent=4)
+                        # Writing to sample.json
+                        with open("sample.json", "w") as outfile:
+                            outfile.write(json_object)
+                        break
+                    else:
+                        j["playlist"]["cplaying"]=0
+                        index=0
 
                 ydl = youtube_dl.YoutubeDL()
                 r = ydl.extract_info(
@@ -304,7 +336,7 @@ class music:
                 j["playlist"]["time"] = time.strftime("%H:%M:%S", t)
                 vc.play(discord.FFmpegPCMAudio(
                     r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'))  # reproduce
-
+                
                 index = index+1  # sube el contador
                 j["playlist"]["cplaying"] = index
 

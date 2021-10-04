@@ -224,11 +224,13 @@ class music(commands.Cog):
                 t = time.localtime()
                 playlist["playlist"]["ptime"] = time.strftime("%H:%M:%S", t)
                 vc.pause()
+                embed = discord.Embed(title="Paused", color=0x3498DB)
+                await ctx.send(embed=embed)
 
 #---------------------------------------------------------RESUME----------------------------------------------------------#
 
     @commands.command(
-        aliases=['res'],
+        aliases=['r'],
         name='resume',
         help='Resume la musica',
         brief='Resume la musica'
@@ -252,6 +254,8 @@ class music(commands.Cog):
             vc = ctx.voice_client
             if vc.is_paused() == True and status == True:
                 vc.resume()
+                embed = discord.Embed(title="Resumed", color=0x3498DB)
+                await ctx.send(embed=embed)
 
                 t = time.localtime()
                 resume_time = time.strftime("%H:%M:%S", t)
@@ -314,10 +318,11 @@ class music(commands.Cog):
                 else:
                     await ctx.send("Specify the number of a song")
             else:
-                index = playlist["playlist"]["cplaying"]
-                index = index
-                playlist["playlist"]["cplaying"] = index
-                vc.stop()
+                if playlist["playlist"]["looping"]==2:
+                    playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]+1
+                    vc.stop()
+                else:
+                    vc.stop()
         json_object = json.dumps(servers, indent=4)
 
         # Writing to sample.json
@@ -355,7 +360,7 @@ class music(commands.Cog):
                 await b.play(vc, ctx)
 
             else:
-                playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]-1
+                playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]-2
                 vc.stop()
 
 #---------------------------------------------------------SONG----------------------------------------------------------#
@@ -450,7 +455,7 @@ class music(commands.Cog):
 #---------------------------------------------------------REMOVE----------------------------------------------------------#
 
     @commands.command(
-        aliases=['r'],
+        aliases=['rm'],
         name='remove',
         help='Removes a song from the queue, use: remove <number>',
         brief='Removes a song'
@@ -540,7 +545,52 @@ class music(commands.Cog):
                     await ctx.send("Specify what song to move and where to move it")
             else:
                 await ctx.send("Specify song and place. Use: move <song> <place to move>")
+
+#---------------------------------------------------------LOOP----------------------------------------------------------#
+
+    @commands.command(
+            aliases=['lp'],
+            name='loop',
+            help='Loops the song or queue',
+            brief='Loops the song or queue'
+        )
+    async def loop(self, ctx, *args):
+        vc = ctx.voice_client
+        servers = b.get_servers()
+        servers_id = b.get_servers_id()
+        id = ctx.message.guild.id
+
+        if int(id) in servers_id:
+            playlist = servers[servers_id.index(int(id))]
+
+            if playlist["playlist"]["looping"]==0:
+                playlist["playlist"]["looping"]=1
+                embed= discord.Embed(description="Now looping **queue**",color=0x3498DB)
+                await ctx.send(embed=embed)
+
+            elif playlist["playlist"]["looping"]==1:
+                playlist["playlist"]["looping"]=2
+                embed= discord.Embed(description="Now looping the **current track**",color=0x3498DB)
+                await ctx.send(embed=embed)
+
+            elif playlist["playlist"]["looping"]==2:
+                playlist["playlist"]["looping"]=0
+                embed= discord.Embed(description="Looping is now **disabled**",color=0x3498DB)
+                await ctx.send(embed=embed)
+                
+#---------------------------------------------------------SHUFFLE----------------------------------------------------------#
         
+    @commands.command(
+            aliases=['sh'],
+            name='shuffle',
+            help='Shuffles the playlist',
+            brief='Shuffles'
+        )
+    async def shuffle(self, ctx):
+        b.shuffler(ctx)
+        await ctx.send("music shuffled")
+
+
 
 def setup(bot):
     bot.add_cog(music(bot))
