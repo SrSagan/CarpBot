@@ -144,7 +144,7 @@ class music(commands.Cog):
             number = 1
             valor = 1
             data = ''
-            if len(names) - index < 9 and len(names) > 9:
+            if len(names) - index < 9:
                 valor = 9-(len(names)-index)
             for name in names:
                 if number >= index-valor:
@@ -318,7 +318,7 @@ class music(commands.Cog):
                 else:
                     await ctx.send("Specify the number of a song")
             else:
-                if playlist["playlist"]["looping"]==2:
+                if playlist["playlist"]["looping"] == 2:
                     playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]+1
                     vc.stop()
                 else:
@@ -497,7 +497,8 @@ class music(commands.Cog):
                             text="Length: "+str(playlist["playlist"]["songs"][len(playlist["playlist"]["songs"])-1]["length"]))
                         await ctx.send(embed=embed)
 
-                        playlist["playlist"]["songs"].pop(len(playlist["playlist"]["songs"])-1)
+                        playlist["playlist"]["songs"].pop(
+                            len(playlist["playlist"]["songs"])-1)
                     else:
                         await ctx.send("Specify the number of a song")
             else:
@@ -506,12 +507,12 @@ class music(commands.Cog):
 #---------------------------------------------------------MOVE----------------------------------------------------------#
 
     @commands.command(
-            aliases=['m'],
-            name='move',
-            help='Moves a song in the queue',
-            brief='Moves a song'
-        )
-    async def remove(self, ctx, *args):
+        aliases=['m'],
+        name='move',
+        help='Moves a song in the queue',
+        brief='Moves a song'
+    )
+    async def move(self, ctx, *args):
         vc = ctx.voice_client
         servers = b.get_servers()
         servers_id = b.get_servers_id()
@@ -530,11 +531,14 @@ class music(commands.Cog):
             if len(args) > 0:
                 if args[0].isnumeric():
                     if int(args[0]) <= len(playlist["playlist"]["songs"]) and int(args[1]) <= len(playlist["playlist"]["songs"]):
-                        moving_song=playlist["playlist"]["songs"][int(args[0])-1]
+                        moving_song = playlist["playlist"]["songs"][int(
+                            args[0])-1]
                         if args[1].isnumeric():
                             playlist["playlist"]["songs"].pop(int(args[0])-1)
-                            playlist["playlist"]["songs"].insert(int(args[1])-1 ,moving_song)
-                            embed=discord.Embed(title="Song moved",color=0x3498DB,description=str(playlist["playlist"]["songs"][int(args[1])-1]["name"])+" moved to position "+str(args[1]))
+                            playlist["playlist"]["songs"].insert(
+                                int(args[1])-1, moving_song)
+                            embed = discord.Embed(title="Song moved", color=0x3498DB, description=str(
+                                playlist["playlist"]["songs"][int(args[1])-1]["name"])+" moved to position "+str(args[1]))
                             await ctx.send(embed=embed)
 
                         else:
@@ -549,11 +553,11 @@ class music(commands.Cog):
 #---------------------------------------------------------LOOP----------------------------------------------------------#
 
     @commands.command(
-            aliases=['lp'],
-            name='loop',
-            help='Loops the song or queue',
-            brief='Loops the song or queue'
-        )
+        aliases=['lp'],
+        name='loop',
+        help='Loops the song or queue',
+        brief='Loops the song or queue'
+    )
     async def loop(self, ctx, *args):
         vc = ctx.voice_client
         servers = b.get_servers()
@@ -563,33 +567,35 @@ class music(commands.Cog):
         if int(id) in servers_id:
             playlist = servers[servers_id.index(int(id))]
 
-            if playlist["playlist"]["looping"]==0:
-                playlist["playlist"]["looping"]=1
-                embed= discord.Embed(description="Now looping **queue**",color=0x3498DB)
+            if playlist["playlist"]["looping"] == 0:
+                playlist["playlist"]["looping"] = 1
+                embed = discord.Embed(
+                    description="Now looping **queue**", color=0x3498DB)
                 await ctx.send(embed=embed)
 
-            elif playlist["playlist"]["looping"]==1:
-                playlist["playlist"]["looping"]=2
-                embed= discord.Embed(description="Now looping the **current track**",color=0x3498DB)
+            elif playlist["playlist"]["looping"] == 1:
+                playlist["playlist"]["looping"] = 2
+                embed = discord.Embed(
+                    description="Now looping the **current track**", color=0x3498DB)
                 await ctx.send(embed=embed)
 
-            elif playlist["playlist"]["looping"]==2:
-                playlist["playlist"]["looping"]=0
-                embed= discord.Embed(description="Looping is now **disabled**",color=0x3498DB)
+            elif playlist["playlist"]["looping"] == 2:
+                playlist["playlist"]["looping"] = 0
+                embed = discord.Embed(
+                    description="Looping is now **disabled**", color=0x3498DB)
                 await ctx.send(embed=embed)
-                
+
 #---------------------------------------------------------SHUFFLE----------------------------------------------------------#
-        
+
     @commands.command(
-            aliases=['sh'],
-            name='shuffle',
-            help='Shuffles the playlist',
-            brief='Shuffles'
-        )
+        aliases=['sh'],
+        name='shuffle',
+        help='Shuffles the playlist',
+        brief='Shuffles'
+    )
     async def shuffle(self, ctx):
         b.shuffler(ctx)
         await ctx.send("music shuffled")
-
 
 
 def setup(bot):
