@@ -26,7 +26,7 @@ class devcommands(commands.Cog):
         a = data.datos()
         grupos = a.get_data() #agarra la info
         print("debug_arrays usado")
-        if ctx.message.author.id == int(devuser) or int(devuser2): #checkea ke sea un dev el ke lo haya usado
+        if ctx.message.author.id == int(devuser) or ctx.message.author.id == int(devuser2): #checkea ke sea un dev el ke lo haya usado
         	for j in a.grupos:
         		await ctx.send(str(j)+" array: "+str(len(grupos[j]["data"]))) #imprime los datos en ds
         else:
@@ -42,7 +42,7 @@ class devcommands(commands.Cog):
         a = data.datos()
         grupos = a.get_data()
         print("debug_images usado")
-        if ctx.message.author.id == int(devuser) or int(devuser2): #checkeea ke sea un dev
+        if ctx.message.author.id == int(devuser) or ctx.message.author.id == int(devuser2): #checkeea ke sea un dev
         	for j in a.grupos:
         		if arg[0] == grupos[j]["name"]:
         			for link in grupos[j]["data"]:
@@ -58,7 +58,7 @@ class devcommands(commands.Cog):
     async def ip(self, ctx):
         import subprocess
         print("ip usado")
-        if ctx.message.author.id == int(devuser) or int(devuser2): #checkeea ke sea un dev
+        if ctx.message.author.id == int(devuser) or ctx.message.author.id == int(devuser2): #checkeea ke sea un dev
             command = "dig +short myip.opendns.com @resolver1.opendns.com" #se usa este comando para averiguar la ip
             subprocess = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE) #se lee la salida del comando
             ip = subprocess.stdout.read()
