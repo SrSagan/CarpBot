@@ -5,14 +5,20 @@ import discord
 from discord.ext import commands
 from discord.flags import alias_flag_value
 from requests.models import RequestEncodingMixin
+from discord.utils import get
 import data
 import music
 import datetime
 import time
 import json
+import asyncio
+from dotenv import load_dotenv
 
 a = data.datos()
 b = music.music()
+
+load_dotenv()
+devuser = os.getenv('DEV_USER') 
 
 
 class music(commands.Cog):
@@ -30,9 +36,21 @@ class music(commands.Cog):
     )
     async def leave(self, ctx):
         vc = ctx.voice_client
-        vc.stop()
-        await ctx.voice_client.disconnect()
-        b.reset_all(ctx)
+        author = ctx.message.author
+
+        try:
+            channel = author.voice.channel
+            status = True
+        except:
+            await ctx.send("You're not in any voice channel")
+            status = False
+        
+        if(ctx.message.author.id == int(devuser)): status=True
+
+        if(status == True):
+            vc.stop()
+            await ctx.voice_client.disconnect()
+            b.reset_all(ctx)
 
 #---------------------------------------------------------PLAY----------------------------------------------------------#
 
@@ -56,6 +74,7 @@ class music(commands.Cog):
                 status = False
 
             # SI ESTA CONECTADO SOLO agrega el link a la queue
+            if(ctx.message.author.id == int(devuser)): status=True
 
             voice_client = discord.utils.get(
                 ctx.bot.voice_clients, guild=ctx.guild)
@@ -141,27 +160,50 @@ class music(commands.Cog):
 
             time_left = time.strftime("%H:%M:%S", time.gmtime(
                 length-time_elapsed))
-            number = 1
+
+            #------------------IMPRESION---------------#
+
+
+            #CREATE SOMEKIND OF LIST AND DISPLAY IN GROUPS OF 10
+            #WHEN ORIGINALLY PUT QUEUE SHOW SONGS AROUND INDEX
+            counter = 1
             valor = 1
             data = ''
             if len(names) - index < 9:
                 valor = 9-(len(names)-index)
+
             for name in names:
-                if number >= index-valor:
-                    if number == index and playlist["playlist"]["status"] == True:
-                        data = data+"\n**"+(str(number)+") " +
+                if counter >= index-valor:
+                    if counter == index and playlist["playlist"]["status"] == True:
+                        data = data+"\n**"+(str(counter)+") " +
                                             str(name)+"**")+" *Time Left: "+time_left+"*"
                     else:
-                        data = data+"\n**"+(str(number)+")** " +
-                                            str(name))+" *Lenght: "+lengths[number-1]+"*"
-                number = number+1
-                if number == index+9:
+                        data = data+"\n**"+(str(counter)+")** " +
+                                            str(name))+" *Lenght: "+lengths[counter-1]+"*"
+                counter = counter+1
+
+                if counter == index+9:
                     data = data+"\n\n**" + \
                         str(len(names)-index-8)+" Songs more**"
                     break
+
             embed = discord.Embed(
                 title="Queue", color=0x3498DB, description=data)
-            await ctx.send(embed=embed)
+            message = await ctx.send(embed=embed)
+
+            #------------------IMPRESION---------------#
+
+            #------------------REACITONS---------------#
+
+            '''controls = ['⏮️', '⏪', '⏩', '⏭️']
+            for emoji in controls:
+                await message.add_reaction(emoji)
+
+            pressed = await b.control_checker(message, controls, self.bot)
+            await ctx.send(str(pressed))'''
+
+            #------------------REACITONS---------------#
+
         else:
             await ctx.send("Not playing anything")
 
@@ -186,6 +228,8 @@ class music(commands.Cog):
         except:
             await ctx.send("You're not in any voice channel")
             status = False
+
+        if(ctx.message.author.id == int(devuser)): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -217,6 +261,8 @@ class music(commands.Cog):
             except:
                 await ctx.send("You're not in any voice channel")
                 status = False
+
+            if(ctx.message.author.id == int(devuser)): status=True
 
             if vc.is_paused() == True and status == True:
                 await ctx.send("Audio already paused")
@@ -250,6 +296,8 @@ class music(commands.Cog):
             except:
                 await ctx.send("You're not in any voice channel")
                 status = False
+
+            if(ctx.message.author.id == int(devuser)): status=True
 
             vc = ctx.voice_client
             if vc.is_paused() == True and status == True:
@@ -301,6 +349,9 @@ class music(commands.Cog):
         except:
             await ctx.send("You're not in any voice channel")
             status = False
+
+        if(ctx.message.author.id == int(devuser)): status=True
+
         if int(id) in servers_id and status == True:
 
             playlist = servers[servers_id.index(int(id))]
@@ -350,6 +401,8 @@ class music(commands.Cog):
         except:
             await ctx.send("You're not in any voice channel")
             status = False
+
+        if(ctx.message.author.id == int(devuser)): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -446,6 +499,8 @@ class music(commands.Cog):
             await ctx.send("You're not in any voice channel")
             status = False
 
+        if(ctx.message.author.id == int(devuser)): status=True
+
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
             playlist["playlist"]["status"] = False
@@ -473,6 +528,8 @@ class music(commands.Cog):
         except:
             await ctx.send("You're not in any voice channel")
             status = False
+
+        if(ctx.message.author.id == int(devuser)): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -525,6 +582,8 @@ class music(commands.Cog):
         except:
             await ctx.send("You're not in any voice channel")
             status = False
+
+        if(ctx.message.author.id == int(devuser)): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]

@@ -3,6 +3,7 @@ import random
 
 class datos:
     def __init__(self):
+
         formatos = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.JPG',
                     '.JPEG', '.PNG', '.GIF', '.WEBP', '.MP4', '.MOV']  # formatos admitidos
         grupos = {  # grupos de links con su informacion
@@ -65,6 +66,8 @@ class datos:
         self.respuestas8ball = respuestas8ball
         self.debugmode = debugmode
 
+#-----------------------GET DATA------------------------#
+
     def get_data(self):
         grupos = self.grupos
         for key in grupos.keys():
@@ -75,6 +78,8 @@ class datos:
         self.grupos = grupos  # agarra la data del archivo de texto y devuelve grupos
         return grupos
 
+#-----------------------SET DATA------------------------#
+
     def set_data(self, grupo, arg):  # agrega links a data y al archivo
         grupos = self.grupos
         archivo = grupos[grupo]["fileName"]
@@ -82,6 +87,8 @@ class datos:
         with open(archivo, "w")as txt_file:
             for line in grupos[grupo]["data"]:
                 txt_file.write("".join(line)+"\n")
+
+#-----------------------REM DATA------------------------#
 
     def rem_data(self, grupo, arg, x):  # remueve links del archivo
         grupos = self.grupos
@@ -95,20 +102,32 @@ class datos:
                 if line.strip("\n") != x:
                     f.write(line)
 
+#-----------------------GET FORMATOS------------------------#
+
     def get_formatos(self):
         return self.formatos
+
+#-----------------------GET GRUPOSTEXT------------------------#
 
     def get_gruposText(self):
         return self.gruposText
 
+#-----------------------GET 8B------------------------#
+
     def get_respuestas8ball(self):
         return self.respuestas8ball
+
+#-----------------------GET DEBUGMODE------------------------#
 
     def get_debugmode(self):
         return self.debugmode
 
+#-----------------------SET DEBUGMODE------------------------#
+
     def set_debugmode(self, state):
         self.debugmode = state
+
+#-----------------------SET FRASE------------------------#
 
     def set_frase(self, frase):  # pone una frase
         frases = self.frases
@@ -126,6 +145,8 @@ class datos:
             return 1  # si fue exitoso retorna un 1
         else:
             return 0  # sino retorna un 0
+
+#-----------------------GET FRASE------------------------#
 
     def get_frase(self, type, *dato):
         frases = self.frases
@@ -186,6 +207,8 @@ class datos:
                 return -1  # si esta vacia se retorna -1
         else:
             return 0  # si no es un type invalido se retorna 0
+
+#-----------------------REM FRASE------------------------#
 
     def rem_frase(self, frase):
         frases = self.frases
