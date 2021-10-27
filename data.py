@@ -42,6 +42,10 @@ class datos:
                 "data": [],
                 "name": "owl",
             },
+            "catlinks": {
+                "fileName": "catlinks.txt",
+                "data": [],
+                "name": "cat",
         }
 
         # texto para grupos
@@ -53,6 +57,7 @@ class datos:
         **meme**: Todo tipo de memes
         **csm**: Refiriendose a chainsawman
         **owl**: Referiendose a owls/buhos
+        **cat**: Refiriendose a gatos/cats
         """
         # respuestas de 8ball
         frases = []

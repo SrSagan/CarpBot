@@ -137,6 +137,7 @@ class links(commands.Cog):
 			"memelinks":0,
 			"csmlinks":0,
 			"owlinks":0,
+			"catlinks":0,
 		} #contador de links removidos
 		print("removelink usado")
 		for x in args: #agarra el argumento

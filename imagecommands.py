@@ -132,6 +132,25 @@ class images(commands.Cog):
 			embed.set_image(url=response)
 			await ctx.send(embed=embed)
 
+	@commands.command(
+		aliases=['cat', "gatinho", "gatito", "kitty"],
+		name='gato',
+		help="Muestra una imagen de un gato random",
+		brief="Muestra una img. de gato"
+    	)
+	async def gato(self, ctx):
+		a = data.datos()
+		grupos = a.get_data()
+		print("gato usado")
+		response = random.choice(grupos["catlinks"]["data"])
+		print(response)
+		if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
+				await ctx.send(response)
+		else:
+			embed=discord.Embed(color=0x3498DB)
+			embed.set_image(url=response)
+			await ctx.send(embed=embed)
+
 
 def setup(bot):
 	bot.add_cog(images(bot))
