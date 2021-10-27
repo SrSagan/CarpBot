@@ -46,6 +46,7 @@ class datos:
                 "fileName": "catlinks.txt",
                 "data": [],
                 "name": "cat",
+            }
         }
 
         # texto para grupos

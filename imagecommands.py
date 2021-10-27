@@ -13,6 +13,26 @@ class images(commands.Cog):
 		self.bot = bot
 
 	@commands.command( #todos hacen lo mismo
+		aliases=['groups'],
+    	name='grupos',
+    	help="Muestra los grupos de imganes",
+    	brief="Muestra los grupos de img."
+    	)
+	async def grupos(self, ctx):
+		a = data.datos()
+		grupos = a.get_data() #agarra datos
+		print("Grupos usado")
+		 #si es una img le pone marquito
+		texto=''
+		for grupo in grupos:
+			texto=texto+str(grupos[grupo]["name"])+": "+str(len(grupos[grupo]["data"]))+"\n"
+			
+		print(texto)
+		embed=discord.Embed(color=0x3498DB, title="Grupos" ,description=texto)
+			
+		await ctx.send(embed=embed)
+
+	@commands.command( #todos hacen lo mismo
 		aliases=['carp'],
     	name='carpincho',
     	help="Muestra una imagen random de un carpincho",
