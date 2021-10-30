@@ -87,12 +87,11 @@ class music:
 
     async def music_queuer(self, ctx, reqest):
         ydl_opts = {
-            'quiet': False,
+            'quiet': True,
             'format': 'bestaudio/best',
             'extract_flat': 'in_playlist',
             'forcethumbnail': 'best',
             'youtube_include_dash_manifest': False,
-            'silent': True,
         }
         type = "none"
 
@@ -227,12 +226,8 @@ class music:
         id = ctx.message.guild.id
         msg_sent = False
         ydl_opts = {
-            'quiet': False,
-            'format': 'bestaudio/best',
-            'extract_flat': 'in_playlist',
-            'forcethumbnail': 'best',
+            'quiet': True,
             'youtube_include_dash_manifest': False,
-            'silent': True,
         }
 
         while True:  # comienza el loop de reproduccion
@@ -313,16 +308,18 @@ class music:
 
         pressed = [0,0,0,0]
         for i in range(0, 60):
-            
+
             cache_msg = discord.utils.get(bot.cached_messages, id=message.id)
             reactions = cache_msg.reactions
-
+            
             for emoji in controls:
                 reaction = discord.utils.get(reactions, emoji=emoji)
-                pressed[controls.index(emoji)]=(reaction.count)
+                #await asyncio.sleep(0.5)
+                pressed[controls.index(emoji)]=reaction.count
 
             for presses in pressed:
                 if presses>1:
                     return pressed.index(presses)
 
             await asyncio.sleep(1)
+        return "no"

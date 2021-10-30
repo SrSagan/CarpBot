@@ -166,43 +166,63 @@ class music(commands.Cog):
 
             #CREATE SOMEKIND OF LIST AND DISPLAY IN GROUPS OF 10
             #WHEN ORIGINALLY PUT QUEUE SHOW SONGS AROUND INDEX
-            counter = 1
-            valor = 1
-            data = ''
-            if len(names) - index < 9:
-                valor = 9-(len(names)-index)
 
-            for name in names:
-                if counter >= index-valor:
-                    if counter == index and playlist["playlist"]["status"] == True:
-                        data = data+"\n**"+(str(counter)+") " +
-                                            str(name)+"**")+" *Time Left: "+time_left+"*"
-                    else:
-                        data = data+"\n**"+(str(counter)+")** " +
-                                            str(name))+" *Lenght: "+lengths[counter-1]+"*"
-                counter = counter+1
+            start = index-1
+            printed=0
+            while True:
+                if start <= 0:
+                    start =1
+                if start > len(names)-10:
+                    start = len(names)-10
 
-                if counter == index+9:
-                    data = data+"\n\n**" + \
-                        str(len(names)-index-8)+" Songs more**"
-                    break
+                if printed==0:
+                    counter=1
+                    data=''
+                    for name in names:
+                        if counter == index and playlist["playlist"]["status"] == True and counter>=start:
+                            data = data+"\n**"+(str(counter)+") " +
+                                                str(name)+"**")+" *Time Left: "+time_left+"*"
+                        elif counter>=start:
+                            data = data+"\n**"+(str(counter)+")** " +
+                                                str(name))+" *Lenght: "+lengths[counter-1]+"*"
+                        counter = counter+1
 
-            embed = discord.Embed(
-                title="Queue", color=0x3498DB, description=data)
-            message = await ctx.send(embed=embed)
+                        if counter == start+11:
+                            if(len(names)-counter+1 != 0):
+                                data = data+"\n\n**" + \
+                                    str(len(names)-counter+1)+" More songs**"
+                            break
 
-            #------------------IMPRESION---------------#
+                    embed = discord.Embed(
+                        title="Queue", color=0x3498DB, description=data)
+                    message = await ctx.send(embed=embed)
+                    printed=1
 
-            #------------------REACITONS---------------#
+                    #------------------IMPRESION---------------#
 
-            '''controls = ['⏮️', '⏪', '⏩', '⏭️']
-            for emoji in controls:
-                await message.add_reaction(emoji)
+                    #------------------REACITONS---------------#
 
-            pressed = await b.control_checker(message, controls, self.bot)
-            await ctx.send(str(pressed))'''
+                    controls = ['⏮️', '⏪', '⏩', '⏭️']
+                    for emoji in controls:
+                        await message.add_reaction(emoji)
 
-            #------------------REACITONS---------------#
+                await asyncio.sleep(0.5)
+
+                pressed = await b.control_checker(message, controls, self.bot)
+                if(pressed == "no"): break
+                else:
+                    if(pressed == 0):
+                        start = 0
+                    elif(pressed == 1):
+                        start = start-10
+                    elif(pressed == 2):
+                        start = start+10
+                    elif(pressed == 3):
+                        start = len(names)-10
+                    await message.delete()
+                    printed=0
+                    
+                #------------------REACITONS---------------#
 
         else:
             await ctx.send("Not playing anything")
