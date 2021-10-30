@@ -45,56 +45,6 @@ class music:
     def set_servers_id(self, servers_id):
         self.servers_id = servers_id
 
-#------------------LINKS------------------#
-
-    def get_links(self):
-        return self.links
-
-    def set_links(self, links):
-        self.links = links
-
-#------------------NAMES------------------#
-
-    def get_names(self):
-        return self.names
-
-    def set_names(self, names):
-        self.names = names
-
-#------------------FILES------------------#
-
-    def get_files(self):
-        return self.files
-
-    def set_files(self, files):
-        self.files = files
-
-#------------------FILES------------------#
-
-    def get_lenghts(self):
-        return self.lengths
-
-#------------------FILES------------------#
-
-    def get_time(self):
-        return self.time
-
-#------------------INDEX------------------#
-
-    def get_index(self):
-        return self.index
-
-    def set_index(self, index):
-        self.index = index
-
-#-----------------STATUS------------------#
-
-    def get_status(self):
-        return self.status
-
-    def set_status(self, status):
-        self.status = status
-
 #-----------------GENERAL-----------------#
 
     def reset_all(self, ctx):
@@ -142,6 +92,7 @@ class music:
             'extract_flat': 'in_playlist',
             'forcethumbnail': 'best',
             'youtube_include_dash_manifest': False,
+            'silent': True,
         }
         type = "none"
 
@@ -275,6 +226,14 @@ class music:
     async def play(self, vc, ctx):
         id = ctx.message.guild.id
         msg_sent = False
+        ydl_opts = {
+            'quiet': False,
+            'format': 'bestaudio/best',
+            'extract_flat': 'in_playlist',
+            'forcethumbnail': 'best',
+            'youtube_include_dash_manifest': False,
+            'silent': True,
+        }
 
         while True:  # comienza el loop de reproduccion
             if int(id) in self.servers_id:
@@ -316,7 +275,7 @@ class music:
                         j["playlist"]["cplaying"] = 0
                         index = 0
 
-                ydl = youtube_dl.YoutubeDL()
+                ydl = youtube_dl.YoutubeDL(ydl_opts)
                 r = ydl.extract_info(
                     j["playlist"]["songs"][index]["link"], download=False)
                 vid_thumbnail = r.get('thumbnail', None)
