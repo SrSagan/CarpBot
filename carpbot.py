@@ -11,7 +11,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 devuser = os.getenv('DEV_USER')
 devuser2 = os.getenv('DEV_USER2')
 
-bot = commands.Bot(command_prefix='d"', case_insensitive=True) #pone el prefix del comando
+bot = commands.Bot(command_prefix='"', case_insensitive=True) #pone el prefix del comando
 
 extensions=["linkcommands", "imagecommands", "devcommands", "generalcommands", "musiccommands"] #una array con todos los archivos
 
