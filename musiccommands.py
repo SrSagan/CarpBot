@@ -92,7 +92,7 @@ class music(commands.Cog):
 
                 vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
                 if vc.is_playing() == False:
-                    await b.play(vc, ctx)
+                    await b.play(vc, ctx, self.bot)
 
             # SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:(((((((((( uuh acabo de caer si esta conectado y no esta reproduciendo si ;-;
             # WENO SE ARREGLA DESPOIS
@@ -103,7 +103,7 @@ class music(commands.Cog):
 
                 vc = ctx.voice_client
                 if vc.is_playing() == False:  # si no esta reproduciendo comienza a reproducir (no hace falta pero weno)
-                    await b.play(vc, ctx)
+                    await b.play(vc, ctx, self.bot)
         else:
             await ctx.send("Write the name or link of a video to add to queue")
 
@@ -169,60 +169,74 @@ class music(commands.Cog):
 
             start = index-1
             printed=0
+            prev_pressed = None
+            edit=0
             while True:
                 if start <= 0:
                     start =1
                 if start > len(names)-10:
                     start = len(names)-10
+                    
+                counter=1
+                data=''
+                for name in names:
+                    if counter == index and playlist["playlist"]["status"] == True and counter>=start:
+                        data = data+"\n**"+(str(counter)+") " +
+                                            str(name)+"**")+" *Time Left: "+time_left+"*"
 
-                if printed==0:
-                    counter=1
-                    data=''
-                    for name in names:
-                        if counter == index and playlist["playlist"]["status"] == True and counter>=start:
-                            data = data+"\n**"+(str(counter)+") " +
-                                                str(name)+"**")+" *Time Left: "+time_left+"*"
-                        elif counter>=start:
-                            data = data+"\n**"+(str(counter)+")** " +
-                                                str(name))+" *Lenght: "+lengths[counter-1]+"*"
-                        counter = counter+1
+                    elif counter>=start:
+                        data = data+"\n**"+(str(counter)+")** " +
+                                            str(name))+" *Lenght: "+lengths[counter-1]+"*"
 
-                        if counter == start+11:
-                            if(len(names)-counter+1 != 0):
-                                data = data+"\n\n**" + \
-                                    str(len(names)-counter+1)+" More songs**"
-                            break
+                    counter = counter+1
 
-                    embed = discord.Embed(
-                        title="Queue", color=0x3498DB, description=data)
+                    if counter == start+11:
+                        if(len(names)-counter+1 != 0):
+                            data = data+"\n\n**" + \
+                                str(len(names)-counter+1)+" More songs**"
+                        break
+
+                embed = discord.Embed(
+                    title="Queue", color=0x3498DB, description=data)
+
+                if(printed==0):
                     message = await ctx.send(embed=embed)
-                    printed=1
+                elif(edit==1):
+                    print("edited")
+                    await message.edit(embed=embed)
+                    edit=0
 
-                    #------------------IMPRESION---------------#
+                #------------------IMPRESION---------------#
 
-                    #------------------REACITONS---------------#
-
+                #------------------REACITONS---------------#
+                if(printed==0):
                     controls = ['⏮️', '⏪', '⏩', '⏭️']
                     for emoji in controls:
                         await message.add_reaction(emoji)
+                printed=1
 
                 await asyncio.sleep(0.5)
+                
 
-                pressed = await b.control_checker(message, controls, self.bot)
+                pressed = await b.control_checker(message, controls, self.bot, ctx) #devuelve las diferencias entre el anterior control y el nuevo
                 if(pressed == "no"): break
+
                 else:
-                    if(pressed == 0):
-                        start = 0
-                    elif(pressed == 1):
-                        start = start-10
-                    elif(pressed == 2):
-                        start = start+10
-                    elif(pressed == 3):
-                        start = len(names)-10
-                    await message.delete()
-                    printed=0
-                    
-                #------------------REACITONS---------------#
+                    counter=0
+                    for press in pressed:
+                        if(press == 1): #checkea donde hay diferencia y actua
+                            if(counter == 0):
+                                start = 0
+                            elif(counter == 1):
+                                start = start-10
+                            elif(counter == 2):
+                                start = start+10
+                            elif(counter == 3):
+                                start = len(names)-10
+                            edit=1
+                        counter=counter+1
+
+                    #------------------REACITONS---------------#
 
         else:
             await ctx.send("Not playing anything")

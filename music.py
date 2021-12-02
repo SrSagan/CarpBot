@@ -124,6 +124,7 @@ class music:
                 "status": False,
                 "tlenght": 0,
                 'looping': 0,
+                'pressed' : [1,1,1,1],
                 "songs":
                 [{
                     "name": None,
@@ -222,7 +223,7 @@ class music:
 
 #--------------MUSIC PLAYER---------------#
 
-    async def play(self, vc, ctx):
+    async def play(self, vc, ctx, bot):
         id = ctx.message.guild.id
         msg_sent = False
         ydl_opts = {
@@ -274,10 +275,11 @@ class music:
                 r = ydl.extract_info(
                     j["playlist"]["songs"][index]["link"], download=False)
                 vid_thumbnail = r.get('thumbnail', None)
-                # check if last message was a "Now Playing" from carpbot
+                # check if last message was a "Now Playing" from carpbot and if it wasn't deleted
 
                 if(msg_sent == True):
-                    await msg.delete()
+                    if(discord.utils.get(bot.cached_messages, id=msg.id) != None):
+                        await msg.delete()
 
                 # if it is it should be deleted
 
@@ -304,22 +306,36 @@ class music:
 
 #-------------QUEUE CONTROLS--------------#
 
-    async def control_checker(self, message, controls, bot):
+    async def control_checker(self, message, controls, bot, ctx):
+        #QUE VIJA X DIOSSS
+        id = ctx.message.guild.id #agarra todo lo necesario
+        if(id in self.servers_id):
+            j = self.servers[self.servers_id.index(int(id))]
+            prev_pressed = j["playlist"]["pressed"]
 
-        pressed = [0,0,0,0]
-        for i in range(0, 60):
+            pressed = [0,0,0,0]
+            out=[0,0,0,0]
+            for i in range(0, 60): #timer de 1min
 
-            cache_msg = discord.utils.get(bot.cached_messages, id=message.id)
-            reactions = cache_msg.reactions
-            
-            for emoji in controls:
-                reaction = discord.utils.get(reactions, emoji=emoji)
-                #await asyncio.sleep(0.5)
-                pressed[controls.index(emoji)]=reaction.count
+                cache_msg = discord.utils.get(bot.cached_messages, id=message.id) #hace todo un tema con cached messages pq ds es una vija y no retorna los msg al toque
+                reactions = cache_msg.reactions
 
-            for presses in pressed:
-                if presses>1:
-                    return pressed.index(presses)
+                for emoji in controls:
+                    reaction = discord.utils.get(reactions, emoji=emoji)
+                    pressed[controls.index(emoji)]=reaction.count #los cuenta
 
-            await asyncio.sleep(1)
-        return "no"
+                counter=0 #los compara
+                for press in prev_pressed:
+                    if(press == pressed[counter]):
+                        out[counter]=0
+                    else:
+                        out[counter]=1
+                    counter=counter+1
+                
+                j["playlist"]["pressed"]=pressed #los guarda
+
+                if(1 in out): #envia las diferencias
+                    return out
+
+                await asyncio.sleep(1)
+            return "no"

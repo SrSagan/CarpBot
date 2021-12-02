@@ -4,7 +4,6 @@ from discord.ext import commands
 import data
 import random
 import os
-import cleverbotfree
 import asyncio
 
 
@@ -61,30 +60,6 @@ class general(commands.Cog):
         else:
             await ctx.send("Tenes que hacer una pregunta si queres que responda")
 
-    @commands.command( #chatbooot
-        aliases=["cb"], #falta agregar para que se cierre luego de X cantidad de tiempo por las dudas de que alguien olvide poner quit y aun hay que implementarlo en el SEM COMPANY server
-        name="chatbot",
-        brief="Un chatbot",
-        help="Es un chatbot de carpbot, es decir puedes tener una conversacion con carpbot. Para terminar la conversacion escriba quit"
-    )
-    async def chatbot(self, ctx): #realmente la menra de la que funciona es que habla con cleverbot y manda los msg de vuelta
-        print("Chatbot usado")
-        await ctx.send("Espere mientras carga el chatbot")
-        async with cleverbotfree.async_playwright() as p_w: #carga cleverbot en un headless firefox cuz fuck paying google am I right?
-            c_b = await cleverbotfree.CleverbotAsync(p_w)
-            await ctx.send("Chatbot listo, habe ahora, en ingles.")   #una vez cargado avisa y comienza el loop
-            while True:
-                msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author) #espera un msg
-
-                if msg.content == 'quit': #si el msg es quit saca el chatbot
-                    await ctx.send("Chatbot Cerrado")
-                    break
-
-                user_input = str(msg.content) #lee el msg 
-                bot = await c_b.single_exchange(user_input) #le da el msg al bot
-                await ctx.send('Carpbot: '+str(bot)) #da la respuesta del bot
-            await c_b.close() #cierra el bot una vez terminado el loop
-    
     @commands.command(
         aliases=["af"],
         name="addfrase",
