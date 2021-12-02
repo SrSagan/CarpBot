@@ -163,13 +163,8 @@ class music(commands.Cog):
 
             #------------------IMPRESION---------------#
 
-
-            #CREATE SOMEKIND OF LIST AND DISPLAY IN GROUPS OF 10
-            #WHEN ORIGINALLY PUT QUEUE SHOW SONGS AROUND INDEX
-
             start = index-1
             printed=0
-            prev_pressed = None
             edit=0
             while True:
                 if start <= 0:
