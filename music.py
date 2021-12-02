@@ -92,7 +92,6 @@ class music:
             'extract_flat': 'in_playlist',
             'forcethumbnail': 'best',
             'youtube_include_dash_manifest': False,
-            'cachedir': False,
         }
         type = "none"
 
