@@ -439,7 +439,7 @@ class music(commands.Cog):
 
             if playlist["playlist"]["status"] == False:
                 playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]-1
-                await b.play(vc, ctx)
+                await b.play(vc, ctx, self.bot)
 
             else:
                 playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]-2

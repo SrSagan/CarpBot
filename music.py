@@ -241,7 +241,7 @@ class music:
                 # Writing to sample.json
                 with open("sample.json", "w") as outfile:
                     outfile.write(json_object)
-
+    
                 #--------------------------REPRODUCIENDO---------------------------#
                 while True:  # si esta reproduciendo no hace nada y espera
                     if vc.is_playing() == False:
