@@ -1,5 +1,6 @@
 from logging import debug
 import discord
+from discord import embeds
 from discord.ext import commands
 import data
 import random
@@ -173,6 +174,35 @@ class general(commands.Cog):
             if removed: await ctx.send("Frase removida")
             else: await ctx.send("La frase no fue removida")
         else: await ctx.send("Escriba una frase para remover")
+
+
+    @commands.command(
+        name="changeprefix",
+        aliases=["cp"],
+        brief="Change the prefix",
+        help="Change the prefix of the bot, default: \""
+    )
+    async def changeprefix(self, ctx, *args):
+        if(ctx.message.author.guild_permissions.administrator):
+            print("change prefix usado")
+
+            embed=discord.Embed(title="Change prefix", color=0x3498DB)
+            embed.add_field(name="Current prefix", value="**"+await a.get_prefix(0, ctx.message)+"**")
+
+            await ctx.send("Write the new prefix:")
+            message = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author)
+            newprefix = message.content
+
+            if(newprefix == "cancel" or message == "Cancel"):
+                await ctx.send("Operation cancelled")
+                return 0
+
+            embed.add_field(name="New prefix", value="**"+newprefix+"**")
+            await a.set_prefix(newprefix, ctx.message)
+
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send("Only admins can use this command")
 
 def setup(bot):
     bot.add_cog(general(bot))

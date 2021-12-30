@@ -1,4 +1,5 @@
 import random
+import json
 
 
 class datos:
@@ -236,3 +237,35 @@ class datos:
             return 1  # si funciona se retorna 1
         else:
             return 0  # sino se retorna 0
+
+#-----------------------GET PREFIX------------------------#
+    async def get_prefix(self, bot, message):
+        id = message.guild.id
+        f=open("prefix.json")
+        data = json.load(f)
+        for server in data:
+            if(server["id"] == int(id)):
+                return server["prefix"]
+        with open('prefix.json', 'w') as f:
+            data.append(
+                {
+                    "id":int(id),
+                    "prefix":"\""
+                }
+            )
+            json.dump(data, f)
+            return "\""
+
+#-----------------------SET PREFIX------------------------#
+    async def set_prefix(self, newprefix, message):
+        id = message.guild.id
+        with open('prefix.json') as f:
+            data = json.load(f)
+        
+        for server in data:
+            if(server["id"] == int(id)):
+                server["prefix"] = newprefix
+        with open('prefix.json', "w") as f:
+            json.dump(data, f)
+
+    
