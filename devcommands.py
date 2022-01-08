@@ -16,26 +16,6 @@ devuser2 = os.getenv('DEV_USER2')
 class devcommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-#-----------------------DEBUG ARRAYS------------------------#
-
-    @commands.command(  # comando debug arrays para mostrar el largo de todos los grupos
-        aliases=["da"],
-        name='debug_arrays',
-        help="Muestra las arrays de links",
-        brief="Muestra las arrays de links (solo devs)"
-
-    )
-    async def debug_arrays(self, ctx):
-        a = data.datos()
-        grupos = a.get_data()  # agarra la info
-        print("debug_arrays usado")
-        # checkea ke sea un dev el ke lo haya usado
-        if ctx.message.author.id == int(devuser) or ctx.message.author.id == int(devuser2):
-            for j in a.grupos:
-                # imprime los datos en ds
-                await ctx.send(str(j)+" array: "+str(len(grupos[j]["data"])))
-        else:
-            await ctx.send("Solo devs pueden usar este comando")
 
 #-----------------------DEBUG IMAGES------------------------#
 
@@ -84,16 +64,6 @@ class devcommands(commands.Cog):
             await ctx.send("IP:"+str(ip))
         else:
             await ctx.send("Solo devs pueden usar este comando")
-
-    @commands.command(
-        aliases=["db"],
-        name='debug',
-        help='Comando debug',
-        brief='Comando debug'
-    )
-    async def debug(self, ctx):
-        user_input = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author)
-        await ctx.send(str(user_input))
 
 
 def setup(bot):

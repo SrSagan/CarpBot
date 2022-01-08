@@ -33,7 +33,7 @@ class images(commands.Cog):
 		await ctx.send(embed=embed)
 
 	@commands.command( #todos hacen lo mismo
-		aliases=['carp'],
+		aliases=['carp', 'capybara', 'capivara'],
     	name='carpincho',
     	help="Muestra una imagen random de un carpincho",
     	brief="Muestra una img de un carpincho"

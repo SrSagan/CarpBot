@@ -1,6 +1,9 @@
 import random
 import json
 
+LINKS_FOLDER="sources/links/"
+PREFIX_FOLDER="sources/"
+
 
 class datos:
     def __init__(self):
@@ -78,7 +81,7 @@ class datos:
     def get_data(self):
         grupos = self.grupos
         for key in grupos.keys():
-            with open(grupos[key]["fileName"], "r") as f:
+            with open(LINKS_FOLDER+grupos[key]["fileName"], "r") as f:
                 for line in f:
                     if line != '\n':
                         grupos[key]["data"].append(line)
@@ -89,7 +92,7 @@ class datos:
 
     def set_data(self, grupo, arg):  # agrega links a data y al archivo
         grupos = self.grupos
-        archivo = grupos[grupo]["fileName"]
+        archivo = LINKS_FOLDER+grupos[grupo]["fileName"]
         grupos[grupo]["data"].append(arg)
         with open(archivo, "w")as txt_file:
             for line in grupos[grupo]["data"]:
@@ -101,7 +104,7 @@ class datos:
         grupos = self.grupos
         y = grupos[grupo]["data"].index(arg)
         grupos[grupo]["data"].pop(y)
-        archivo = grupos[grupo]["fileName"]
+        archivo = LINKS_FOLDER+grupos[grupo]["fileName"]
         with open(archivo, "r") as f:
             lines = f.readlines()
         with open(archivo, "w") as f:
@@ -241,12 +244,12 @@ class datos:
 #-----------------------GET PREFIX------------------------#
     async def get_prefix(self, bot, message):
         id = message.guild.id
-        f=open("prefix.json")
+        f=open(PREFIX_FOLDER+"prefix.json")
         data = json.load(f)
         for server in data:
             if(server["id"] == int(id)):
                 return server["prefix"]
-        with open('prefix.json', 'w') as f:
+        with open(PREFIX_FOLDER+'prefix.json', 'w') as f:
             data.append(
                 {
                     "id":int(id),
@@ -259,13 +262,13 @@ class datos:
 #-----------------------SET PREFIX------------------------#
     async def set_prefix(self, newprefix, message):
         id = message.guild.id
-        with open('prefix.json') as f:
+        with open(PREFIX_FOLDER+'prefix.json') as f:
             data = json.load(f)
         
         for server in data:
             if(server["id"] == int(id)):
                 server["prefix"] = newprefix
-        with open('prefix.json', "w") as f:
+        with open(PREFIX_FOLDER+'prefix.json', "w") as f:
             json.dump(data, f)
 
     
