@@ -13,12 +13,23 @@ import time
 import json
 import asyncio
 from dotenv import load_dotenv
+import lenguajes as leng
 
 a = data.datos()
 b = music.music()
 
+devusers=[]
 load_dotenv()
-devuser = os.getenv('DEV_USER') 
+dev = os.getenv('DEV_USERS')  # checkea los los dev users
+
+while True:
+    x = dev.find(",")
+    if(x==-1):
+        devusers.append(int(dev))
+        print(devusers)
+        break
+    devusers.append(int(dev[:x]))
+    dev = dev[x+1:]
 
 
 class music(commands.Cog):
@@ -31,8 +42,6 @@ class music(commands.Cog):
     @commands.command(
         aliases=['l', 'lv'],
         name='leave',
-        help='Sale del canal de voz',
-        brief='Sale del canal de voz'
     )
     async def leave(self, ctx):
         vc = ctx.voice_client
@@ -42,10 +51,10 @@ class music(commands.Cog):
             channel = author.voice.channel
             status = True
         except:
-            await ctx.send("You're not in any voice channel")
+            await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
         
-        if(ctx.message.author.id == int(devuser)): status=True
+        if(ctx.message.author.id in devusers): status=True
 
         if(status == True):
             vc.stop()
@@ -57,8 +66,6 @@ class music(commands.Cog):
     @commands.command(pass_context=True,  # reproduce musica
                       aliases=['p', 'pl'],
                       name='play',
-                      help='Reproduce un link de youtube',
-                      brief='Reproduce musica'
                       )
     async def play(self, ctx, *request):
 
@@ -70,11 +77,11 @@ class music(commands.Cog):
                 channel = author.voice.channel
                 status = True
             except:
-                await ctx.send("You're not in any voice channel")
+                await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
                 status = False
 
             # SI ESTA CONECTADO SOLO agrega el link a la queue
-            if(ctx.message.author.id == int(devuser)): status=True
+            if(ctx.message.author.id in devusers): status=True
 
             voice_client = discord.utils.get(
                 ctx.bot.voice_clients, guild=ctx.guild)
@@ -105,15 +112,13 @@ class music(commands.Cog):
                 if vc.is_playing() == False:  # si no esta reproduciendo comienza a reproducir (no hace falta pero weno)
                     await b.play(vc, ctx, self.bot)
         else:
-            await ctx.send("Write the name or link of a video to add to queue")
+            await ctx.send(leng.eenolduvpaalq[a.get_lenguaje(ctx.message)])
 
 #---------------------------------------------------------QUEUE----------------------------------------------------------#
 
     @commands.command(
         aliases=['q'],
         name='queue',
-        help='Muestra la lista de canciones',
-        brief='Muestra la queue'
     )
     async def queue(self, ctx):
         servers = b.get_servers()
@@ -177,18 +182,18 @@ class music(commands.Cog):
                 for name in names:
                     if counter == index and playlist["playlist"]["status"] == True and counter>=start:
                         data = data+"\n**"+(str(counter)+") " +
-                                            str(name)+"**")+" *Time Left: "+time_left+"*"
+                                            str(name)+"**")+leng.tr[a.get_lenguaje(ctx.message)]+time_left+"*"
 
                     elif counter>=start:
                         data = data+"\n**"+(str(counter)+")** " +
-                                            str(name))+" *Lenght: "+lengths[counter-1]+"*"
+                                            str(name))+leng.duracion[a.get_lenguaje(ctx.message)]+lengths[counter-1]+"*"
 
                     counter = counter+1
 
                     if counter == start+11:
                         if(len(names)-counter+1 != 0):
                             data = data+"\n\n**" + \
-                                str(len(names)-counter+1)+" More songs**"
+                                str(len(names)-counter+1)+leng.mc[a.get_lenguaje(ctx.message)]
                         break
 
                 embed = discord.Embed(
@@ -234,15 +239,13 @@ class music(commands.Cog):
                     #------------------REACITONS---------------#
 
         else:
-            await ctx.send("Not playing anything")
+            await ctx.send(leng.nsern[a.get_lenguaje(ctx.message)])
 
 #---------------------------------------------------------STOP----------------------------------------------------------#
 
     @commands.command(
         aliases=['s'],
         name='stop',
-        help='Para la musica',
-        brief='Para la musica'
     )
     async def stop(self, ctx):
         # chekear si el client esta en canal de voz sino no usar done
@@ -255,10 +258,10 @@ class music(commands.Cog):
             channel = author.voice.channel
             status = True
         except:
-            await ctx.send("You're not in any voice channel")
+            await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id == int(devuser)): status=True
+        if(ctx.message.author.id in devusers): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -271,8 +274,6 @@ class music(commands.Cog):
     @commands.command(
         aliases=['ps'],
         name='pause',
-        help='Pausa la musica',
-        brief='Pausa la musica'
     )
     async def pause(self, ctx):
         # chekear si el client esta en canal de voz sino no usar
@@ -288,18 +289,18 @@ class music(commands.Cog):
                 channel = author.voice.channel
                 status = True
             except:
-                await ctx.send("You're not in any voice channel")
+                await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
                 status = False
 
-            if(ctx.message.author.id == int(devuser)): status=True
+            if(ctx.message.author.id in devusers): status=True
 
             if vc.is_paused() == True and status == True:
-                await ctx.send("Audio already paused")
+                await ctx.send(leng.eayep[a.get_lenguaje(ctx.message)])
             else:
                 t = time.localtime()
                 playlist["playlist"]["ptime"] = time.strftime("%H:%M:%S", t)
                 vc.pause()
-                embed = discord.Embed(title="Paused", color=0x3498DB)
+                embed = discord.Embed(title=leng.pausado[a.get_lenguaje(ctx.message)], color=0x3498DB)
                 await ctx.send(embed=embed)
 
 #---------------------------------------------------------RESUME----------------------------------------------------------#
@@ -307,8 +308,6 @@ class music(commands.Cog):
     @commands.command(
         aliases=['r'],
         name='resume',
-        help='Resume la musica',
-        brief='Resume la musica'
     )
     async def resume(self, ctx):
         # chekear si el client esta en canal de voz sino no usar
@@ -323,15 +322,15 @@ class music(commands.Cog):
                 channel = author.voice.channel
                 status = True
             except:
-                await ctx.send("You're not in any voice channel")
+                await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
                 status = False
 
-            if(ctx.message.author.id == int(devuser)): status=True
+            if(ctx.message.author.id in devusers): status=True
 
             vc = ctx.voice_client
             if vc.is_paused() == True and status == True:
                 vc.resume()
-                embed = discord.Embed(title="Resumed", color=0x3498DB)
+                embed = discord.Embed(title=leng.resumido[a.get_lenguaje(ctx.message)], color=0x3498DB)
                 await ctx.send(embed=embed)
 
                 t = time.localtime()
@@ -355,15 +354,13 @@ class music(commands.Cog):
                     tiempo+time_paused))
 
             else:
-                await ctx.send("Audio not paused")
+                await ctx.send(leng.eanep[a.get_lenguaje(ctx.message)])
 
 #---------------------------------------------------------NEXT----------------------------------------------------------#
 
     @commands.command(
         aliases=['n', 'skip'],
         name='next',
-        help='Salta la cancion',
-        brief='Salta la musica'
     )
     async def next(self, ctx, *args):
         # chekear si el client esta en canal de voz sino no usar
@@ -376,10 +373,10 @@ class music(commands.Cog):
             channel = author.voice.channel
             status = True
         except:
-            await ctx.send("You're not in any voice channel")
+            await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id == int(devuser)): status=True
+        if(ctx.message.author.id in devusers): status=True
 
         if int(id) in servers_id and status == True:
 
@@ -394,9 +391,9 @@ class music(commands.Cog):
                         playlist["playlist"]["cplaying"] = index
                         vc.stop()
                     else:
-                        await ctx.send("Song out of range")
+                        await ctx.send(leng.cfdr[a.get_lenguaje(ctx.message)])
                 else:
-                    await ctx.send("Specify the number of a song")
+                    await ctx.send(leng.eenduc[a.get_lenguaje(ctx.message)])
             else:
                 if playlist["playlist"]["looping"] == 2:
                     playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]+1
@@ -414,8 +411,6 @@ class music(commands.Cog):
     @commands.command(
         aliases=['b'],
         name='back',
-        help='Vuelve a la anterior cancion',
-        brief='Vuelve la musica'
     )
     async def back(self, ctx):
         # chekear si el client esta en canal de voz sino no usar
@@ -428,10 +423,10 @@ class music(commands.Cog):
             channel = author.voice.channel
             status = True
         except:
-            await ctx.send("You're not in any voice channel")
+            await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id == int(devuser)): status=True
+        if(ctx.message.author.id in devusers): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -449,8 +444,6 @@ class music(commands.Cog):
 
     @commands.command(
         name='song',
-        help='Muestra que cancion se esta reproduciendo',
-        brief='Song playing'
     )
     async def song(self, ctx):
         servers = b.get_servers()
@@ -501,9 +494,9 @@ class music(commands.Cog):
             # lo conviernet
             # amigo alto bardo hacer la pija esta
             embed = discord.Embed(
-                title="Now playing", color=0x3498DB, description=str(names[index-1]))
-            embed.set_footer(text="Length: "+str(lengths[index-1]))
-            embed.set_footer(text="Time Left: "+time_left)
+                title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index-1)+"- "+str(names[index-1]))
+            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+str(lengths[index-1]))
+            embed.set_footer(text=leng.tr[a.get_lenguaje(ctx.message)]+time_left)
             await ctx.send(embed=embed)
 
 #---------------------------------------------------------CLEAR----------------------------------------------------------#
@@ -511,8 +504,6 @@ class music(commands.Cog):
     @commands.command(
         aliases=['c'],
         name='clear',
-        help='Limpia la queue',
-        brief='Limpia la queue'
     )
     async def clear(self, ctx):
         vc = ctx.voice_client
@@ -525,10 +516,10 @@ class music(commands.Cog):
             channel = author.voice.channel
             status = True
         except:
-            await ctx.send("You're not in any voice channel")
+            await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id == int(devuser)): status=True
+        if(ctx.message.author.id in devusers): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -541,8 +532,6 @@ class music(commands.Cog):
     @commands.command(
         aliases=['rm'],
         name='remove',
-        help='Removes a song from the queue, use: remove <number>',
-        brief='Removes a song'
     )
     async def remove(self, ctx, *args):
         vc = ctx.voice_client
@@ -555,10 +544,10 @@ class music(commands.Cog):
             channel = author.voice.channel
             status = True
         except:
-            await ctx.send("You're not in any voice channel")
+            await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id == int(devuser)): status=True
+        if(ctx.message.author.id in devusers): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -567,36 +556,34 @@ class music(commands.Cog):
                     if int(args[0]) <= len(playlist["playlist"]["songs"]):
 
                         embed = discord.Embed(
-                            title="Removed:", color=0x3498DB, description=str(playlist["playlist"]["songs"][int(args[0])-1]["name"]))
+                            title=leng.removido[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(playlist["playlist"]["songs"][int(args[0])-1]["name"]))
                         embed.set_footer(
-                            text="Length: "+str(playlist["playlist"]["songs"][int(args[0])-1]["length"]))
+                            text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist["playlist"]["songs"][int(args[0])-1]["length"]))
                         await ctx.send(embed=embed)
 
                         playlist["playlist"]["songs"].pop(int(args[0])-1)
                     else:
-                        await ctx.send("Song out of range")
+                        await ctx.send(leng.cfdr[a.get_lenguaje(ctx.message)])
                 else:
                     if args[0] == "last":
                         embed = discord.Embed(
-                            title="Removed:", color=0x3498DB, description=str(playlist["playlist"]["songs"][len(playlist["playlist"]["songs"])-1]["name"]))
+                            title=leng.removido[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(playlist["playlist"]["songs"][len(playlist["playlist"]["songs"])-1]["name"]))
                         embed.set_footer(
-                            text="Length: "+str(playlist["playlist"]["songs"][len(playlist["playlist"]["songs"])-1]["length"]))
+                            text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist["playlist"]["songs"][len(playlist["playlist"]["songs"])-1]["length"]))
                         await ctx.send(embed=embed)
 
                         playlist["playlist"]["songs"].pop(
                             len(playlist["playlist"]["songs"])-1)
                     else:
-                        await ctx.send("Specify the number of a song")
+                        await ctx.send(leng.eenduc[a.get_lenguaje(ctx.message)])
             else:
-                await ctx.send("Specify the number of a song to remove. remove <number>")
+                await ctx.send(leng.eenducar[a.get_lenguaje(ctx.message)])
 
 #---------------------------------------------------------MOVE----------------------------------------------------------#
 
     @commands.command(
         aliases=['m'],
         name='move',
-        help='Moves a song in the queue',
-        brief='Moves a song'
     )
     async def move(self, ctx, *args):
         vc = ctx.voice_client
@@ -609,10 +596,10 @@ class music(commands.Cog):
             channel = author.voice.channel
             status = True
         except:
-            await ctx.send("You're not in any voice channel")
+            await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id == int(devuser)): status=True
+        if(ctx.message.author.id in devusers): status=True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -630,21 +617,19 @@ class music(commands.Cog):
                             await ctx.send(embed=embed)
 
                         else:
-                            await ctx.send("Specify where to move the song")
+                            await ctx.send(leng.eadmlc[a.get_lenguaje(ctx.message)])
                     else:
-                        await ctx.send("Song out of range")
+                        await ctx.send(leng.cfdr[a.get_lenguaje(ctx.message)])
                 else:
-                    await ctx.send("Specify what song to move and where to move it")
+                    await ctx.send(leng.eqcpmyadm[a.get_lenguaje(ctx.message)])
             else:
-                await ctx.send("Specify song and place. Use: move <song> <place to move>")
+                await ctx.send(leng.ecyl[a.get_lenguaje(ctx.message)])
 
 #---------------------------------------------------------LOOP----------------------------------------------------------#
 
     @commands.command(
         aliases=['lp'],
         name='loop',
-        help='Loops the song or queue',
-        brief='Loops the song or queue'
     )
     async def loop(self, ctx, *args):
         vc = ctx.voice_client
@@ -658,19 +643,19 @@ class music(commands.Cog):
             if playlist["playlist"]["looping"] == 0:
                 playlist["playlist"]["looping"] = 1
                 embed = discord.Embed(
-                    description="Now looping **queue**", color=0x3498DB)
+                    description=leng.arlq_ca_d[a.get_lenguaje(ctx.message)][0], color=0x3498DB)
                 await ctx.send(embed=embed)
 
             elif playlist["playlist"]["looping"] == 1:
                 playlist["playlist"]["looping"] = 2
                 embed = discord.Embed(
-                    description="Now looping the **current track**", color=0x3498DB)
+                    description=leng.arlq_ca_d[a.get_lenguaje(ctx.message)][1], color=0x3498DB)
                 await ctx.send(embed=embed)
 
             elif playlist["playlist"]["looping"] == 2:
                 playlist["playlist"]["looping"] = 0
                 embed = discord.Embed(
-                    description="Looping is now **disabled**", color=0x3498DB)
+                    description=leng.arlq_ca_d[a.get_lenguaje(ctx.message)][2], color=0x3498DB)
                 await ctx.send(embed=embed)
 
 #---------------------------------------------------------SHUFFLE----------------------------------------------------------#
@@ -678,12 +663,10 @@ class music(commands.Cog):
     @commands.command(
         aliases=['sh'],
         name='shuffle',
-        help='Shuffles the playlist',
-        brief='Shuffles'
     )
     async def shuffle(self, ctx):
         b.shuffler(ctx)
-        await ctx.send("music shuffled")
+        await ctx.send(leng.mm[a.get_lenguaje(ctx.message)])
 
 
 def setup(bot):

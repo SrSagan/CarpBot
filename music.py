@@ -11,6 +11,7 @@ from requests import get
 import json
 import random
 import discord.utils
+import lenguajes as leng
 
 a = data.datos()
 
@@ -135,6 +136,10 @@ class music:
         }
 
         if type == "playlist":  # si es una playlist agrega cada cancion por separado
+            
+            title = video["title"]
+            author = video["uploader"]
+
             totalLenght = 0
             counter = 0
             for entrie in video["entries"]:
@@ -166,10 +171,10 @@ class music:
 
                 counter = counter+1
             embed = discord.Embed(
-                title="Queued", color=0x3498DB, description=str(len(video["entries"]))+" songs")
+                title="Queued "+title, color=0x3498DB, description=str(len(video["entries"]))+leng.canciones[a.get_lenguaje(ctx.message)])
             totalLenght = time.strftime(
                 "%H:%M:%S", time.gmtime(totalLenght))
-            embed.set_footer(text="Length "+str(totalLenght))
+            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+str(totalLenght)+"\n"+author)
             await ctx.send(embed=embed)
 
         else:  # si es un link o nombre guarda tambien los datos
@@ -213,7 +218,7 @@ class music:
             embed = discord.Embed(
                 title="Queued", color=0x3498DB, description=str(vid_name))
             embed.set_image(url=vid_thumbnail)
-            embed.set_footer(text="Length "+str(vid_length))
+            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+str(len(self.servers[self.servers_id.index(int(id))]["playlist"]["songs"])))
             await ctx.send(embed=embed)
         json_object = json.dumps(self.servers, indent=4)
 
@@ -259,7 +264,7 @@ class music:
                     if j["playlist"]["looping"] != 1 or int(id) not in self.servers_id:
                         j["playlist"]["status"] = False
                         embed = discord.Embed(
-                            title="Queue over", color=0x3498DB)
+                            title=leng.qo[a.get_lenguaje(ctx.message)], color=0x3498DB)
                         await ctx.send(embed=embed)
 
                         json_object = json.dumps(self.servers, indent=4)
@@ -284,8 +289,9 @@ class music:
                 # if it is it should be deleted
 
                 embed = discord.Embed(
-                    title="Now Playing", color=0x3498DB, description=str(j["playlist"]["songs"][index]["name"]))
+                    title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(j["playlist"]["songs"][index]["name"]))
                 embed.set_image(url=vid_thumbnail)
+                embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+str(index+1))
                 # muestra que esta reproduciendo
                 msg = await ctx.send(embed=embed)
                 msg_sent = True
