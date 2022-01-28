@@ -182,18 +182,18 @@ class music(commands.Cog):
                 for name in names:
                     if counter == index and playlist["playlist"]["status"] == True and counter>=start:
                         data = data+"\n**"+(str(counter)+") " +
-                                            str(name)+"**")+leng.tr[a.get_lenguaje(ctx.message)]+time_left+"*"
+                                            str(name)+"** *")+leng.tr[a.get_lenguaje(ctx.message)]+" "+time_left+"*"
 
                     elif counter>=start:
                         data = data+"\n**"+(str(counter)+")** " +
-                                            str(name))+leng.duracion[a.get_lenguaje(ctx.message)]+lengths[counter-1]+"*"
+                                            str(name))+" *"+leng.duracion[a.get_lenguaje(ctx.message)]+": "+lengths[counter-1]+"*"
 
                     counter = counter+1
 
                     if counter == start+11:
                         if(len(names)-counter+1 != 0):
                             data = data+"\n\n**" + \
-                                str(len(names)-counter+1)+leng.mc[a.get_lenguaje(ctx.message)]
+                                str(len(names)-counter+1)+" "+leng.mc[a.get_lenguaje(ctx.message)]
                         break
 
                 embed = discord.Embed(
@@ -494,9 +494,9 @@ class music(commands.Cog):
             # lo conviernet
             # amigo alto bardo hacer la pija esta
             embed = discord.Embed(
-                title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index-1)+"- "+str(names[index-1]))
+                title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index)+"- "+str(names[index-1]))
             embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+str(lengths[index-1]))
-            embed.set_footer(text=leng.tr[a.get_lenguaje(ctx.message)]+time_left)
+            embed.set_footer(text=leng.tr[a.get_lenguaje(ctx.message)]+": "+time_left)
             await ctx.send(embed=embed)
 
 #---------------------------------------------------------CLEAR----------------------------------------------------------#

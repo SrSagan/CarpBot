@@ -138,7 +138,8 @@ class music:
         if type == "playlist":  # si es una playlist agrega cada cancion por separado
             
             title = video["title"]
-            author = video["uploader"]
+            if("uploader" in video): author = video["uploader"]
+            else: author= "Unknown"
 
             totalLenght = 0
             counter = 0
@@ -218,7 +219,7 @@ class music:
             embed = discord.Embed(
                 title="Queued", color=0x3498DB, description=str(vid_name))
             embed.set_image(url=vid_thumbnail)
-            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+str(len(self.servers[self.servers_id.index(int(id))]["playlist"]["songs"])))
+            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(self.servers[self.servers_id.index(int(id))]["playlist"]["songs"])))
             await ctx.send(embed=embed)
         json_object = json.dumps(self.servers, indent=4)
 
@@ -291,7 +292,7 @@ class music:
                 embed = discord.Embed(
                     title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(j["playlist"]["songs"][index]["name"]))
                 embed.set_image(url=vid_thumbnail)
-                embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+str(index+1))
+                embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(index+1))
                 # muestra que esta reproduciendo
                 msg = await ctx.send(embed=embed)
                 msg_sent = True

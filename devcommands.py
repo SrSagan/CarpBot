@@ -17,7 +17,6 @@ while True:
     x = dev.find(",")
     if(x==-1):
         devusers.append(int(dev))
-        print(devusers)
         break
     devusers.append(int(dev[:x]))
     dev = dev[x+1:]

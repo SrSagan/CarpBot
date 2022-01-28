@@ -271,21 +271,22 @@ class general(commands.Cog):
         if(ctx.message.author.guild_permissions.administrator):
             valid_lenguajes=["EN", "ES", "PT"]
 
-            if(len(args) > 0 and args[0].upper() not in valid_lenguajes):
+            if(len(args) > 0 and args[0].upper() in valid_lenguajes):
+                newlenguaje = args[0].upper()
+            else:
                 embed = discord.Embed(title=leng.cel[a.get_lenguaje(ctx.message)], color=0x3498DB)
                 embed.add_field(name=leng.eul[a.get_lenguaje(ctx.message)], value=leng.pei[a.get_lenguaje(ctx.message)])
                 await ctx.send(embed=embed)
                 message = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author)
                 newlenguaje = message.content
                 newlenguaje = newlenguaje.upper()
-            else:
-                newlenguaje = args[0].upper()
+                
 
             if(newlenguaje == "CANCEL"):
                 await ctx.send(leng.oc[a.get_lenguaje(ctx.message)])
                 return 0
             elif(newlenguaje in valid_lenguajes):
-                await ctx.send(leng.lca[a.get_lenguaje(ctx.message)]+newlenguaje)
+                await ctx.send(leng.lca[a.get_lenguaje(ctx.message)]+" "+newlenguaje)
                 a.set_lenguaje(newlenguaje, ctx.message)
             else:
                 await ctx.send(leng.li[a.get_lenguaje(ctx.message)])

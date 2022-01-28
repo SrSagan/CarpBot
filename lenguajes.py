@@ -299,9 +299,9 @@ pei={
     "PT":"Português=PT\nEspanhol=ES\nInglês=EN"
 }
 lca={
-    "EN":"Lenguage changed to: ",
-    "ES":"Lenguaje cambiado a: ",
-    "PT":"Indioma alterado para: "
+    "EN":"Lenguage changed to",
+    "ES":"Lenguaje cambiado a",
+    "PT":"Indioma alterado para"
 }
 li={
     "EN":"Invalid lenguage",
@@ -359,9 +359,9 @@ gi={
     "PT":"Grupo invalido"
 }
 laa_lsaa={
-    "EN":[" Link added to", " Links added to"],
-    "ES":[" Link agregado a", " Links agregados a"],
-    "PT":[" Link adicionado em", " Links adicionados em"]
+    "EN":["Link added to", "Links added to"],
+    "ES":["Link agregado a", "Links agregados a"],
+    "PT":["Link adicionado em", "Links adicionados em"]
 }
 eulopjcec={
     "EN":"Write a link or parameter with the command",
@@ -374,9 +374,9 @@ lr={
     "PT":"Link removido"
 }
 el_nseeng={
-    "EN":["The link: "," cannot be found"],
-    "ES":["El link: "," no se encuentra en ningun grupo "],
-    "PT":["O link: ", " não pôde ser encontrado"]
+    "EN":["The link","cannot be found"],
+    "ES":["El link","no se encuentra en ningun grupo "],
+    "PT":["O link", "não pôde ser encontrado"]
 }
 eeldlijcec={
     "EN":"Write the link of the image with the command",
@@ -384,14 +384,14 @@ eeldlijcec={
     "PT":"Escreva o link da imagem com o comando"
 }
 lrd_lsrd={
-    "EN":[" Link removed from:", " Links removed from:"],
-    "ES":[" Link removido de:", " Links removidos de:"],
-    "PT":[" Link removido pelo:", " Links removidos pelo:"] 
+    "EN":["Link removed from:", "Links removed from"],
+    "ES":["Link removido de:", "Links removidos de"],
+    "PT":["Link removido pelo:", "Links removidos pelo"] 
 }
 posicion={
-    "EN":"Position ",
-    "ES":"Posicion ",
-    "PT":"Posição "
+    "EN":"Position",
+    "ES":"Posicion",
+    "PT":"Posição"
 }
 ar={
     "EN":"Now playing",
@@ -399,14 +399,14 @@ ar={
     "PT":"Tocando agora"
 }
 duracion={
-    "EN":"Length: ",
-    "ES":"Duracion: ",
-    "PT":"Duração: "
+    "EN":"Length",
+    "ES":"Duracion",
+    "PT":"Duração"
 }
 tr={
-    "EN":" *Time Left:",
-    "ES":" *Tiempo restante:",
-    "PT":" *Tempo restante:"
+    "EN":"Time Left",
+    "ES":"Tiempo restante",
+    "PT":"Tempo restante"
 }
 neencdv={
     "EN":"You're not in any voice channe",
@@ -424,9 +424,9 @@ eenolduvpaalq={
     "PT":"Escreva o nome ou link de um video para adicionar para a lista"
 }
 mc={
-    "EN":"More songs**",
-    "ES":"Mas canciones**",
-    "PT":"Mais músicas**"
+    "EN":"More songs",
+    "ES":"Mas canciones",
+    "PT":"Mais músicas"
 }
 nsern={
     "EN":"Not playing anything",

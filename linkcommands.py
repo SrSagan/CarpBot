@@ -114,9 +114,9 @@ class links(commands.Cog):
 						InvalidGroup=True
 
 				if added == 1: #cantidad de links igual a 1
-					await ctx.send(str(added)+leng.laa_lsaa[a.get_lenguaje(ctx.message)][0]+"'"+str(grupos[jact]["name"])+"'")
+					await ctx.send(str(added)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][0]+" '"+str(grupos[jact]["name"])+"'")
 				elif added > 1: #cantidad de links agregados mayor a uno se dice
-					await ctx.send(str(added)+leng.laa_lsaa[a.get_lenguaje(ctx.message)][1]+"'"+str(grupos[jact]["name"])+"'")
+					await ctx.send(str(added)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][1]+" '"+str(grupos[jact]["name"])+"'")
 		else: #si no se escribio nada
 			await ctx.send(leng.eulopjcec[a.get_lenguaje(ctx.message)])
 
@@ -161,8 +161,8 @@ class links(commands.Cog):
 		for j in grupos: #se escribe cuantos links se eliminaron de que grupos
 			if removedLinks[j] > 0:
 				if removedLinks[j] == 1:
-					await ctx.send(str(removedLinks[j])+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][0]+"'"+str(grupos[j]["name"])+"'")
+					await ctx.send(str(removedLinks[j])+" "+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][0]+" '"+str(grupos[j]["name"])+"'")
 				elif removedLinks[j] > 1:
-					await ctx.send(str(removedLinks[j])+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][1]+"'"+str(grupos[j]["name"])+"'") 
+					await ctx.send(str(removedLinks[j])+" "+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][1]+" '"+str(grupos[j]["name"])+"'") 
 def setup(bot):
     bot.add_cog(links(bot))
