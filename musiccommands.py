@@ -26,7 +26,6 @@ while True:
     x = dev.find(",")
     if(x==-1):
         devusers.append(int(dev))
-        print(devusers)
         break
     devusers.append(int(dev[:x]))
     dev = dev[x+1:]
@@ -93,9 +92,13 @@ class music(commands.Cog):
                 else:
                     texto = (texto+" "+word)
 
+            x = texto.find("-f")
+            if(x != -1):
+                await b.queuer(ctx, texto, "fl")
+
             if voice_client != None:
 
-                await b.music_queuer(ctx, texto)
+                await b.queuer(ctx, texto, "yt")
 
                 vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
                 if vc.is_playing() == False:
@@ -105,7 +108,7 @@ class music(commands.Cog):
             # WENO SE ARREGLA DESPOIS
             elif status == True:
 
-                await b.music_queuer(ctx, texto)
+                await b.queuer(ctx, texto, "yt")
                 await channel.connect()
 
                 vc = ctx.voice_client

@@ -1,4 +1,5 @@
 import os
+import re
 import discord
 from discord.ext import commands
 from discord import FFmpegPCMAudio
@@ -12,8 +13,10 @@ import json
 import random
 import discord.utils
 import lenguajes as leng
+import m_queuer
 
 a = data.datos()
+q = m_queuer.queuer()
 
 
 class music:
@@ -84,148 +87,12 @@ class music:
 
             j["playlist"]["songs"] = final
 
-# ------------YOUTUBE QUEUER--------------#
-
-    async def music_queuer(self, ctx, reqest):
-        ydl_opts = {
-            'quiet': True,
-            'format': 'bestaudio/best',
-            'extract_flat': 'in_playlist',
-            'forcethumbnail': 'best',
-            'youtube_include_dash_manifest': False,
-        }
-        type = "none"
-
-        ydl = youtube_dl.YoutubeDL(ydl_opts)
-        try:
-            get(reqest)
-        except:
-            video = ydl.extract_info(f"ytsearch:{reqest}", download=False)[  # busca que es por nombre
-                'entries'][0]
-        else:
-            # si no es nombre busca la url
-            video = ydl.extract_info(reqest, download=False)
-
-        # diferencia que tipo de dato le fue dado (playlist, link, nombre)
-        if "_type" in video:
-            if video.get("_type", None) == "playlist":
-                type = "playlist"
-            else:
-                type = "none"
-        else:
-            type = "link"
-
-        server = {
-            "id": 0,
-            "playlist":
-            {
-                "cplaying": 0,
-                "ptime": None,
-                "time": None,
-                "status": False,
-                "tlenght": 0,
-                'looping': 0,
-                'pressed' : [1,1,1,1],
-                "songs":
-                [{
-                    "name": None,
-                    "link": None,
-                    "length": None,
-                }],
-            }
-        }
-
-        if type == "playlist":  # si es una playlist agrega cada cancion por separado
-            
-            title = video["title"]
-            if("uploader" in video): author = video["uploader"]
-            else: author= "Unknown"
-
-            totalLenght = 0
-            counter = 0
-            for entrie in video["entries"]:
-                vid_name = video["entries"][counter]['title']
-                vid_length = video["entries"][counter]['duration']
-                totalLenght = totalLenght+vid_length
-                vid_length = time.strftime(
-                    "%H:%M:%S", time.gmtime(vid_length))
-                vid_link = video["entries"][counter]['url']
-
-                id = ctx.message.guild.id
-
-                if int(id) in self.servers_id:
-                    song = {
-                        "name": vid_name,
-                        "length": vid_length,
-                        "link": vid_link,
-                    }
-                    self.servers[self.servers_id.index(
-                        int(id))]["playlist"]["songs"].append(song)
-
-                else:
-                    self.servers_id.append(int(id))
-                    server["id"] = int(id)
-                    server["playlist"]["songs"][0]["name"] = vid_name
-                    server["playlist"]["songs"][0]["length"] = vid_length
-                    server["playlist"]["songs"][0]["link"] = vid_link
-                    self.servers.append(server)
-
-                counter = counter+1
-            embed = discord.Embed(
-                title="Queued "+title, color=0x3498DB, description=str(len(video["entries"]))+leng.canciones[a.get_lenguaje(ctx.message)])
-            totalLenght = time.strftime(
-                "%H:%M:%S", time.gmtime(totalLenght))
-            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+str(totalLenght)+"\n"+author)
-            await ctx.send(embed=embed)
-
-        else:  # si es un link o nombre guarda tambien los datos
-            # titulo, duracion, url, thumbnail*, url
-
-            # agarra distinta info del video
-            vid_name = video.get('title', None)
-            vid_length = video.get('duration')
-            vid_length = time.strftime("%H:%M:%S", time.gmtime(vid_length))
-
-            if type == 'none':
-                ydl = youtube_dl.YoutubeDL({
-                    'format': 'bestaudio/best', 'forcethumbnail': 'best', })
-                vid_link = video.get('url', None)
-                vid_thumbnail = ydl.extract_info(vid_link, download=False)
-                vid_thumbnail = vid_thumbnail.get('thumbnail', None)
-
-            elif type == 'link':
-                vid_link = video.get('webpage_url', None)
-                vid_thumbnail = video.get('thumbnail', None)
-
-            id = ctx.message.guild.id
-
-            if int(id) in self.servers_id:
-                song = {
-                    "name": vid_name,
-                    "length": vid_length,
-                    "link": vid_link,
-                }
-                self.servers[self.servers_id.index(
-                    int(id))]["playlist"]["songs"].append(song)
-
-            else:
-                self.servers_id.append(int(id))
-                server["id"] = int(id)
-                server["playlist"]["songs"][0]["name"] = vid_name
-                server["playlist"]["songs"][0]["length"] = vid_length
-                server["playlist"]["songs"][0]["link"] = vid_link
-                self.servers.append(server)
-
-            embed = discord.Embed(
-                title="Queued", color=0x3498DB, description=str(vid_name))
-            embed.set_image(url=vid_thumbnail)
-            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(self.servers[self.servers_id.index(int(id))]["playlist"]["songs"])))
-            await ctx.send(embed=embed)
-        json_object = json.dumps(self.servers, indent=4)
-
-        # Writing to sample.json
-        with open("sample.json", "w") as outfile:
-            outfile.write(json_object)
+#--------------QUEUER---------------#
+    async def queuer(self, ctx, request, type):
+        if(type=="yt"):
+            self.servers_id, self.servers = await q.youtube_queuer(ctx, request, self.servers_id, self.servers)
+        elif(type=="fl"):
+            self.servers_id, self.servers = await q.file_queuer(ctx, request, self.servers_id, self.servers)
 
 #--------------MUSIC PLAYER---------------#
 
@@ -346,3 +213,11 @@ class music:
 
                 await asyncio.sleep(1)
             return "no"
+
+#-------------FILE PLAYER--------------#
+
+    async def file_player(self, ctx):
+        msg = ctx.message
+        for b in msg.attachments:
+            url = b.url
+        await ctx.send(url)
