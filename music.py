@@ -1,7 +1,4 @@
-import os
-import re
 import discord
-from discord.ext import commands
 from discord import FFmpegPCMAudio
 import time
 import asyncio
@@ -14,9 +11,11 @@ import random
 import discord.utils
 import lenguajes as leng
 import m_queuer
+import m_player
 
 a = data.datos()
 q = m_queuer.queuer()
+p = m_player.player()
 
 
 class music:
@@ -63,46 +62,10 @@ class music:
         with open("sample.json", "w") as outfile:
             outfile.write(json_object)
 
-#----------------SHUFFLER-----------------#
-
-    def shuffler(self, ctx):
-        id = ctx.message.guild.id
-
-        if int(id) in self.servers_id:
-            j = self.servers[self.servers_id.index(int(id))]
-
-            final = []
-
-            cplaying = j["playlist"]["cplaying"]
-            y = range(0, cplaying)
-
-            for n in y:
-                final.append(j["playlist"]["songs"][n])
-
-            out = j["playlist"]["songs"]
-            for n in y:
-                out.pop(0)
-            random.shuffle(out)
-            final += out
-
-            j["playlist"]["songs"] = final
-
-#--------------QUEUER---------------#
-    async def queuer(self, ctx, request, type):
-        if(type=="yt"):
-            self.servers_id, self.servers = await q.youtube_queuer(ctx, request, self.servers_id, self.servers)
-        elif(type=="fl"):
-            self.servers_id, self.servers = await q.file_queuer(ctx, request, self.servers_id, self.servers)
-
-#--------------MUSIC PLAYER---------------#
-
+ #--------------MUSIC PLAYER---------------#
     async def play(self, vc, ctx, bot):
         id = ctx.message.guild.id
         msg_sent = False
-        ydl_opts = {
-            'quiet': True,
-            'youtube_include_dash_manifest': False,
-        }
 
         while True:  # comienza el loop de reproduccion
             if int(id) in self.servers_id:
@@ -110,6 +73,8 @@ class music:
                 j = self.servers[self.servers_id.index(int(id))]
                 j["playlist"]["status"] = True
                 index = j["playlist"]["cplaying"]
+
+
                 json_object = json.dumps(self.servers, indent=4)
                 # Writing to sample.json
                 with open("sample.json", "w") as outfile:
@@ -139,44 +104,76 @@ class music:
                         # Writing to sample.json
                         with open("sample.json", "w") as outfile:
                             outfile.write(json_object)
+
                         break
                     else:
                         j["playlist"]["cplaying"] = 0
                         index = 0
 
-                ydl = youtube_dl.YoutubeDL(ydl_opts)
-                r = ydl.extract_info(
-                    j["playlist"]["songs"][index]["link"], download=False)
-                vid_thumbnail = r.get('thumbnail', None)
-                # check if last message was a "Now Playing" from carpbot and if it wasn't deleted
+                #check if class is youtube or other and use correct function
+                if(j["playlist"]["songs"][index]["class"] == "yt"):
+                    vid_thumbnail = await p.youtube_player(index, vc, j)
+                elif(j["playlist"]["songs"][index]["class"] == "fl"):
+                    vid_thumbnail = await p.file_player(index, vc, j)
 
                 if(msg_sent == True):
                     if(discord.utils.get(bot.cached_messages, id=msg.id) != None):
                         await msg.delete()
 
-                # if it is it should be deleted
-
+                # if it is it should be delete
                 embed = discord.Embed(
                     title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(j["playlist"]["songs"][index]["name"]))
-                embed.set_image(url=vid_thumbnail)
+                if(vid_thumbnail!=0):
+                    embed.set_image(url=vid_thumbnail)
                 embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(index+1))
+
                 # muestra que esta reproduciendo
                 msg = await ctx.send(embed=embed)
                 msg_sent = True
-
-                t = time.localtime()
-                j["playlist"]["time"] = time.strftime("%H:%M:%S", t)
-                vc.play(discord.FFmpegPCMAudio(
-                    r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'))  # reproduce
-
                 index = index+1  # sube el contador
                 j["playlist"]["cplaying"] = index
+                t = time.localtime()
+                j["playlist"]["time"] = time.strftime("%H:%M:%S", t)
 
                 json_object = json.dumps(self.servers, indent=4)
 
                 # Writing to sample.json
                 with open("sample.json", "w") as outfile:
                     outfile.write(json_object)
+
+#----------------SHUFFLER-----------------#
+
+    def shuffler(self, ctx):
+        id = ctx.message.guild.id
+
+        if int(id) in self.servers_id:
+            j = self.servers[self.servers_id.index(int(id))]
+
+            final = []
+
+            cplaying = j["playlist"]["cplaying"]
+            y = range(0, cplaying)
+
+            for n in y:
+                final.append(j["playlist"]["songs"][n])
+
+            out = j["playlist"]["songs"]
+            for n in y:
+                out.pop(0)
+            random.shuffle(out)
+            final += out
+
+            j["playlist"]["songs"] = final
+
+#--------------QUEUER---------------#
+    async def queuer(self, ctx, request, type):
+        if(type=="yt"):
+            self.servers_id, self.servers = await q.youtube_queuer(ctx, request, self.servers_id, self.servers)
+        elif(type=="fl"):
+            msg = ctx.message
+            for b in msg.attachments:
+                url = b.url
+            self.servers_id, self.servers = await q.file_queuer(ctx, url, self.servers_id, self.servers)
 
 #-------------QUEUE CONTROLS--------------#
 
@@ -213,11 +210,3 @@ class music:
 
                 await asyncio.sleep(1)
             return "no"
-
-#-------------FILE PLAYER--------------#
-
-    async def file_player(self, ctx):
-        msg = ctx.message
-        for b in msg.attachments:
-            url = b.url
-        await ctx.send(url)
