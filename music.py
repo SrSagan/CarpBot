@@ -1,11 +1,7 @@
 import discord
-from discord import FFmpegPCMAudio
 import time
 import asyncio
-from requests.sessions import merge_setting
-import youtube_dl
 import data
-from requests import get
 import json
 import random
 import discord.utils

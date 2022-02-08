@@ -8,7 +8,8 @@ help={
     - **Move** Moves a song to a place of the queue, use: "move (song numer) (Place to move)
     - **Next** Goes to the next song or skips to a song on queue, use:"next (song number)
     - **Pause** Pauses the song
-    - **Play** Plays the song, use: "play (name or url)
+    - **Play** Plays the song, use: "play (name, url or parameter)
+	    - **-f** Plays a file added with the message
     - **Queue** Shows the queue, list of songs
     - **Remove** Removes a song, use: "remove (song number)
     - **Resume** Resumes the song if paused
@@ -61,7 +62,8 @@ help={
     - **Move** Mueve la cancion a un lugar en la queue, uso: "move (numero de cancion) (lugar a mover)
     - **Next** Pasa a la siguiente cancion o skipea a una cancion en la queue, uso: "next (numero de cancion)
     - **Pause** Pausa la musica
-    - **Play** Reproduce una cancion, uso: "play (nombre o url)
+    - **Play** Reproduce una cancion, uso: "play (nombre, url o parametro)
+	    - **-f** Reproduce un archivo agregado con el mensaje
     - **Remove** Remueve una cancion, uso: "remove (numero de cancion)
     - **Shuffle** Mezcla la queue
     - **Song** Muestra la cancion actual
@@ -111,7 +113,8 @@ help={
     - **Move** Move uma música para certo lugar da lista, use: "move (número da música) (lugar onde vai mover)
     - **Next** Toca a próxima musica ou pula para certa posição na lista de reprodução, use: "next (número da música)
     - **Pause** Pausa a música
-    - **Play** Toca a música, use: "play (nome ou url)
+    - **Play** Toca a música, use: "play (nome, url ou parâmetro)
+	    - **-f** Toca um arquvio adicionado com a mensagem
     - **Queue** Mostra a lista de músicas
     - **Remove** Remove uma música, use: "remove (número da música)
     - **Shuffle** Toca a lista de músicas aleatoriamente

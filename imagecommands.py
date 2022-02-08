@@ -72,7 +72,6 @@ class images(commands.Cog):
 		for grupo in grupos:
 			texto=texto+str(grupos[grupo]["name"])+": "+str(len(grupos[grupo]["data"]))+"\n"
 			
-		print(texto)
 		embed=discord.Embed(color=0x3498DB, title=leng.grupos[a.get_lenguaje(ctx.message)] ,description=texto)
 			
 		await ctx.send(embed=embed)

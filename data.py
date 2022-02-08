@@ -86,10 +86,12 @@ class datos:
 #-----------------------REM DATA------------------------#
 
     def rem_data(self, grupo, arg, x):  # remueve links del archivo
-        grupos = self.grupos
+        grupos = self.get_data()
         y = grupos[grupo]["data"].index(arg)
         grupos[grupo]["data"].pop(y)
-        archivo = LINKS_FOLDER+grupos[grupo]["fileName"]
+        archivo = LINKS_FOLDER+self.grupos[grupo]["fileName"]
+        self.grupos = grupos
+
         with open(archivo, "r") as f:
             lines = f.readlines()
         with open(archivo, "w") as f:
