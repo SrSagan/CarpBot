@@ -1,18 +1,15 @@
-import os
 import discord
-from discord.ext import commands
-from discord import FFmpegPCMAudio
 import time
-import asyncio
-from requests.sessions import merge_setting
 import youtube_dl
 import data
 from requests import get
 import json
-import random
 import discord.utils
 import lenguajes as leng
-
+import requests
+import shutil
+from tinytag import TinyTag
+import os
 
 a = data.datos()
 
@@ -37,6 +34,7 @@ class queuer:
                     "name": None,
                     "link": None,
                     "length": None,
+                    "class": None,
                 }],
             }
         }
@@ -48,6 +46,7 @@ class queuer:
             server["playlist"]["songs"][0]["name"] = song["name"]
             server["playlist"]["songs"][0]["length"] = song["length"]
             server["playlist"]["songs"][0]["link"] = song["link"]
+            server["playlist"]["songs"][0]["class"] = song["class"]
             servers.append(server)
             return servers_id, servers
 
@@ -105,6 +104,7 @@ class queuer:
                     "name": vid_name,
                     "length": vid_length,
                     "link": vid_link,
+                    "class": "yt"
                 }
 
                 servers_id, servers = await self.queuer(song, id, servers_id, servers)
@@ -142,6 +142,7 @@ class queuer:
                 "name": vid_name,
                 "length": vid_length,
                 "link": vid_link,
+                "class": "yt"
             }
             
             servers_id, servers = await self.queuer(song, id, servers_id, servers)
@@ -164,9 +165,42 @@ class queuer:
 
     async def file_queuer(self, ctx, url, servers_id, servers):
         id = ctx.message.guild.id
+
+        #download the song and get the metadata
+        r = requests.get(url, stream=True)
+
+        #https://cdn.discordapp.com/attachments/879920775195422783/937832073236979772/ta_bien.mp3
+
+        #get the name from the url
+        y = url.rfind("/")
+        name = url[y+1:]
+
+        if r.status_code == 200:
+            with open("temp/"+name, 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
+
+        audio = TinyTag.get("temp/"+name)
+
+        if(audio.title==None):
+            title = name
+        else:
+            title = audio.title
+        
+        vid_length=time.strftime("%H:%M:%S", time.gmtime(audio.duration))
+
         song = {
-                "name": "???",
-                "length": "???",
+                "name": title,
+                "length": vid_length,
                 "link": url,
+                "class": "fl"
         }
-        return await self.queuer(song, id, servers_id, servers)
+        servers_id, servers = await self.queuer(song, id, servers_id, servers)
+        embed = discord.Embed(
+            title="Queued", color=0x3498DB, description=str(title))
+        embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(servers[servers_id.index(int(id))]["playlist"]["songs"])))
+        await ctx.send(embed=embed)
+
+        os.remove("temp/"+name)
+
+        return servers_id, servers
