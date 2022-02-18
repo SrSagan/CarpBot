@@ -112,76 +112,35 @@ class general(commands.Cog):
             for word in args:
                 texto = (texto+" "+word)  # junta todo el texto del msg
             x = texto.find("!")
-            y = texto.find("¡")  # checkea por cualquiera de los 3 divisores
-            z = texto.find("?")
-
-            if x > -1:  # separa el autor y lo busca
+            if x > -1:  # separa la palabra
                 j = len(texto)
-                autor = texto[x+1:j]
+                palabra = texto[x+1:j]
                 if debugmode:
                     await ctx.send(autor)
-                frases = a.get_frase("autor", autor)
+                frases = a.get_frase("palabra", palabra)
                 if debugmode:
                     await ctx.send(str(frases))
-
-            elif y > -1:  # separa la fecha y la busca
-                j = len(texto)
-                fecha = texto[y+1:j]
-                if debugmode:
-                    await ctx.send(fecha)
-                frases = a.get_frase("fecha", fecha)
-                if debugmode:
-                    await ctx.send(str(frases))
-
-            elif z > -1:  # separa una palabra y la busca
-                j = len(texto)
-                word = texto[z+1:j]
-                if debugmode:
-                    await ctx.send(word)
-                frases = a.get_frase("palabra", word)
-                if debugmode:
-                    await ctx.send(str(frases))
-
-            else:
-                # si no se encontro nada informa
-                await ctx.send(leng.nsen[a.get_lenguaje(ctx.message)])
-
-            if frases != -1:  # si se encontraron frases las envia todas
-                for frase in frases:
-                    x = frase.find('!')
-                    y = frase.rfind('!')
-                    autor = frase[x+1:y-1]
-                    fecha = frase[y+1:]
-                    frase = frase[:x-1]
-                    embed = discord.Embed(
-                        title=leng.ff[a.get_lenguaje(ctx.message)], color=0x3498DB)
-                    embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][0], value=frase,
-                                    inline=False)  # pone la frase
-                    embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][1], value=autor,
-                                    inline=True)  # pone el autor
-                    embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][2], value=fecha,
-                                    inline=True)  # pone la fecha
-
-                    await ctx.send(embed=embed)  # envia la respuesta
-            else:
-                # si no se encuentra nada se informa
-                await ctx.send(leng.nsen[a.get_lenguaje(ctx.message)])
+            else: frases=[a.get_frase("none")]
+        else: frases=[a.get_frase("none")]
+        
+        if(frases == -1):
+            await ctx.send(leng.nsen[a.get_lenguaje(ctx.message)])
 
         else:  # si no se busca nada pone una random
-            frase = a.get_frase("none")
-            x = frase.find('!')
-            y = frase.rfind('!')
-            autor = frase[x+1:y-1]
-            fecha = frase[y+1:]
-            frase = frase[:x-1]
-            embed = discord.Embed(title=leng.ff[a.get_lenguaje(ctx.message)], color=0x3498DB)
-            embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][0], value=frase,
-                            inline=False)  # pone la frase
-            embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][1], value=autor,
-                            inline=True)  # pone el autor
-            embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][2], value=fecha,
-                            inline=True)  # pone la fecha
-            await ctx.send(embed=embed)  # envia la respuesta
+            for frase in frases:
+                x = frase.find('!')
+                y = frase.rfind('!')
+                autor = frase[x+1:y-1]
+                fecha = frase[y+1:]
+                frase = frase[:x-1]
+                embed = discord.Embed(title=leng.ff[a.get_lenguaje(ctx.message)], color=0x3498DB)
+                embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][0], value=frase,
+                                inline=False)  # pone la frase
+                embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][1], value=autor,
+                                inline=True)  # pone el autor
+                embed.add_field(name=leng.f_a_f[a.get_lenguaje(ctx.message)][2], value=fecha,
+                                inline=True)  # pone la fecha
+                await ctx.send(embed=embed)  # envia la respuesta
 
 #-----------------------------REMOVEFRASE-----------------------------#
 

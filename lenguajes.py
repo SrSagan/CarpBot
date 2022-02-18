@@ -40,10 +40,8 @@ help={
     - **8ball** Answers questions with yes or no
     - **Addfrase** Adds a phrase to frase filosofica, use: "addfrase (phrase !author !date)
     -  **Dado** Rolls a dice, gives number between 1 and 6
-    -  **Frasefilosofica** Displays a random philosophical phrase, it has multiple search paramaters:
-    	-  **!autor:** You can search the name of the author of the phrase, ex: !ivan
-    	-  **¡fecha:** You can search the date of a phrase, ex: ¡2021
-    	-  **?plabra:** You can search for a word inside any phrase, ex: ?casa
+    -  **Frasefilosofica** Displays a random philosophical phrase, it has one search paramater
+	    -  **!word:** You can search a phrase using the ! on the command
     - **Removefrase** Removes a philosophical phrase, use: "removefrase (phrase !author !date)
     - **Changeprefix** Changes the prefix of the bot
     - **Changelenguage** Changes the lenguage of the bot
@@ -91,10 +89,8 @@ help={
     - **8ball** Responde preguntas con si o no
     - **Addfrase** Agrega una frase a frase filosofica, uso "addfrase (frase !autor !fecha)
     - **Dado** Tira un dado, da un numero del 1 al 6
-    - **Frasefilosofica** Muestra una frase filosofica random, tiene multiples parametros de busqueda:
-    	- **!autor:** Podes buscar el nombre del autor de la frase, ej: !Ivan
-    	- **¡fecha:** Podes buscar la fecha de la frase, ej: ¡2021
-    	- **?palabra:** Podes buscar una palabra dentro de una frase, ej: ?casa
+    - **Frasefilosofica** Muestra una frase filosofica random, tiene un parametro de busqueda
+	    - **!palabra:** Podes buscar una frase usando ! en el comando
     - **Removefrase** Remueve una frase filosofica, uso: "removefrase (frase !autor !fecha)
     - **Changeprefix** Cambia el prefijo del bot
     - **Changelenguage** Cambia el lenguaje del bot
@@ -144,10 +140,8 @@ help={
     - **8ball** Responde perguntas com "sim" ou "não" (pode estar em espanhol ou inglês)
     - **Addfrase** Adiciona uma frase para frase filosófica, use: "addfrase (frase !autor !data)
     -  **Dado** Rola um dado, dá um número entre 1 a 6
-    -  **Frasefilosofica** Mostra uma frase filosófica aleatoria, cujo tem múltiplos parâmetros de pesquisa: 
-        -  **!autor:** Você pode pesquisar o nome do autor da frase, ex: !ivan 
-        -  **¡fecha:** Você pode pesquisar a data da frase, ex: ¡2021 
-        -  **?plabra:** Você pode pesquisar por uma palavra denteo de qualquer frase, ex: ?casa
+    - **Frasefilosofica** Mostra uma frase filosófica aleatória, que contém um parâmetro de pesquisa 
+	    - **!palavra:** você pode pesquisar uma frase usando o ! no comando
     - **Removefrase** Remove uma frase filosófica, use: "removefrase (frase !autor !data)
     - **Changeprefix** Muda o prefixo do bot
 
