@@ -160,7 +160,27 @@ class datos:
             # si el type es none retorna una frase random
             return random.choice(frases)
 
-        elif type == "autor":  # si el type es autor
+
+        elif type == "palabra":  # si el type es palabra
+            for texto in frases:
+                textolow = texto.lower()
+                x = textolow.find("!")
+                textolow = textolow[:x]
+                x = textolow.find(dato[0].lower())
+                y = textolow[x:].find(" ")  # se busca si esta
+                if x > -1:
+                    # se compara la palabra encontrada con la palabra dada
+                    word = textolow[x:x+y]
+                    if word == dato[0].lower():
+                        # si coincide se guarda la frase en la array
+                        arrayReturns.append(texto)
+            if len(arrayReturns) > 0:
+                return arrayReturns  # se retorna la array
+            else:
+                return -1  # si esta vacia se retorna -1
+        else:
+            return 0  # si no es un type invalido se retorna 0
+        '''elif type == "autor":  # si el type es autor
             for texto in frases:
                 textolow = texto.lower()
                 x = textolow.find('!')
@@ -185,27 +205,8 @@ class datos:
             if len(arrayReturns) > 0:  # si la array tiene algun valor se retorna
                 return arrayReturns
             else:
-                return -1  # si la array esta vacia se retorna -1
-
-        elif type == "palabra":  # si el type es palabra
-            for texto in frases:
-                textolow = texto.lower()
-                x = textolow.find("!")
-                textolow = textolow[:x]
-                x = textolow.find(dato[0].lower())
-                y = textolow[x:].find(" ")  # se busca si esta
-                if x > -1:
-                    # se compara la palabra encontrada con la palabra dada
-                    word = textolow[x:x+y]
-                    if word == dato[0].lower():
-                        # si coincide se guarda la frase en la array
-                        arrayReturns.append(texto)
-            if len(arrayReturns) > 0:
-                return arrayReturns  # se retorna la array
-            else:
-                return -1  # si esta vacia se retorna -1
-        else:
-            return 0  # si no es un type invalido se retorna 0
+                return -1  # si la array esta vacia se retorna -1'''
+        
 
 #-----------------------REM FRASE------------------------#
 
