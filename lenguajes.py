@@ -406,7 +406,7 @@ tr={
     "PT":"Tempo restante"
 }
 neencdv={
-    "EN":"You're not in any voice channe",
+    "EN":"You're not in any voice channel",
     "ES":"No estas en ningun canal de voz",
     "PT":"Você não está em nenhum canal de musica"
 }

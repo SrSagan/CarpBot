@@ -58,7 +58,7 @@ class music:
         with open("sample.json", "w") as outfile:
             outfile.write(json_object)
 
- #--------------MUSIC PLAYER---------------#
+#--------------MUSIC PLAYER---------------#
     async def play(self, vc, ctx, bot):
         id = ctx.message.guild.id
         msg_sent = False

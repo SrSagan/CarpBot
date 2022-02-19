@@ -176,7 +176,6 @@ class datos:
         else:
             return 0  # si no es un type invalido se retorna 0
         
-
 #-----------------------REM FRASE------------------------#
 
     def rem_frase(self, frase):

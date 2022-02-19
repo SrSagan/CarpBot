@@ -18,13 +18,13 @@ import lenguajes as leng
 a = data.datos()
 b = music.music()
 
-devusers=[]
+devusers = []
 load_dotenv()
 dev = os.getenv('DEV_USERS')  # checkea los los dev users
 
 while True:
     x = dev.find(",")
-    if(x==-1):
+    if(x == -1):
         devusers.append(int(dev))
         break
     devusers.append(int(dev[:x]))
@@ -37,6 +37,7 @@ class music(commands.Cog):
 
 
 #---------------------------------------------------------LEAVE----------------------------------------------------------#
+
 
     @commands.command(
         aliases=['l', 'lv'],
@@ -52,8 +53,9 @@ class music(commands.Cog):
         except:
             await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
-        
-        if(ctx.message.author.id in devusers): status=True
+
+        if(ctx.message.author.id in devusers):
+            status = True
 
         if(status == True):
             vc.stop()
@@ -76,11 +78,12 @@ class music(commands.Cog):
                 channel = author.voice.channel
                 status = True
             except:
-                await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
                 status = False
 
+            if(ctx.message.author.id in devusers):
+                status = True
+
             # SI ESTA CONECTADO SOLO agrega el link a la queue
-            if(ctx.message.author.id in devusers): status=True
 
             voice_client = discord.utils.get(
                 ctx.bot.voice_clients, guild=ctx.guild)
@@ -91,8 +94,6 @@ class music(commands.Cog):
                     texto = request[0]
                 else:
                     texto = (texto+" "+word)
-
-                
 
             if voice_client != None:
                 x = texto.find("-f")
@@ -119,6 +120,9 @@ class music(commands.Cog):
                 vc = ctx.voice_client
                 if vc.is_playing() == False:  # si no esta reproduciendo comienza a reproducir (no hace falta pero weno)
                     await b.play(vc, ctx, self.bot)
+            else:
+                await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
+
         else:
             await ctx.send(leng.eenolduvpaalq[a.get_lenguaje(ctx.message)])
 
@@ -177,22 +181,22 @@ class music(commands.Cog):
             #------------------IMPRESION---------------#
 
             start = index-1
-            printed=0
-            edit=0
+            printed = 0
+            edit = 0
             while True:
                 if start <= 0:
-                    start =1
+                    start = 1
                 if start > len(names)-10:
                     start = len(names)-10
-                    
-                counter=1
-                data=''
+
+                counter = 1
+                data = ''
                 for name in names:
-                    if counter == index and playlist["playlist"]["status"] == True and counter>=start:
+                    if counter == index and playlist["playlist"]["status"] == True and counter >= start:
                         data = data+"\n**"+(str(counter)+") " +
                                             str(name)+"** *")+leng.tr[a.get_lenguaje(ctx.message)]+" "+time_left+"*"
 
-                    elif counter>=start:
+                    elif counter >= start:
                         data = data+"\n**"+(str(counter)+")** " +
                                             str(name))+" *"+leng.duracion[a.get_lenguaje(ctx.message)]+": "+lengths[counter-1]+"*"
 
@@ -201,38 +205,40 @@ class music(commands.Cog):
                     if counter == start+11:
                         if(len(names)-counter+1 != 0):
                             data = data+"\n\n**" + \
-                                str(len(names)-counter+1)+" "+leng.mc[a.get_lenguaje(ctx.message)]
+                                str(len(names)-counter+1)+" " + \
+                                leng.mc[a.get_lenguaje(ctx.message)]+"**"
                         break
 
                 embed = discord.Embed(
                     title="Queue", color=0x3498DB, description=data)
 
-                if(printed==0):
+                if(printed == 0):
                     message = await ctx.send(embed=embed)
-                elif(edit==1):
+                elif(edit == 1):
                     print("edited")
                     await message.edit(embed=embed)
-                    edit=0
+                    edit = 0
 
                 #------------------IMPRESION---------------#
 
                 #------------------REACITONS---------------#
-                if(printed==0):
+                if(printed == 0):
                     controls = ['⏮️', '⏪', '⏩', '⏭️']
                     for emoji in controls:
                         await message.add_reaction(emoji)
-                printed=1
+                printed = 1
 
                 await asyncio.sleep(0.5)
-                
 
-                pressed = await b.control_checker(message, controls, self.bot, ctx) #devuelve las diferencias entre el anterior control y el nuevo
-                if(pressed == "no"): break
+                # devuelve las diferencias entre el anterior control y el nuevo
+                pressed = await b.control_checker(message, controls, self.bot, ctx)
+                if(pressed == "no"):
+                    break
 
                 else:
-                    counter=0
+                    counter = 0
                     for press in pressed:
-                        if(press == 1): #checkea donde hay diferencia y actua
+                        if(press == 1):  # checkea donde hay diferencia y actua
                             if(counter == 0):
                                 start = 0
                             elif(counter == 1):
@@ -241,8 +247,8 @@ class music(commands.Cog):
                                 start = start+10
                             elif(counter == 3):
                                 start = len(names)-10
-                            edit=1
-                        counter=counter+1
+                            edit = 1
+                        counter = counter+1
 
                     #------------------REACITONS---------------#
 
@@ -269,7 +275,8 @@ class music(commands.Cog):
             await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id in devusers): status=True
+        if(ctx.message.author.id in devusers):
+            status = True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -300,7 +307,8 @@ class music(commands.Cog):
                 await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
                 status = False
 
-            if(ctx.message.author.id in devusers): status=True
+            if(ctx.message.author.id in devusers):
+                status = True
 
             if vc.is_paused() == True and status == True:
                 await ctx.send(leng.eayep[a.get_lenguaje(ctx.message)])
@@ -308,7 +316,8 @@ class music(commands.Cog):
                 t = time.localtime()
                 playlist["playlist"]["ptime"] = time.strftime("%H:%M:%S", t)
                 vc.pause()
-                embed = discord.Embed(title=leng.pausado[a.get_lenguaje(ctx.message)], color=0x3498DB)
+                embed = discord.Embed(
+                    title=leng.pausado[a.get_lenguaje(ctx.message)], color=0x3498DB)
                 await ctx.send(embed=embed)
 
 #---------------------------------------------------------RESUME----------------------------------------------------------#
@@ -333,12 +342,14 @@ class music(commands.Cog):
                 await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
                 status = False
 
-            if(ctx.message.author.id in devusers): status=True
+            if(ctx.message.author.id in devusers):
+                status = True
 
             vc = ctx.voice_client
             if vc.is_paused() == True and status == True:
                 vc.resume()
-                embed = discord.Embed(title=leng.resumido[a.get_lenguaje(ctx.message)], color=0x3498DB)
+                embed = discord.Embed(
+                    title=leng.resumido[a.get_lenguaje(ctx.message)], color=0x3498DB)
                 await ctx.send(embed=embed)
 
                 t = time.localtime()
@@ -384,7 +395,8 @@ class music(commands.Cog):
             await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id in devusers): status=True
+        if(ctx.message.author.id in devusers):
+            status = True
 
         if int(id) in servers_id and status == True:
 
@@ -434,7 +446,8 @@ class music(commands.Cog):
             await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id in devusers): status=True
+        if(ctx.message.author.id in devusers):
+            status = True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -502,9 +515,11 @@ class music(commands.Cog):
             # lo conviernet
             # amigo alto bardo hacer la pija esta
             embed = discord.Embed(
-                title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index)+"- "+str(names[index-1]))
-            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+str(lengths[index-1]))
-            embed.set_footer(text=leng.tr[a.get_lenguaje(ctx.message)]+": "+time_left)
+                title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index)+"- "+(str(names[index-1])))
+            embed.set_footer(text=leng.duracion[a.get_lenguaje(
+                ctx.message)]+str(lengths[index-1]))
+            embed.set_footer(
+                text=leng.tr[a.get_lenguaje(ctx.message)]+": "+time_left)
             await ctx.send(embed=embed)
 
 #---------------------------------------------------------CLEAR----------------------------------------------------------#
@@ -527,7 +542,8 @@ class music(commands.Cog):
             await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id in devusers): status=True
+        if(ctx.message.author.id in devusers):
+            status = True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -555,7 +571,8 @@ class music(commands.Cog):
             await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id in devusers): status=True
+        if(ctx.message.author.id in devusers):
+            status = True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
@@ -568,8 +585,13 @@ class music(commands.Cog):
                         embed.set_footer(
                             text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist["playlist"]["songs"][int(args[0])-1]["length"]))
                         await ctx.send(embed=embed)
+                        deleted = int(args[0])-1
 
-                        playlist["playlist"]["songs"].pop(int(args[0])-1)
+                        if(deleted == playlist["playlist"]["cplaying"]-1):
+                            playlist["playlist"]["status"] = False
+                            vc.stop()
+                        playlist["playlist"]["songs"].pop(deleted)
+
                     else:
                         await ctx.send(leng.cfdr[a.get_lenguaje(ctx.message)])
                 else:
@@ -580,8 +602,12 @@ class music(commands.Cog):
                             text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist["playlist"]["songs"][len(playlist["playlist"]["songs"])-1]["length"]))
                         await ctx.send(embed=embed)
 
-                        playlist["playlist"]["songs"].pop(
-                            len(playlist["playlist"]["songs"])-1)
+                        deleted = len(playlist["playlist"]["songs"])-1
+
+                        if(deleted == playlist["playlist"]["cplaying"]-1):
+                            playlist["playlist"]["status"] = False
+                            vc.stop()
+                        playlist["playlist"]["songs"].pop(deleted)
                     else:
                         await ctx.send(leng.eenduc[a.get_lenguaje(ctx.message)])
             else:
@@ -607,7 +633,8 @@ class music(commands.Cog):
             await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])
             status = False
 
-        if(ctx.message.author.id in devusers): status=True
+        if(ctx.message.author.id in devusers):
+            status = True
 
         if int(id) in servers_id and status == True:
             playlist = servers[servers_id.index(int(id))]
