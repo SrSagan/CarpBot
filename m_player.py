@@ -4,7 +4,7 @@ import discord.utils
 
 
 class player:
-    #--------------YOUTUBE PLAYER---------------#
+#--------------YOUTUBE PLAYER---------------#
     async def youtube_player(self, index, vc, j):
         ydl_opts = {
             'quiet': True,
@@ -15,7 +15,7 @@ class player:
             j["playlist"]["songs"][index]["link"], download=False)
 
         vc.play(discord.FFmpegPCMAudio(
-            r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'))  # reproduciendo
+        r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', options= '-vn'))  # reproduciendo
 
         return r.get('thumbnail', None)
 
