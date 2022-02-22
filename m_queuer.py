@@ -53,7 +53,6 @@ class queuer:
 #-------------YOUTUBE QUEUER--------------#
 
     async def youtube_queuer(self, ctx, reqest, servers_id, servers):
-
         ydl_opts = {
             'quiet': True,
             'format': 'bestaudio/best',

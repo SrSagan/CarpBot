@@ -79,6 +79,8 @@ class general(commands.Cog):
                 texto = (texto+" "+word)  # junta todo el texto del msg
             x = texto.find('!')  # busca los simbolos divisores (!)
             y = texto.rfind('!')
+            if(x == -1 or y == -1):
+                await ctx.send(leng.pfeaf[a.get_lenguaje(ctx.message)])
             autor = texto[x+1:y-1]
             fecha = texto[y+1:]
             frase = texto[:x-1]
