@@ -31,6 +31,7 @@ while True:
     dev = dev[x+1:]
 
 
+
 class music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -69,7 +70,7 @@ class music(commands.Cog):
                       name='play',
                       )
     async def play(self, ctx, *request):
-
+    
         # cosas a hacer:
         # Se tiene que checkear por problemas, checkear si el client esta en un canal de voz DONE
         if len(request) > 0:
@@ -94,14 +95,13 @@ class music(commands.Cog):
                     texto = request[0]
                 else:
                     texto = (texto+" "+word)
-
+            
             if voice_client != None:
                 x = texto.find("-f")
                 if(x != -1):
                     await b.queuer(ctx, texto, "fl")
                 else:
                     await b.queuer(ctx, texto, "yt")
-
                 vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
                 if vc.is_playing() == False:
                     await b.play(vc, ctx, self.bot)
@@ -115,10 +115,12 @@ class music(commands.Cog):
                     await b.queuer(ctx, texto, "fl")
                 else:
                     await b.queuer(ctx, texto, "yt")
+                    
                 await channel.connect()
 
                 vc = ctx.voice_client
                 if vc.is_playing() == False:  # si no esta reproduciendo comienza a reproducir (no hace falta pero weno)
+                    
                     await b.play(vc, ctx, self.bot)
             else:
                 await ctx.send(leng.neencdv[a.get_lenguaje(ctx.message)])

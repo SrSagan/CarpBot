@@ -65,6 +65,7 @@ class music:
 
         while True:  # comienza el loop de reproduccion
             if int(id) in self.servers_id:
+                
 
                 j = self.servers[self.servers_id.index(int(id))]
                 j["playlist"]["status"] = True
