@@ -27,7 +27,6 @@ class links(commands.Cog):
             await ctx.send(leng.eulopjcec[a.get_lenguaje(ctx.message)])
             return 0
 
-
         for arg in args:
             x = arg.rfind('.')
             y = arg.rfind('?')
@@ -38,11 +37,11 @@ class links(commands.Cog):
                     formato = arg[x:]
             else:
                 await ctx.send(leng.lnkinv[a.get_lenguaje(ctx.message)])
-            
+
             if(formato not in a.get_formatos() and arg.find("youtu") == -1 and args[0].lower() != 'exception'):
                 await ctx.send(leng.fi[a.get_lenguaje(ctx.message)])
                 return 0
-        
+
         ladded = 0
         gstate = 0
 
@@ -59,7 +58,7 @@ class links(commands.Cog):
 
             for grupo in grupos:
                 if(msg.content == grupos[grupo]["name"]):
-                    selectedGroup=grupo
+                    selectedGroup = grupo
                     gstate = 1
                     break
 
@@ -75,7 +74,7 @@ class links(commands.Cog):
             if(args[0].lower() == 'exception'):
                 if(arg != args[0]):
                     a.set_data(selectedGroup, arg)
-                    ladded = +1
+                    ladded += 1
 
             elif(args[0].lower() == 'continue'):
                 await ctx.send(leng.ei[a.get_lenguaje(ctx.message)])
@@ -96,15 +95,15 @@ class links(commands.Cog):
 
                         if(gstate != 1):
                             a.set_data(selectedGroup, img)
-                            ladded = +1
+                            ladded += 1
             else:
                 a.set_data(selectedGroup, arg)
-                ladded = +1
+                ladded += 1
 
-            if ladded == 1:  # cantidad de links igual a 1
-                await ctx.send(str(ladded)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][0]+" '"+str(grupos[selectedGroup]["name"])+"'")
-            elif ladded > 1:  # cantidad de links agregados mayor a uno se dice
-                await ctx.send(str(ladded)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][1]+" '"+str(grupos[selectedGroup]["name"])+"'")
+        if ladded == 1:  # cantidad de links igual a 1
+            await ctx.send(str(ladded)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][0]+" '"+str(grupos[selectedGroup]["name"])+"'")
+        elif ladded > 1:  # cantidad de links agregados mayor a uno se dice
+            await ctx.send(str(ladded)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][1]+" '"+str(grupos[selectedGroup]["name"])+"'")
 
 #-----------------------------REMOVELINK-----------------------------#
 
