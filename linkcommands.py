@@ -35,12 +35,16 @@ class links(commands.Cog):
                     formato = arg[x:y]
                 else:
                     formato = arg[x:]
+                    
+                if(formato not in a.get_formatos() and arg.find("youtu") == -1):
+                    await ctx.send(leng.fi[a.get_lenguaje(ctx.message)])
+                    return 0
             else:
-                await ctx.send(leng.lnkinv[a.get_lenguaje(ctx.message)])
+                if(args[0].lower() != 'exception' and args[0].lower() != 'continue'):
+                    await ctx.send(leng.lnkinv[a.get_lenguaje(ctx.message)])
+                    return 0
 
-            if(formato not in a.get_formatos() and arg.find("youtu") == -1 and args[0].lower() != 'exception'):
-                await ctx.send(leng.fi[a.get_lenguaje(ctx.message)])
-                return 0
+
 
         ladded = 0
         gstate = 0
@@ -66,7 +70,6 @@ class links(commands.Cog):
                 await ctx.send(leng.gi[a.get_lenguaje(ctx.message)])
 
         for arg in args:
-
             if(arg in grupos[selectedGroup]["data"] or arg+"\n" in grupos[selectedGroup]["data"]):
                 await ctx.send(leng.elyeell[a.get_lenguaje(ctx.message)])
                 return 0
@@ -80,6 +83,7 @@ class links(commands.Cog):
                 await ctx.send(leng.ei[a.get_lenguaje(ctx.message)])
 
                 while True:
+                    gstate=0
                     msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author)
 
                     if(msg.content.lower() == 'end'):
