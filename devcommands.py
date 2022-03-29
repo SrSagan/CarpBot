@@ -6,6 +6,7 @@ from discord.ext import commands
 import data
 from dotenv import load_dotenv
 import lenguajes as leng
+from discord_components import DiscordComponents, DiscordButton, Button
 
 a = data.datos()
 
@@ -67,6 +68,24 @@ class devcommands(commands.Cog):
             y = ip.find("\\")
             ip = ip[x+1:y]
             await ctx.send("IP:"+str(ip))
+        else:
+            await ctx.send("Solo devs pueden usar este comando")
+
+#-----------------------DEBUG------------------------#
+
+    @commands.command(  # DEBUG
+        name='debug',
+    )
+    async def debug(self, ctx):
+        # checkeea ke sea un dev
+        if(ctx.message.author.id in devusers):
+            components=[Button(label="Boton xd", custom_id="button1")]
+            embed = discord.Embed(title="title", color=0x3498DB, description="description")
+            await ctx.send(embed=embed, components=components)
+            while True:
+                print("whaa")
+                interaction = await self.bot.wait_for("button_click")
+                print(interaction)
         else:
             await ctx.send("Solo devs pueden usar este comando")
 

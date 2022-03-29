@@ -1,11 +1,7 @@
 import os
-import re
 
 import discord
 from discord.ext import commands
-from discord.flags import alias_flag_value
-from requests.models import RequestEncodingMixin
-from discord.utils import get
 import data
 import music
 import datetime
@@ -14,6 +10,7 @@ import json
 import asyncio
 from dotenv import load_dotenv
 import lenguajes as leng
+from lyricsgenius import Genius
 
 a = data.datos()
 b = music.music()
@@ -21,6 +18,8 @@ b = music.music()
 devusers = []
 load_dotenv()
 dev = os.getenv('DEV_USERS')  # checkea los los dev users
+lyrics_init = os.getenv("LYRICS")
+gn = Genius(lyrics_init)
 
 while True:
     x = dev.find(",")
@@ -704,6 +703,59 @@ class music(commands.Cog):
     async def shuffle(self, ctx):
         b.shuffler(ctx)
         await ctx.send(leng.mm[a.get_lenguaje(ctx.message)])
+
+#---------------------------------------------------------LYRICS----------------------------------------------------------#
+
+    @commands.command(
+        aliases=['letra', 'lyr'],
+        name='lyrics',
+    )
+    async def lyrics(self, ctx, *args):
+        servers = b.get_servers()
+        servers_id = b.get_servers_id()
+        id = ctx.message.guild.id
+
+        if(len(args) > 0):
+            texto = ""
+            for word in args:
+                texto = (texto+" "+word)
+            song = gn.search_song(texto)
+
+        else:
+            playlist = servers[servers_id.index(int(id))]
+            index = playlist["playlist"]["cplaying"]
+            song = gn.search_song(playlist["playlist"]["songs"][index-1]["name"])
+        
+        #find the embeded broken text at the end (fkin piece of shit)
+        lyrics = song.lyrics
+        x = lyrics.lower()
+        x = x.rfind("embed")
+
+        y=1
+        while True:
+            if(lyrics[x-y].isnumeric()):
+                y=y+1
+            else:
+                break
+        lyrics = lyrics[:x-y+1]
+    
+        #embed send
+        if(len(lyrics) >= 6000):
+            lyrics_pages=[]
+            while True:
+                if(len(lyrics) <= 4000):
+                    lyrics_pages.append(lyrics)
+                    break
+                x = lyrics[:4000]
+                x = x.rfind("\n")
+                lyrics_pages.append(lyrics[:x])
+                lyrics = lyrics[x:]
+                await ctx.send(str(len(lyrics)))
+
+        for lyrics in lyrics_pages:
+            gembed = discord.Embed(title=song.title, color=0x3498DB, description=lyrics)
+            gembed.set_thumbnail(url=song.header_image_url)
+            await ctx.send(embed=gembed)
 
 
 def setup(bot):
