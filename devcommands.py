@@ -6,7 +6,7 @@ from discord.ext import commands
 import data
 from dotenv import load_dotenv
 import lenguajes as leng
-from discord_components import DiscordComponents, DiscordButton, Button
+#from discord_components import DiscordComponents, DiscordButton, Button
 
 a = data.datos()
 
@@ -73,7 +73,7 @@ class devcommands(commands.Cog):
 
 #-----------------------DEBUG------------------------#
 
-    @commands.command(  # DEBUG
+    '''@commands.command(  # DEBUG
         name='debug',
     )
     async def debug(self, ctx):
@@ -87,7 +87,9 @@ class devcommands(commands.Cog):
                 interaction = await self.bot.wait_for("button_click")
                 print(interaction)
         else:
-            await ctx.send("Solo devs pueden usar este comando")
+            await ctx.send("Solo devs pueden usar este comando")'''
+    #imma shoot myself one day
+    #and the guy who made this thing is coming with me
 
 def setup(bot):
     bot.add_cog(devcommands(bot))
