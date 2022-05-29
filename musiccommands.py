@@ -740,6 +740,8 @@ class music(commands.Cog):
         lyrics = lyrics[:x-y+1]
     
         #embed send
+        lyrics_pages=[]
+        lyrics_pages.append(lyrics)
         if(len(lyrics) >= 6000):
             lyrics_pages=[]
             while True:
