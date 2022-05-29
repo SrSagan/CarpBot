@@ -263,3 +263,21 @@ class datos:
                 server["leng"] = newlenguaje
         with open(SOURCES_FOLDER+'prefix.json', "w") as f:
             json.dump(data, f)
+
+#-----------------------GET TIME------------------------#
+
+    def get_time(self, seconds):
+        s = seconds % 60
+        m = (seconds-s)/60 % 60
+        h = seconds/3600
+
+        array=[h,m,s]
+        outarray=[]
+        for value in array:
+            value = str(int(value))
+            if(len(value) == 1):
+                value="0"+value
+            outarray.append(value)
+
+        time = outarray[0]+":"+outarray[1]+":"+outarray[2]
+        return time

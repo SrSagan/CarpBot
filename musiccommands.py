@@ -144,6 +144,15 @@ class music(commands.Cog):
             lengths = []
             names = []
             index = playlist["playlist"]["cplaying"]
+            looping = playlist["playlist"]["looping"]
+
+            #correct looping
+            if(looping == 0):
+                looping=2
+            elif(looping == 1):
+                looping=0
+            elif(looping == 2):
+                looping=1
 
             for j in playlist["playlist"]["songs"]:
                 lengths.append(j["length"])
@@ -203,13 +212,18 @@ class music(commands.Cog):
 
                     counter = counter+1
 
+                    
                     if counter == start+11:
                         if(len(names)-counter+1 != 0):
                             data = data+"\n\n**" + \
                                 str(len(names)-counter+1)+" " + \
-                                leng.mc[a.get_lenguaje(ctx.message)]+"**"
+                                leng.mc[a.get_lenguaje(ctx.message)]+"**\n"+leng.arlq_ca_d[a.get_lenguaje(ctx.message)][looping]
+                        else:
+                            data =data+"\n\n"+leng.arlq_ca_d[a.get_lenguaje(ctx.message)][looping]
                         break
 
+
+                #leng.arlq_ca_d[a.get_lenguaje(ctx.message)][looping]
                 embed = discord.Embed(
                     title="Queue", color=0x3498DB, description=data)
 
@@ -551,6 +565,7 @@ class music(commands.Cog):
             playlist["playlist"]["status"] = False
             vc.stop()
             b.reset_all(ctx)
+            await ctx.send(leng.pv[a.get_lenguaje(ctx.message)])
 
 #---------------------------------------------------------REMOVE----------------------------------------------------------#
 
@@ -711,6 +726,7 @@ class music(commands.Cog):
         name='lyrics',
     )
     async def lyrics(self, ctx, *args):
+        #TODO: Give a list of pages of lyrics and make the user select before spamming the whole freaking chat with scott pirigrim movie
         servers = b.get_servers()
         servers_id = b.get_servers_id()
         id = ctx.message.guild.id
@@ -719,13 +735,46 @@ class music(commands.Cog):
             texto = ""
             for word in args:
                 texto = (texto+" "+word)
-            song = gn.search_song(texto)
+            songs = gn.search_songs(texto)
 
         else:
             playlist = servers[servers_id.index(int(id))]
             index = playlist["playlist"]["cplaying"]
-            song = gn.search_song(playlist["playlist"]["songs"][index-1]["name"])
-        
+            songs = gn.search_songs(playlist["playlist"]["songs"][index-1]["name"])
+
+        songs = songs["hits"]
+        out=[]
+        for song in songs:
+            song={
+            "name":song["result"]["title"],
+            "artist":song["result"]["primary_artist"]["name"],
+            "id":song["result"]["id"]
+            }
+            out.append(song)
+
+        embed = discord.Embed(title="Results", color=0x3498DB, description="Select a result")
+        position=1
+        for song in out:
+            value="**Name:** "+song["name"]+"\n"+"**Arist:** "+song["artist"]
+            embed.add_field(name=str(position), value=value, inline=False)
+            position=position+1
+
+        await ctx.send(embed=embed)
+
+        msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author)
+
+        if(msg.content.lower() == 'cancel'):
+                return 0
+
+        msg = msg.content
+        tabla=[1,2,3,4,5,6,7,8,10]
+        if msg.isnumeric():
+            msg=int(msg)
+            for num in tabla:
+                if(msg == num):
+                    song = gn.search_song(song_id=out[tabla.index(num)]["id"])
+
+
         #find the embeded broken text at the end (fkin piece of shit)
         lyrics = song.lyrics
         x = lyrics.lower()
@@ -752,7 +801,6 @@ class music(commands.Cog):
                 x = x.rfind("\n")
                 lyrics_pages.append(lyrics[:x])
                 lyrics = lyrics[x:]
-                await ctx.send(str(len(lyrics)))
 
         for lyrics in lyrics_pages:
             gembed = discord.Embed(title=song.title, color=0x3498DB, description=lyrics)

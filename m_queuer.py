@@ -1,5 +1,4 @@
 import discord
-import time
 import youtube_dl
 import data
 from requests import get
@@ -28,7 +27,7 @@ class queuer:
                 "status": False,
                 "tlenght": 0,
                 'looping': 0,
-                'pressed' : [1,1,1,1],
+                'pressed' : [1,1,1,1,0],
                 "songs":
                 [{
                     "name": None,
@@ -82,6 +81,11 @@ class queuer:
             type = "link"
 
         if type == "playlist":  # si es una playlist agrega cada cancion por separado
+
+            json_object=json.dumps(video, indent=4)
+            with open("video.json", "w") as outfile:
+                outfile.write(json_object)
+        
             
             title = video["title"]
             if("uploader" in video): author = video["uploader"]
@@ -93,8 +97,7 @@ class queuer:
                 vid_name = video["entries"][counter]['title']
                 vid_length = video["entries"][counter]['duration']
                 totalLenght = totalLenght+vid_length
-                vid_length = time.strftime(
-                    "%H:%M:%S", time.gmtime(vid_length))
+                vid_length = a.get_time(vid_length)
                 vid_link = video["entries"][counter]['url']
 
                 id = ctx.message.guild.id
@@ -108,11 +111,12 @@ class queuer:
 
                 servers_id, servers = await self.queuer(song, id, servers_id, servers)
 
+
                 counter = counter+1
+
             embed = discord.Embed(
                 title="Queued "+title, color=0x3498DB, description=str(len(video["entries"]))+" "+leng.canciones[a.get_lenguaje(ctx.message)])
-            totalLenght = time.strftime(
-                "%H:%M:%S", time.gmtime(totalLenght))
+            totalLenght = a.get_time(totalLenght)
             embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(totalLenght)+"\n"+author)
             await ctx.send(embed=embed)
 
@@ -122,7 +126,7 @@ class queuer:
             # agarra distinta info del video
             vid_name = video.get('title', None)
             vid_length = video.get('duration')
-            vid_length = time.strftime("%H:%M:%S", time.gmtime(vid_length))
+            vid_length = a.get_time(vid_length)
 
             if type == 'none':
                 ydl = youtube_dl.YoutubeDL({
@@ -146,11 +150,12 @@ class queuer:
             
             servers_id, servers = await self.queuer(song, id, servers_id, servers)
 
-            embed = discord.Embed(
-                title="Queued", color=0x3498DB, description=str(vid_name))
-            embed.set_image(url=vid_thumbnail)
-            embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(servers[servers_id.index(int(id))]["playlist"]["songs"])))
-            await ctx.send(embed=embed)
+            if(servers[servers_id.index(int(id))]["playlist"]["cplaying"] == 1):
+                embed = discord.Embed(
+                    title="Queued", color=0x3498DB, description=str(vid_name))
+                embed.set_image(url=vid_thumbnail)
+                embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(servers[servers_id.index(int(id))]["playlist"]["songs"])))
+                await ctx.send(embed=embed)
 
         
         json_object = json.dumps(servers, indent=4)
@@ -186,7 +191,7 @@ class queuer:
         else:
             title = audio.title
         
-        vid_length=time.strftime("%H:%M:%S", time.gmtime(audio.duration))
+        vid_length=a.get_time(audio.duration)
 
         song = {
                 "name": title,

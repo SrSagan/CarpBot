@@ -510,3 +510,8 @@ pfeaf={
     "ES":"Por favor escriba el autor y la fecha, ej: esto es una frase !juan !2020",
     "PT":"Por favor, escreva o autor e a data, ex: isso é uma frase !nick !2020" 
 }
+pv={
+    "EN":"Playlist cleared",
+    "ES":"Playlist vaciada",
+    "PT":"Playlist limpa"
+}

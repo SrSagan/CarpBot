@@ -109,9 +109,10 @@ class music:
 
                 #check if class is youtube or other and use correct function
                 if(j["playlist"]["songs"][index]["class"] == "yt"):
-                    vid_thumbnail = await p.youtube_player(index, vc, j)
+                    vid_thumbnail, url = await p.youtube_player(index, vc, j)
                 elif(j["playlist"]["songs"][index]["class"] == "fl"):
                     vid_thumbnail = await p.file_player(index, vc, j)
+                    url=None
 
                 if(msg_sent == True):
                     if(discord.utils.get(bot.cached_messages, id=msg.id) != None):
@@ -119,7 +120,8 @@ class music:
 
                 # if it is it should be delete
                 embed = discord.Embed(
-                    title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(j["playlist"]["songs"][index]["name"]))
+                    title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=j["playlist"]["songs"][index]["name"], url=url)
+
                 if(vid_thumbnail!=0):
                     embed.set_image(url=vid_thumbnail)
                 embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(index+1))
@@ -181,7 +183,15 @@ class music:
             j = self.servers[self.servers_id.index(int(id))]
             prev_pressed = j["playlist"]["pressed"]
 
-            pressed = [0,0,0,0]
+            state=prev_pressed[4]
+            if(state==0):
+                state=1
+            else:
+                state=0
+            j["playlist"]["pressed"][4]=state
+            prev_pressed = prev_pressed[0:3]
+
+            pressed = [0,0,0,0, state]
             out=[0,0,0,0]
             for i in range(0, 60): #timer de 1min
 
@@ -199,8 +209,11 @@ class music:
                     else:
                         out[counter]=1
                     counter=counter+1
-                
-                j["playlist"]["pressed"]=pressed #los guarda
+                if(j["playlist"]["pressed"][4] == state):
+                    pressed[4]=state
+                    j["playlist"]["pressed"]=pressed #los guarda
+                else:
+                    return "no"
 
                 if(1 in out): #envia las diferencias
                     return out
