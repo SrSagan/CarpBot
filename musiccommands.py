@@ -735,7 +735,7 @@ class music(commands.Cog):
             texto = ""
             for word in args:
                 texto = (texto+" "+word)
-            songs = gn.search_songs(texto)
+            songs = gn.search_songs(texto)  #find a way to search more than 10 songs
 
         else:
             playlist = servers[servers_id.index(int(id))]
@@ -751,9 +751,11 @@ class music(commands.Cog):
             "id":song["result"]["id"]
             }
             out.append(song)
-
+        
+        #make pages of 5 songs each and make them control with (n)ext (p)revious (c)ancel
+        #somehow add a timer of one minute after last action after which it stops checking
         embed = discord.Embed(title="Results", color=0x3498DB, description="Select a result")
-        position=1
+        position=1#redraw menu or edit? new numbers or same 5? 
         for song in out:
             value="**Name:** "+song["name"]+"\n"+"**Arist:** "+song["artist"]
             embed.add_field(name=str(position), value=value, inline=False)
@@ -763,7 +765,7 @@ class music(commands.Cog):
 
         msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author)
 
-        if(msg.content.lower() == 'cancel'):
+        if(msg.content.lower() == 'cancel'): #also check for previous next and cancel and inform of each one
                 return 0
 
         msg = msg.content
