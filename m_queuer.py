@@ -22,12 +22,13 @@ class queuer:
             "playlist":
             {
                 "cplaying": 0,
+                "oldindex": 1,
                 "ptime": None,
                 "time": None,
                 "status": False,
                 "tlenght": 0,
                 'looping': 0,
-                'pressed' : [1,1,1,1,0],
+                'pressed' : [1,1,1,1,0,0],
                 "songs":
                 [{
                     "name": None,
@@ -42,6 +43,7 @@ class queuer:
             return servers_id, servers
         else:
             servers_id.append(int(id))
+            server["id"]=int(id)
             server["playlist"]["songs"][0]["name"] = song["name"]
             server["playlist"]["songs"][0]["length"] = song["length"]
             server["playlist"]["songs"][0]["link"] = song["link"]
@@ -111,7 +113,6 @@ class queuer:
 
                 servers_id, servers = await self.queuer(song, id, servers_id, servers)
 
-
                 counter = counter+1
 
             embed = discord.Embed(
@@ -150,7 +151,7 @@ class queuer:
             
             servers_id, servers = await self.queuer(song, id, servers_id, servers)
 
-            if(servers[servers_id.index(int(id))]["playlist"]["cplaying"] == 1):
+            if(servers[servers_id.index(int(id))]["playlist"]["status"]):
                 embed = discord.Embed(
                     title="Queued", color=0x3498DB, description=str(vid_name))
                 embed.set_image(url=vid_thumbnail)
@@ -195,8 +196,8 @@ class queuer:
 
         song = {
                 "name": title,
-                "length": vid_length,
                 "link": url,
+                "length": vid_length,
                 "class": "fl"
         }
         servers_id, servers = await self.queuer(song, id, servers_id, servers)

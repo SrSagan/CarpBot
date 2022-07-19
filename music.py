@@ -52,30 +52,49 @@ class music:
             self.servers.pop(self.servers_id.index(int(id)))
             self.servers_id.pop(self.servers_id.index(int(id)))
 
-        json_object = json.dumps(self.servers, indent=4)
-
-        # Writing to sample.json
-        with open("sample.json", "w") as outfile:
-            outfile.write(json_object)
+        self.write_json()
 
 #--------------MUSIC PLAYER---------------#
     async def play(self, vc, ctx, bot):
         id = ctx.message.guild.id
         msg_sent = False
-
         while True:  # comienza el loop de reproduccion
             if int(id) in self.servers_id:
                 
-
                 j = self.servers[self.servers_id.index(int(id))]
+
+                self.write_json()
+
                 j["playlist"]["status"] = True
-                index = j["playlist"]["cplaying"]
+                if(self.get_oldindex(ctx)==self.get_index(ctx)):
+                    vid_thumbnail, url = await self.nextSong(ctx, vc, j)  
+                else:
+                    vid_thumbnail, url = await self.playSong(ctx, vc, j)
+                     
+                self.set_oldindex(ctx, self.get_index(ctx))
 
+                #check if the message was sent
+                if(msg_sent == True):
+                    if(discord.utils.get(bot.cached_messages, id=msg.id) != None):
+                        await msg.delete() 
+                
+                if(url == None):
+                    url = j["playlist"]["songs"][self.get_index(ctx)]["link"]
+                
+                # if it is it should be delete
+                embed = discord.Embed(
+                    title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=j["playlist"]["songs"][self.get_index(ctx)]["name"], url=url)
 
-                json_object = json.dumps(self.servers, indent=4)
-                # Writing to sample.json
-                with open("sample.json", "w") as outfile:
-                    outfile.write(json_object)
+                if(vid_thumbnail!=0):
+                    embed.set_image(url=vid_thumbnail)
+                embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(self.get_index(ctx)+1))
+
+                # muestra que esta reproduciendo
+                msg = await ctx.send(embed=embed)
+                msg_sent = True
+
+                t = time.localtime()
+                j["playlist"]["time"] = time.strftime("%H:%M:%S", t)
     
                 #--------------------------REPRODUCIENDO---------------------------#
                 while True:  # si esta reproduciendo no hace nada y espera
@@ -85,60 +104,25 @@ class music:
                     await asyncio.sleep(0.25)
                 #--------------------------REPRODUCIENDO---------------------------#
 
-                index = j["playlist"]["cplaying"]
                 if j["playlist"]["looping"] == 2:
-                    index = index-1
+                    self.set_index(ctx, function="min")
 
                 # si termina la queue frena el loop
-                if j["playlist"]["cplaying"]+1 > len(j["playlist"]["songs"]) or j["playlist"]["status"] == False or int(id) not in self.servers_id:
+                if self.get_index(ctx)+2 > len(j["playlist"]["songs"]) or j["playlist"]["status"] == False or int(id) not in self.servers_id:
                     if j["playlist"]["looping"] != 1 or int(id) not in self.servers_id:
                         j["playlist"]["status"] = False
                         embed = discord.Embed(
                             title=leng.qo[a.get_lenguaje(ctx.message)], color=0x3498DB)
                         await ctx.send(embed=embed)
 
-                        json_object = json.dumps(self.servers, indent=4)
-                        # Writing to sample.json
-                        with open("sample.json", "w") as outfile:
-                            outfile.write(json_object)
+                        self.write_json()
 
                         break
                     else:
-                        j["playlist"]["cplaying"] = 0
-                        index = 0
+                        self.set_index(ctx, 0)
+                
 
-                #check if class is youtube or other and use correct function
-                if(j["playlist"]["songs"][index]["class"] == "yt"):
-                    vid_thumbnail, url = await p.youtube_player(index, vc, j)
-                elif(j["playlist"]["songs"][index]["class"] == "fl"):
-                    vid_thumbnail = await p.file_player(index, vc, j)
-                    url=None
-
-                if(msg_sent == True):
-                    if(discord.utils.get(bot.cached_messages, id=msg.id) != None):
-                        await msg.delete()
-
-                # if it is it should be delete
-                embed = discord.Embed(
-                    title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=j["playlist"]["songs"][index]["name"], url=url)
-
-                if(vid_thumbnail!=0):
-                    embed.set_image(url=vid_thumbnail)
-                embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(index+1))
-
-                # muestra que esta reproduciendo
-                msg = await ctx.send(embed=embed)
-                msg_sent = True
-                index = index+1  # sube el contador
-                j["playlist"]["cplaying"] = index
-                t = time.localtime()
-                j["playlist"]["time"] = time.strftime("%H:%M:%S", t)
-
-                json_object = json.dumps(self.servers, indent=4)
-
-                # Writing to sample.json
-                with open("sample.json", "w") as outfile:
-                    outfile.write(json_object)
+                self.write_json()
 
 #----------------SHUFFLER-----------------#
 
@@ -183,18 +167,23 @@ class music:
             j = self.servers[self.servers_id.index(int(id))]
             prev_pressed = j["playlist"]["pressed"]
 
+            #gets the state and changes it
             state=prev_pressed[4]
             if(state==0):
                 state=1
             else:
                 state=0
             j["playlist"]["pressed"][4]=state
-            prev_pressed = prev_pressed[0:3]
+            j["playlist"]["pressed"][5]=message.id
+            prev_pressed = prev_pressed[0:4]
 
             pressed = [0,0,0,0, state]
             out=[0,0,0,0]
             for i in range(0, 60): #timer de 1min
-
+                
+                if(message.id != j["playlist"]["pressed"][5]):
+                    return "no"
+                
                 cache_msg = discord.utils.get(bot.cached_messages, id=message.id) #hace todo un tema con cached messages pq ds es una vija y no retorna los msg al toque
                 reactions = cache_msg.reactions
 
@@ -209,14 +198,94 @@ class music:
                     else:
                         out[counter]=1
                     counter=counter+1
-                if(j["playlist"]["pressed"][4] == state):
-                    pressed[4]=state
-                    j["playlist"]["pressed"]=pressed #los guarda
-                else:
+                
+                self.write_json()
+                if(j["playlist"]["pressed"][4] != state and j["playlist"]["pressed"]["5"] != message.id):
                     return "no"
+                else:
+                    pressed[4:]=[state, message.id]
+                    j["playlist"]["pressed"]=pressed #los guarda
 
                 if(1 in out): #envia las diferencias
                     return out
 
                 await asyncio.sleep(1)
             return "no"
+
+#-------------GET INDEX--------------#
+    def get_index(self, ctx):
+        id = ctx.message.guild.id
+        if int(id) in self.servers_id:
+            j = self.servers[self.servers_id.index(int(id))]
+ 
+            return j["playlist"]["cplaying"]
+        else:
+            return -1
+
+#-------------SET INDEX--------------#
+    def set_index(self, ctx, index=0, function=None):
+        id = ctx.message.guild.id
+        if int(id) in self.servers_id:
+            j = self.servers[self.servers_id.index(int(id))]
+            
+            if(function == "sum"):
+                j["playlist"]["cplaying"] =  self.get_index(ctx)+1
+            elif(function == "min"):
+                j["playlist"]["cplaying"] =  self.get_index(ctx)-1
+            else:
+                if(index != None):
+                    j["playlist"]["cplaying"] = index
+            
+            self.write_json()
+
+#-------------NEXT SONG--------------#
+    async def nextSong(self, ctx, vc, j):
+        self.set_index(ctx, function="sum")
+
+        return await self.playSong(ctx, vc, j)
+
+#-------------PLAY SONG--------------#
+    async def playSong(self, ctx, vc, j):
+        #check if class is youtube or other and use correct function
+        if(j["playlist"]["songs"][self.get_index(ctx)]["class"] == "yt"):
+            vid_thumbnail, url, index = await p.youtube_player(self.get_index(ctx), vc, j)
+            
+        elif(j["playlist"]["songs"][self.get_index(ctx)]["class"] == "fl"):
+            vid_thumbnail, index = await p.file_player(self.get_index(ctx), vc, j)
+            url=None
+        
+        return vid_thumbnail, url
+
+#-------------GET OLDINDEX--------------#
+    def get_oldindex(self, ctx):
+        id = ctx.message.guild.id
+        if int(id) in self.servers_id:
+            j = self.servers[self.servers_id.index(int(id))]
+ 
+            return j["playlist"]["oldindex"]
+        else:
+            return -1
+
+#-------------SET INDEX--------------#
+    def set_oldindex(self, ctx, index=0, function=None):
+        id = ctx.message.guild.id
+        if int(id) in self.servers_id:
+            j = self.servers[self.servers_id.index(int(id))]
+            
+            if(function == "sum"):
+                j["playlist"]["oldindex"] =  self.get_oldindex(ctx)+1
+            elif(function == "min"):
+                j["playlist"]["oldindex"] =  self.get_oldindex(ctx)-1
+            else:
+                if(index != None):
+                    j["playlist"]["oldindex"] = index
+            
+            self.write_json()
+
+#-------------WRITE JSON--------------#
+    #TODO write constant updater of json :)
+    def write_json(self):
+        json_object = json.dumps(self.servers, indent=4)
+        # Writing to sample.json
+        with open("sample.json", "w") as outfile:
+            outfile.write(json_object)
