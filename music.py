@@ -124,7 +124,7 @@ class music:
 
                 self.write_json()
 
-#----------------SHUFFLER-----------------#
+#----------------SHUFFLER-----------------#<
 
     def shuffler(self, ctx):
         id = ctx.message.guild.id
