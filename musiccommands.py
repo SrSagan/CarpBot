@@ -470,7 +470,8 @@ class music(commands.Cog):
             vc = ctx.voice_client
 
             if(playlist["playlist"]["status"] == False):
-                playlist["playlist"]["oldindex"]=b.get_index(ctx)-1
+                #DISGUSTING trick to make the old index think is lower and not play the next song (in this case would be out of index)
+                playlist["playlist"]["oldindex"]=b.get_index(ctx)-1 
                 await b.play(vc, ctx, self.bot)
             else:
                 b.set_index(ctx, function="min")
