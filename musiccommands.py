@@ -164,7 +164,7 @@ class music(commands.Cog):
 
             start_time = datetime.timedelta(
                 hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-            x = time.strptime(lengths[index].split(',')[0], '%H:%M:%S')
+            x = time.strptime(lengths[index-1].split(',')[0], '%H:%M:%S')
             # lo mismo pero del largo del video
 
             length = datetime.timedelta(
@@ -202,7 +202,7 @@ class music(commands.Cog):
                 counter = 1
                 data = ''
                 for name in names:
-                    if counter == index+1 and playlist["playlist"]["status"] == True and counter >= start:
+                    if counter == index and playlist["playlist"]["status"] == True and counter >= start:
                         data = data+"\n**"+(str(counter)+") " +
                                             str(name)+"** *")+leng.tr[a.get_lenguaje(ctx.message)]+" "+time_left+"*"
 
@@ -230,6 +230,7 @@ class music(commands.Cog):
                 if(printed == 0):
                     message = await ctx.send(embed=embed)
                 elif(edit == 1):
+                    print("edited")
                     await message.edit(embed=embed)
                     edit = 0
 
@@ -243,13 +244,12 @@ class music(commands.Cog):
                 printed = 1
 
                 await asyncio.sleep(0.5)
-                if(message.id != playlist["playlist"]["pressed"][5]): #if it's a new message it resets stuff so it doesn't break
-                     playlist["playlist"]["pressed"][0:4]=[1,1,1,1]
 
                 # devuelve las diferencias entre el anterior control y el nuevo
                 pressed = await b.control_checker(message, controls, self.bot, ctx)
                 if(pressed == "no"):
                     break
+
                 else:
                     counter = 0
                     for press in pressed:
@@ -423,7 +423,7 @@ class music(commands.Cog):
                 if args[0].isnumeric():
                     if int(args[0]) <= len(songs):
                         index = int(args[0])-1
-                        b.set_index(ctx, index=index)
+                        playlist["playlist"]["cplaying"] = index
                         vc.stop()
                     else:
                         await ctx.send(leng.cfdr[a.get_lenguaje(ctx.message)])
@@ -435,7 +435,6 @@ class music(commands.Cog):
                     vc.stop()
                 else:
                     vc.stop()
-                    #await b.nextSong(ctx, vc, playlist)
         json_object = json.dumps(servers, indent=4)
 
         # Writing to sample.json
@@ -469,16 +468,15 @@ class music(commands.Cog):
             playlist = servers[servers_id.index(int(id))]
             vc = ctx.voice_client
 
-            if(playlist["playlist"]["status"] == False):
-                #DISGUSTING trick to make the old index think is lower and not play the next song (in this case would be out of index)
-                playlist["playlist"]["oldindex"]=b.get_index(ctx)-1 
+            if playlist["playlist"]["status"] == False:
+                playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]-1
                 await b.play(vc, ctx, self.bot)
+
             else:
-                b.set_index(ctx, function="min")
+                playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]-2
                 vc.stop()
 
 #---------------------------------------------------------SONG----------------------------------------------------------#
-
 
     @commands.command(
         name='song',
@@ -504,7 +502,7 @@ class music(commands.Cog):
 
             start_time = datetime.timedelta(
                 hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-            x = time.strptime(lengths[index].split(',')[0], '%H:%M:%S')
+            x = time.strptime(lengths[index-1].split(',')[0], '%H:%M:%S')
 
             # lo mismo pero del largo del video
             length = datetime.timedelta(
@@ -531,11 +529,10 @@ class music(commands.Cog):
 
             # lo conviernet
             # amigo alto bardo hacer la pija esta
-            url = "https://youtube.com/watch?v="+playlist["playlist"]["songs"][index]["link"]
             embed = discord.Embed(
-                title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index+1)+"- "+(str(names[index])), url=url)
+                title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index)+"- "+(str(names[index-1])))
             embed.set_footer(text=leng.duracion[a.get_lenguaje(
-                ctx.message)]+str(lengths[index]))
+                ctx.message)]+str(lengths[index-1]))
             embed.set_footer(
                 text=leng.tr[a.get_lenguaje(ctx.message)]+": "+time_left)
             await ctx.send(embed=embed)
@@ -666,14 +663,6 @@ class music(commands.Cog):
                             playlist["playlist"]["songs"].pop(int(args[0])-1)
                             playlist["playlist"]["songs"].insert(
                                 int(args[1])-1, moving_song)
-                            #fix missalignment when moving on top or below the song that's currently playing
-                            if(int(args[1])-1 <= b.get_index(ctx)):
-                                b.set_index(ctx, function="sum")
-                                b.set_oldindex(ctx, function="sum")
-                            if(int(args[1])-1 >= b.get_index(ctx)):
-                                b.set_index(ctx, function="min")
-                                b.set_oldindex(ctx, function="min")
-
                             embed = discord.Embed(title="Song moved", color=0x3498DB, description=str(
                                 playlist["playlist"]["songs"][int(args[1])-1]["name"])+" moved to position "+str(args[1]))
                             await ctx.send(embed=embed)
@@ -751,7 +740,7 @@ class music(commands.Cog):
         else:
             playlist = servers[servers_id.index(int(id))]
             index = playlist["playlist"]["cplaying"]
-            songs = gn.search_songs(playlist["playlist"]["songs"][index]["name"])
+            songs = gn.search_songs(playlist["playlist"]["songs"][index-1]["name"])
 
         songs = songs["hits"]
         out=[]
@@ -821,5 +810,5 @@ class music(commands.Cog):
             await ctx.send(embed=gembed)
 
 
-def setup(bot):
-    bot.add_cog(music(bot))
+async def setup(bot):
+    await bot.add_cog(music(bot))

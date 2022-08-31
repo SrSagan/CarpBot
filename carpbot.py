@@ -4,19 +4,25 @@ import discord
 from dotenv import load_dotenv
 from discord.ext import commands
 import data
+import asyncio
 d = data.datos()
+
+intents = discord.Intents.default()
+intents.message_content = True
 
 load_dotenv() #carga datos importantes como el token y los dev users del archivo .dev
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix=d.get_prefix, case_insensitive=True, help_command=None) #pone el prefix del comando
+bot = commands.Bot(command_prefix=d.get_prefix, case_insensitive=True, help_command=None, intents=intents) #pone el prefix del comando
 
 extensions=["linkcommands", "imagecommands", "devcommands", "generalcommands", "musiccommands"] #una array con todos los archivos
 
-if __name__ == '__main__': #se cargan todos los archivos
-	for extension in extensions:
-		bot.load_extension(extension)
+async def main():
+	async with bot:
+		for extension in extensions:
+			await bot.load_extension(extension)
+		await bot.start(TOKEN)
+		#print(TOKEN)
+		print("Bot iniciado")
 
-
-print("bot iniciado")
-bot.run(TOKEN)
+asyncio.run(main())

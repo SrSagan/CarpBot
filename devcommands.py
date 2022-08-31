@@ -91,5 +91,5 @@ class devcommands(commands.Cog):
     #imma shoot myself one day
     #and the guy who made this thing is coming with me
 
-def setup(bot):
-    bot.add_cog(devcommands(bot))
+async def setup(bot):
+    await bot.add_cog(devcommands(bot))

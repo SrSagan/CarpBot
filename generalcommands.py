@@ -254,5 +254,5 @@ class general(commands.Cog):
         else:
             await ctx.send(leng.sapuec[a.get_lenguaje(ctx.message)])
 
-def setup(bot):
-    bot.add_cog(general(bot))
+async def setup(bot):
+    await bot.add_cog(general(bot))

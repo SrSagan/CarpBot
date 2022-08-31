@@ -2,6 +2,7 @@ import discord
 import youtube_dl
 import discord.utils
 
+
 class player:
 #--------------YOUTUBE PLAYER---------------#
     async def youtube_player(self, index, vc, j):
@@ -16,8 +17,7 @@ class player:
         vc.play(discord.FFmpegPCMAudio(
         r["formats"][0]["url"], before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', options= '-vn'))  # reproduciendo
 
-
-        return r.get('thumbnail', None), r.get('webpage_url'), j["playlist"]["songs"].index(j["playlist"]["songs"][index])
+        return r.get('thumbnail', None), r.get('webpage_url')
 
 #--------------FILE PLAYER---------------#
     async def file_player(self, index, vc, j):
@@ -25,4 +25,4 @@ class player:
         vc.play(discord.FFmpegPCMAudio(j["playlist"]["songs"][index]["link"],
                 before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'))  # reproduciendo
 
-        return 0, j["playlist"]["songs"].index(j["playlist"]["songs"][index])
+        return 0

@@ -156,5 +156,5 @@ class links(commands.Cog):
                     await ctx.send(str(removedLinks[j])+" "+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][1]+" '"+str(grupos[j]["name"])+"'")
 
 
-def setup(bot):
-    bot.add_cog(links(bot))
+async def setup(bot):
+    await bot.add_cog(links(bot))
