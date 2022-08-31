@@ -21,8 +21,8 @@ async def main():
 	async with bot:
 		for extension in extensions:
 			await bot.load_extension(extension)
-		await bot.start(TOKEN)
-		#print(TOKEN)
 		print("Bot iniciado")
+		await bot.start(TOKEN)
+		
 
 asyncio.run(main())
