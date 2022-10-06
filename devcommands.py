@@ -73,7 +73,7 @@ class devcommands(commands.Cog):
 
 #-----------------------DEBUG------------------------#
 
-    @commands.command(  # DEBUG
+    '''@commands.command(  # DEBUG
         name='debug',
     )
     async def debug(self, ctx):
@@ -83,7 +83,7 @@ class devcommands(commands.Cog):
             embed=discord.Embed(title="xd", color=0x3498DB)
             await ctx.send(embed=embed)
         else:
-            await ctx.send("Solo devs pueden usar este comando")
+            await ctx.send("Solo devs pueden usar este comando")'''
     #imma shoot myself one day
     #and the guy who made this thing is coming with me
 

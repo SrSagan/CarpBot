@@ -62,6 +62,39 @@ class music(commands.Cog):
             await ctx.voice_client.disconnect()
             b.reset_all(ctx)
 
+#-----------------------------------------------------estrelheinhas--------------------------------------------------------------#
+
+    @commands.command(pass_context=True,  #a command for the one no longer with us to remember her as she will always be in my heart
+                      aliases=['es', 'juli'],
+                      name='estrelheinhas',
+                      )
+    async def estrelheinhas(self, ctx):
+        voice_client = discord.utils.get(
+                ctx.bot.voice_clients, guild=ctx.guild)
+        author = ctx.message.author
+        try:
+            channel = author.voice.channel
+            status = True
+        except:
+            status = False
+        if(ctx.message.author.id in devusers):
+            status = True
+            
+        if voice_client != None:
+            await b.queuer(ctx, "https://www.youtube.com/playlist?list=PLT5RzA2p1DMdJSacPMujx1qaFXqMgxnHe", "yt")
+            vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
+            if vc.is_playing() == False:
+                 await b.play(vc, ctx, self.bot)
+        elif status == True:
+            await b.queuer(ctx, "https://www.youtube.com/playlist?list=PLT5RzA2p1DMdJSacPMujx1qaFXqMgxnHe", "yt")
+                 
+            await channel.connect()
+            vc = ctx.voice_client
+            if vc.is_playing() == False:  # si no esta reproduciendo comienza a reproducir (no hace falta pero weno)
+                await b.play(vc, ctx, self.bot)
+            #to conmemorate the only person who truly changed me
+
+
 #---------------------------------------------------------PLAY----------------------------------------------------------#
 
     @commands.command(pass_context=True,  # reproduce musica
