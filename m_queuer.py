@@ -150,7 +150,7 @@ class queuer:
             
             servers_id, servers = await self.queuer(song, id, servers_id, servers)
 
-            if(servers[servers_id.index(int(id))]["playlist"]["cplaying"] == 1):
+            if(servers[servers_id.index(int(id))]["playlist"]["status"] == True):
                 embed = discord.Embed(
                     title="Queued", color=0x3498DB, description=str(vid_name))
                 embed.set_image(url=vid_thumbnail)

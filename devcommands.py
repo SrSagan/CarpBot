@@ -73,21 +73,17 @@ class devcommands(commands.Cog):
 
 #-----------------------DEBUG------------------------#
 
-    '''@commands.command(  # DEBUG
+    @commands.command(  # DEBUG
         name='debug',
     )
     async def debug(self, ctx):
         # checkeea ke sea un dev
         if(ctx.message.author.id in devusers):
-            components=[Button(label="Boton xd", custom_id="button1")]
-            embed = discord.Embed(title="title", color=0x3498DB, description="description")
-            await ctx.send(embed=embed, components=components)
-            while True:
-                print("whaa")
-                interaction = await self.bot.wait_for("button_click")
-                print(interaction)
+            #await ctx.send("debug")
+            embed=discord.Embed(title="xd", color=0x3498DB)
+            await ctx.send(embed=embed)
         else:
-            await ctx.send("Solo devs pueden usar este comando")'''
+            await ctx.send("Solo devs pueden usar este comando")
     #imma shoot myself one day
     #and the guy who made this thing is coming with me
 
