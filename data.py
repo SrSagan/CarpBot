@@ -51,6 +51,11 @@ class datos:
                 "fileName": "catlinks.txt",
                 "data": [],
                 "name": "cat",
+            },
+            "ducklinks": {
+                "fileName": "ducklinks.txt",
+                "data": [],
+                "name": "duck"
             }
         }
 
@@ -281,3 +286,11 @@ class datos:
 
         time = outarray[0]+":"+outarray[1]+":"+outarray[2]
         return time
+
+#-----------------------WRITE JSON------------------------#
+    def write_json(self, array, filename):
+        json_object = json.dumps(array, indent=4)
+
+        # Writing to sample.json
+        with open(filename+".json", "w") as outfile:
+            outfile.write(json_object)

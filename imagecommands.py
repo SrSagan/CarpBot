@@ -10,19 +10,21 @@ a = data.datos()
 import lenguajes as leng
 
 groups={
-		"carplinks":['carp', 'capybara', 'capivara'],
+		"carplinks":['carp', 'capybara', 'capivara', 'carpincho'],
 		"rayllumlinks":['rayllum'],
 		"tdplinks":["tdp"],
 		"avatarlinks":["avatar", "atla"],
 		"memelinks":["meme"],
 		"owlinks":['owl', 'buho'],
 		"csmlinks":['csm', 'chainsawman'],
-		"catlinks":['cat', "gatinho", "gatito", "kitty", "gato"]
+		"catlinks":['cat', "gatinho", "gatito", "kitty", "gato"],
+		"ducklinks":["duck", "pato", "quack", "patito", "fuck", "duccky"]
 }
 aliases=[]
 for grupo in groups:
 	for alias in groups[grupo]:
-		aliases.append(alias)
+		if(alias != 'carpincho'):
+			aliases.append(alias)
 
 
 class images(commands.Cog):
@@ -45,7 +47,8 @@ class images(commands.Cog):
 		command = command[len(prefix):].lower()
 
 		for grupo in self.groups:
-			if(command in self.groups[grupo] or command=='carpincho'):
+
+			if(command in self.groups[grupo]):
 				grupos = a.get_data()
 				print(grupo+" usado")
 

@@ -8,6 +8,7 @@ import discord.utils
 import lenguajes as leng
 import m_queuer
 import m_player
+import yt_dlp
 
 a = data.datos()
 q = m_queuer.queuer()
@@ -44,7 +45,7 @@ class music:
     def set_servers_id(self, servers_id):
         self.servers_id = servers_id
 
-#-----------------GENERAL-----------------#
+#-----------------RESET ALL-----------------#
 
     def reset_all(self, ctx):
         id = ctx.message.guild.id
@@ -134,11 +135,7 @@ class music:
                 t = time.localtime()
                 j["playlist"]["time"] = time.strftime("%H:%M:%S", t)
 
-                json_object = json.dumps(self.servers, indent=4)
-
-                # Writing to sample.json
-                with open("sample.json", "w") as outfile:
-                    outfile.write(json_object)
+                a.write_json(self.servers, "servers")
 
 #----------------SHUFFLER-----------------#
 
@@ -220,3 +217,76 @@ class music:
 
                 await asyncio.sleep(1)
             return "no"
+
+#-------------VIDEO INFO--------------#
+
+    async def get_video_info(self, id, ctx, *index):
+        #gives currently playing video info
+        #info to give:
+        #name, author, length, url, views, thumbnail_link, codec, bitrate
+        #if possible track release year album artist
+        if int(id) in self.servers_id:
+            j = self.servers[self.servers_id.index(int(id))]
+            ydl_opts = {
+                'quiet': False,
+                'youtube_include_dash_manifest': False,
+                'youtube_include_hls_manifest': False,
+                'format': 'bestaudio'
+            }
+            yt = yt_dlp.YoutubeDL(ydl_opts)
+            #if an index is given use that instead of the currently playing
+            if(len(index) != 0):
+                index = int(index[0])
+
+                if(index <= len(j["playlist"]["songs"])):
+                    video = yt.extract_info(j["playlist"]["songs"][index-1]["link"], download=False)
+                else:
+                    return leng.cfdr[a.get_lenguaje(ctx.message)]
+
+            else:
+                video = yt.extract_info(j["playlist"]["songs"][j["playlist"]["cplaying"]-1]["link"], download=False)
+            
+            final_text=''
+            
+            #convert time myself cuz datetime is a piece of crap fact
+            date = "/"+video["upload_date"][0:4]
+            date = "/"+video["upload_date"][4:6]+date
+            date = video["upload_date"][6:8]+date
+
+            youtube_info="**Youtube Information**\n"
+            youtube_info+="-**Title:** "+video["fulltitle"]+"\n"
+            youtube_info+="-**Uploader:** "+video["uploader"]+"\n"
+            youtube_info+="-**Views:** "+str(video["view_count"])+"\n"
+            youtube_info+="-**Length:** "+video["duration_string"]+"\n"
+            youtube_info+="-**Likes:** "+str(video["like_count"])+"\n"
+            youtube_info+="-**Uploaded:** "+date+"\n"
+            youtube_info+="-**Link:** "+video["webpage_url"]+"\n"
+            youtube_info+="-**Channel Link:** "+video["channel_url"]+"\n"
+            youtube_info+="-**Thumbnail:** "+video["thumbnail"]+"\n\n"
+            final_text=youtube_info
+
+            if("track" in video):
+                music_info="**Music information**\n"
+                music_info+="-**Track name:** "+video["track"]+"\n"
+                music_info+="-**Artist:** "+video["artist"]+"\n"
+                music_info+="-**Album:** "+video["album"]+"\n"
+                if(video["release_year"] == None):
+                    release_year="Unknown"
+                else:
+                    release_year=video["release_year"]
+                music_info+="-**Release year:** "+release_year+"\n\n"
+                final_text+=music_info
+
+            file_info="**File information**\n"
+            file_info+="-**Audio codec**: "+video["acodec"]+"\n"
+            file_info+="-**Sample rate**: "+str(video["asr"]/1000)+"Khz\n"
+            file_info+="-**Size**: "+str(video["filesize"]/1000000)+"MB\n"
+            file_info+="-**Channels**: "+str(video["audio_channels"])+"\n"
+            file_info+="-**Youtube format**: "+video["format"]+"\n"
+            final_text+=file_info
+            
+            embed = discord.Embed(
+               title="Video Information", color=0x3498DB, description=final_text, )
+            embed.set_thumbnail(url=video["thumbnail"])
+            return embed
+

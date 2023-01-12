@@ -94,7 +94,6 @@ class music(commands.Cog):
                 await b.play(vc, ctx, self.bot)
             #to conmemorate the only person who truly changed me
 
-
 #---------------------------------------------------------PLAY----------------------------------------------------------#
 
     @commands.command(pass_context=True,  # reproduce musica
@@ -635,12 +634,6 @@ class music(commands.Cog):
                             text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist["playlist"]["songs"][int(args[0])-1]["length"]))
                         await ctx.send(embed=embed)
                         deleted = int(args[0])-1
-
-                        if(deleted == playlist["playlist"]["cplaying"]-1):
-                            playlist["playlist"]["status"] = False
-                            vc.stop()
-                        playlist["playlist"]["songs"].pop(deleted)
-
                     else:
                         await ctx.send(leng.cfdr[a.get_lenguaje(ctx.message)])
                 else:
@@ -652,13 +645,19 @@ class music(commands.Cog):
                         await ctx.send(embed=embed)
 
                         deleted = len(playlist["playlist"]["songs"])-1
-
-                        if(deleted == playlist["playlist"]["cplaying"]-1):
-                            playlist["playlist"]["status"] = False
-                            vc.stop()
-                        playlist["playlist"]["songs"].pop(deleted)
                     else:
                         await ctx.send(leng.eenduc[a.get_lenguaje(ctx.message)])
+                    
+                playlist["playlist"]["songs"].pop(deleted)
+
+                if(deleted == playlist["playlist"]["cplaying"]-1):
+                    if(deleted == len(playlist["playlist"]["songs"])): #si es la ultima cancion de la playlist vuelve una para atras
+                        await self.back(ctx)
+                    else:
+                        vc.stop() #sino reproduce la siguiente
+                        playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]-1 #la siguiente cambia a ser la que estabamos reproduciendo 
+                        #ya que se shiftea toda la playlist
+
             else:
                 await ctx.send(leng.eenducar[a.get_lenguaje(ctx.message)])
 
@@ -841,6 +840,30 @@ class music(commands.Cog):
             gembed = discord.Embed(title=song.title, color=0x3498DB, description=lyrics)
             gembed.set_thumbnail(url=song.header_image_url)
             await ctx.send(embed=gembed)
+
+#---------------------------------------------------------VIDEO INFO----------------------------------------------------------#
+
+    @commands.command(
+        aliases=['vi', 'vinf'],
+        name='videoinfo',
+    )
+    async def videoinfo(self, ctx, *args):
+        print("videoinfo usado")
+        servers = b.get_servers()
+        servers_id = b.get_servers_id()
+        id = ctx.message.guild.id
+
+        if(len(args) != 0):
+            if(args[0].isnumeric()):
+                embed = await b.get_video_info(id, ctx, args[0])
+            else:
+                leng.eenduc[a.get_lenguaje(ctx.message)]
+        else:
+            embed = await b.get_video_info(id, ctx)
+        if(type(embed) == str):
+            await ctx.send(embed)
+        else:
+            await ctx.send(embed=embed)
 
 
 async def setup(bot):

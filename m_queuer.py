@@ -1,5 +1,4 @@
 import discord
-import youtube_dl
 import data
 from requests import get
 import json
@@ -9,6 +8,8 @@ import requests
 import shutil
 from tinytag import TinyTag
 import os
+import yt_dlp
+import youtube_dl
 
 a = data.datos()
 
@@ -53,15 +54,14 @@ class queuer:
 
     async def youtube_queuer(self, ctx, reqest, servers_id, servers):
         ydl_opts = {
-            'quiet': True,
-            'format': 'bestaudio/best',
+            'quiet': False,
             'extract_flat': 'in_playlist',
-            'forcethumbnail': 'best',
             'youtube_include_dash_manifest': False,
+            'youtube_include_hls_manifest': False,
         }
         type = "none"
 
-        ydl = youtube_dl.YoutubeDL(ydl_opts)
+        ydl = yt_dlp.YoutubeDL(ydl_opts)
         try:
             get(reqest)
         except:
@@ -82,9 +82,7 @@ class queuer:
 
         if type == "playlist":  # si es una playlist agrega cada cancion por separado
 
-            json_object=json.dumps(video, indent=4)
-            with open("video.json", "w") as outfile:
-                outfile.write(json_object)
+            a.write_json(video, "playlist")
         
             
             title = video["title"]
@@ -96,23 +94,25 @@ class queuer:
             for entrie in video["entries"]:
                 vid_name = video["entries"][counter]['title']
                 vid_length = video["entries"][counter]['duration']
-                totalLenght = totalLenght+vid_length
-                vid_length = a.get_time(vid_length)
-                vid_link = video["entries"][counter]['url']
+                if(vid_length != None):
+                    totalLenght = totalLenght+vid_length
+                    vid_length = a.get_time(vid_length)
+                    vid_link = video["entries"][counter]['url']
 
-                id = ctx.message.guild.id
+                    id = ctx.message.guild.id
 
-                song = {
-                    "name": vid_name,
-                    "length": vid_length,
-                    "link": vid_link,
-                    "class": "yt"
-                }
+                    song = {
+                        "name": vid_name,
+                        "length": vid_length,
+                        "link": vid_link,
+                        "class": "yt"
+                    }
 
-                servers_id, servers = await self.queuer(song, id, servers_id, servers)
+                    servers_id, servers = await self.queuer(song, id, servers_id, servers)
 
 
                 counter = counter+1
+            
 
             embed = discord.Embed(
                 title="Queued "+title, color=0x3498DB, description=str(len(video["entries"]))+" "+leng.canciones[a.get_lenguaje(ctx.message)])
@@ -129,7 +129,7 @@ class queuer:
             vid_length = a.get_time(vid_length)
 
             if type == 'none':
-                ydl = youtube_dl.YoutubeDL({
+                ydl = yt_dlp.YoutubeDL({
                     'format': 'bestaudio/best', 'forcethumbnail': 'best', })
                 vid_link = video.get('url', None)
                 vid_thumbnail = ydl.extract_info(vid_link, download=False)
@@ -158,11 +158,7 @@ class queuer:
                 await ctx.send(embed=embed)
 
         
-        json_object = json.dumps(servers, indent=4)
-
-        # Writing to sample.json
-        with open("sample.json", "w") as outfile:
-            outfile.write(json_object)
+        a.write_json(servers, "servers")
         return servers_id, servers
 
 #-------------FILE QUEUER--------------#

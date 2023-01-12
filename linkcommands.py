@@ -36,7 +36,7 @@ class links(commands.Cog):
                 else:
                     formato = arg[x:]
                     
-                if(formato not in a.get_formatos() and arg.find("youtu") == -1):
+                if(formato not in a.get_formatos() and arg.find("youtu") == -1 and args[0].lower() != 'exception'):
                     await ctx.send(leng.fi[a.get_lenguaje(ctx.message)])
                     return 0
             else:
@@ -127,6 +127,7 @@ class links(commands.Cog):
             "csmlinks": 0,
             "owlinks": 0,
             "catlinks": 0,
+            "ducklinks": 0,
         }  # contador de links removidos
         print("removelink usado")
         for x in args:  # agarra el argumento
