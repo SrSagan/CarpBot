@@ -171,6 +171,10 @@ class music(commands.Cog):
         id = ctx.message.guild.id
         vc = ctx.voice_client
 
+        #complete re work:
+        #create a page system that divides the whole playlist into pages of 10, the last page will have less songs if necessary, none of them will have more
+        #once the page is done it's saved and only changed if something changed the playlist
+
         if int(id) in servers_id:
             playlist = servers[servers_id.index(int(id))]
             lengths = []
@@ -657,6 +661,9 @@ class music(commands.Cog):
                         vc.stop() #sino reproduce la siguiente
                         playlist["playlist"]["cplaying"] = playlist["playlist"]["cplaying"]-1 #la siguiente cambia a ser la que estabamos reproduciendo 
                         #ya que se shiftea toda la playlist
+                
+                if(deleted < playlist["playlist"]["cplaying"]):
+                    playlist["playlist"]["cplaying"]-= 1
 
             else:
                 await ctx.send(leng.eenducar[a.get_lenguaje(ctx.message)])

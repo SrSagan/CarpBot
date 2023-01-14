@@ -18,7 +18,7 @@ groups={
 		"owlinks":['owl', 'buho'],
 		"csmlinks":['csm', 'chainsawman'],
 		"catlinks":['cat', "gatinho", "gatito", "kitty", "gato"],
-		"ducklinks":["duck", "pato", "quack", "patito", "fuck", "duccky"]
+		"ducklinks":["duck", "pato", "quack", "patito", "fuck", "ducky"],
 }
 aliases=[]
 for grupo in groups:
@@ -52,7 +52,10 @@ class images(commands.Cog):
 				grupos = a.get_data()
 				print(grupo+" usado")
 
-				response = random.choice(grupos[grupo]["data"])
+				for g in grupos:
+					if(grupo == g["group"]):
+						response = random.choice(g["data"])
+						break
 				if response.rfind("mp4") > -1 or response.rfind("youtu") > -1:
 						await ctx.send(response)
 				else:
@@ -73,7 +76,7 @@ class images(commands.Cog):
 		 #si es una img le pone marquito
 		texto=''
 		for grupo in grupos:
-			texto=texto+str(grupos[grupo]["name"])+": "+str(len(grupos[grupo]["data"]))+"\n"
+			texto=texto+str(grupo["name"])+": "+str(len(grupo["data"]))+"\n"
 			
 		embed=discord.Embed(color=0x3498DB, title=leng.grupos[a.get_lenguaje(ctx.message)] ,description=texto)
 			

@@ -61,7 +61,7 @@ class links(commands.Cog):
                 return 0
 
             for grupo in grupos:
-                if(msg.content == grupos[grupo]["name"]):
+                if(msg.content == grupos[grupos.index(grupo)]["name"]):
                     selectedGroup = grupo
                     gstate = 1
                     break
@@ -70,7 +70,7 @@ class links(commands.Cog):
                 await ctx.send(leng.gi[a.get_lenguaje(ctx.message)])
 
         for arg in args:
-            if(arg in grupos[selectedGroup]["data"] or arg+"\n" in grupos[selectedGroup]["data"]):
+            if(arg in selectedGroup["data"] or arg+"\n" in selectedGroup["data"]):
                 await ctx.send(leng.elyeell[a.get_lenguaje(ctx.message)])
                 return 0
 
@@ -92,7 +92,7 @@ class links(commands.Cog):
 
                     for c in msg.attachments:
                         img = c.url
-                        if(img in grupos[selectedGroup]["data"] or img+"\n" in grupos[selectedGroup]["data"]):
+                        if(img in selectedGroup["data"] or img+"\n" in selectedGroup["data"]):
                             await ctx.send(leng.elyeell[a.get_lenguaje(ctx.message)])
                             gstate = 1
                             break
@@ -105,9 +105,9 @@ class links(commands.Cog):
                 ladded += 1
 
         if ladded == 1:  # cantidad de links igual a 1
-            await ctx.send(str(ladded)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][0]+" '"+str(grupos[selectedGroup]["name"])+"'")
+            await ctx.send(str(ladded)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][0]+" '"+str(selectedGroup["name"])+"'")
         elif ladded > 1:  # cantidad de links agregados mayor a uno se dice
-            await ctx.send(str(ladded)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][1]+" '"+str(grupos[selectedGroup]["name"])+"'")
+            await ctx.send(str(ladded)+" "+leng.laa_lsaa[a.get_lenguaje(ctx.message)][1]+" '"+str(selectedGroup["name"])+"'")
 
 #-----------------------------REMOVELINK-----------------------------#
 
@@ -118,43 +118,36 @@ class links(commands.Cog):
     async def removelink(self, ctx, *args):
         a = data.datos()
         grupos = a.get_data()  # agarra la data de grupos
-        removedLinks = {
-            "carplinks": 0,
-            "rayllumlinks": 0,
-            "tdplinks": 0,
-            "avatarlinks": 0,
-            "memelinks": 0,
-            "csmlinks": 0,
-            "owlinks": 0,
-            "catlinks": 0,
-            "ducklinks": 0,
-        }  # contador de links removidos
         print("removelink usado")
+        removedLinks=[]
+        for g in grupos:
+            removedLinks.append(0)
+        
         for x in args:  # agarra el argumento
             if len(args) > 0:  # checkea que haya argumentos
-                contador = 0
-                for j in grupos:  # checkea en cada grupo
-                    if not x in grupos[j]["data"]:  # si no esta entre los links
+                done=False
+                for grupo in grupos:  # checkea en cada grupo
+                    if not x in grupo["data"]:  # si no esta entre los links
                         z = (x+"\n")
                     else:
                         z = x
-                    if z in grupos[j]["data"]:
-                        a.rem_data(j, z, x)  # saca la data
-                        removedLinks[j] = removedLinks[j]+1  # sube el contador
+
+                    if z in grupo["data"]:
+                        a.rem_data(grupo, z, x)  # saca la data
+                        removedLinks[grupos.index(grupo)]+=1 # sube el contado
                         print("link removido")
-                    else:
-                        contador = contador+1  # sube el contador de grupos
-                    # si todos los grupos son checkeados es porque el link no esta
-                    if contador >= len(grupos):
-                        await ctx.send(leng.el_nseeng[a.get_lenguaje(ctx.message)][0]+" '"+x+"' "+leng.el_nseeng[a.get_lenguaje(ctx.message)][1])
+                        done=True
+                    
+                if(done == False):
+                    await ctx.send(leng.el_nseeng[a.get_lenguaje(ctx.message)][0]+" '"+x+"' "+leng.el_nseeng[a.get_lenguaje(ctx.message)][1])
             else:
                 await ctx.send(leng.eeldlijcec[a.get_lenguaje(ctx.message)])
-        for j in grupos:  # se escribe cuantos links se eliminaron de que grupos
-            if removedLinks[j] > 0:
-                if removedLinks[j] == 1:
-                    await ctx.send(str(removedLinks[j])+" "+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][0]+" '"+str(grupos[j]["name"])+"'")
-                elif removedLinks[j] > 1:
-                    await ctx.send(str(removedLinks[j])+" "+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][1]+" '"+str(grupos[j]["name"])+"'")
+        for removed in removedLinks:  # se escribe cuantos links se eliminaron de que grupos
+            if removed > 0:
+                if removed == 1:
+                    await ctx.send(str(removed)+" "+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][0]+" '"+str(grupos[removedLinks.index(removed)]["name"])+"'")
+                elif removed > 1:
+                    await ctx.send(str(removed)+" "+leng.lrd_lsrd[a.get_lenguaje(ctx.message)][1]+" '"+str(grupos[removedLinks.index(removed)]["name"])+"'")
 
 
 async def setup(bot):

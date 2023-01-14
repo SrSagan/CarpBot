@@ -1,7 +1,6 @@
 import discord
 import data
 from requests import get
-import json
 import discord.utils
 import lenguajes as leng
 import requests
@@ -9,7 +8,6 @@ import shutil
 from tinytag import TinyTag
 import os
 import yt_dlp
-import youtube_dl
 
 a = data.datos()
 
@@ -43,6 +41,7 @@ class queuer:
             return servers_id, servers
         else:
             servers_id.append(int(id))
+            server["id"]=int(id)
             server["playlist"]["songs"][0]["name"] = song["name"]
             server["playlist"]["songs"][0]["length"] = song["length"]
             server["playlist"]["songs"][0]["link"] = song["link"]

@@ -11,53 +11,53 @@ class datos:
 
         formatos = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.JPG',
                     '.JPEG', '.PNG', '.GIF', '.WEBP', '.MP4', '.MOV']  # formatos admitidos
-        grupos = {  # grupos de links con su informacion
-            "carplinks": {
-                "fileName": "carplinks.txt",
+        grupos = [  # grupos de links con su informacion
+            {   
+                "group": "carplinks",
                 "data": [],
                 "name": "carpincho",
             },
-            "rayllumlinks": {
-                "fileName": "rayllumlinks.txt",
+            {
+                "group": "rayllumlinks",
                 "data": [],
                 "name": "rayllum",
             },
-            "tdplinks": {
-                "fileName": "tdplinks.txt",
+            {
+                "group": "tdplinks",
                 "data": [],
                 "name": "tdp",
             },
-            "avatarlinks": {
-                "fileName": "avatarlinks.txt",
+            {
+                "group": "avatarlinks",
                 "data": [],
                 "name": "avatar",
             },
-            "memelinks": {
-                "fileName": "memelinks.txt",
+            {
+                "group": "memelinks",
                 "data": [],
                 "name": "meme",
             },
-            "csmlinks": {
-                "fileName": "csmlinks.txt",
+            {
+                "group": "csmlinks",
                 "data": [],
                 "name": "csm",
             },
-            "owlinks": {
-                "fileName": "owlinks.txt",
+            {
+                "group": "owlinks",
                 "data": [],
                 "name": "owl",
             },
-            "catlinks": {
-                "fileName": "catlinks.txt",
+            {
+                "group": "catlinks",
                 "data": [],
                 "name": "cat",
             },
-            "ducklinks": {
-                "fileName": "ducklinks.txt",
+            {
+                "group": "ducklinks",
                 "data": [],
                 "name": "duck"
             }
-        }
+        ]
 
         frases = []
         debugmode = 0  # debugmode
@@ -70,11 +70,11 @@ class datos:
 
     def get_data(self):
         grupos = self.grupos
-        for key in grupos.keys():
-            with open(LINKS_FOLDER+grupos[key]["fileName"], "r") as f:
+        for grupo in grupos:
+            with open(LINKS_FOLDER+grupo["group"]+".txt", "r") as f:
                 for line in f:
                     if line != '\n':
-                        grupos[key]["data"].append(line)
+                        grupo["data"].append(line)
         self.grupos = grupos  # agarra la data del archivo de texto y devuelve grupos
         return grupos
 
@@ -82,20 +82,21 @@ class datos:
 
     def set_data(self, grupo, arg):  # agrega links a data y al archivo
         grupos = self.grupos
-        archivo = LINKS_FOLDER+grupos[grupo]["fileName"]
-        grupos[grupo]["data"].append(arg)
+        archivo = LINKS_FOLDER+grupo["group"]+".txt"
+        grupo["data"].append(arg)
         with open(archivo, "w")as txt_file:
-            for line in grupos[grupo]["data"]:
+            for line in grupo["data"]:
                 txt_file.write("".join(line)+"\n")
+        grupos[grupos.index(grupo)] = grupo
 
 #-----------------------REM DATA------------------------#
 
     def rem_data(self, grupo, arg, x):  # remueve links del archivo
         grupos = self.get_data()
-        y = grupos[grupo]["data"].index(arg)
-        grupos[grupo]["data"].pop(y)
-        archivo = LINKS_FOLDER+self.grupos[grupo]["fileName"]
-        self.grupos = grupos
+        y = grupos[grupos.index(grupo)]["data"].index(arg)
+        grupos[grupos.index(grupo)]["data"].pop(y)
+        archivo = LINKS_FOLDER+grupo["group"]+".txt"
+        self.grupos = grupos 
 
         with open(archivo, "r") as f:
             lines = f.readlines()
