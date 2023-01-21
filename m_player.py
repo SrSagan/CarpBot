@@ -1,5 +1,4 @@
 import discord
-import youtube_dl
 import discord.utils
 import yt_dlp
 import data

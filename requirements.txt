@@ -1,6 +1,7 @@
-discord.py==2.0.1
+discord.py==2.1.0
 lyricsgenius==3.0.1
-python-dotenv==0.20.0
+python-dotenv==0.21.0
 requests==2.28.1
 tinytag==1.8.1
 youtube_dl==2021.12.17
+yt_dlp==2023.1.6
