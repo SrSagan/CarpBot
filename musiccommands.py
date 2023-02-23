@@ -831,17 +831,14 @@ class music(commands.Cog):
     
         #embed send
         lyrics_pages=[]
-        lyrics_pages.append(lyrics)
-        if(len(lyrics) >= 6000):
-            lyrics_pages=[]
-            while True:
-                if(len(lyrics) <= 4000):
-                    lyrics_pages.append(lyrics)
-                    break
-                x = lyrics[:4000]
-                x = x.rfind("\n")
-                lyrics_pages.append(lyrics[:x])
-                lyrics = lyrics[x:]
+        while True:
+            if(len(lyrics) <= 4000):
+                lyrics_pages.append(lyrics)
+                break
+            x = lyrics[:4000]
+            x = x.rfind("\n")
+            lyrics_pages.append(lyrics[:x])
+            lyrics = lyrics[x:]
 
         for lyrics in lyrics_pages:
             gembed = discord.Embed(title=song.title, color=0x3498DB, description=lyrics)

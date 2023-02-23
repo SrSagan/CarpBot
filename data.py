@@ -116,7 +116,7 @@ class datos:
         lenguage = self.get_lenguaje(message)
         return leng.gruposText[lenguage]
 
-#-----------------------GET 8B------------------------#
+#------------------------GET 8B-------------------------#
 
     def get_respuestas8ball(self, message):
         lenguage = self.get_lenguaje(message)
@@ -236,7 +236,7 @@ class datos:
         with open(SOURCES_FOLDER+'prefix.json', "w") as f:
             json.dump(data, f)
 
-#-----------------------GET LENGUAJE-----------------------#
+#-----------------------GET LENGUAJE------------------------#
 
     def get_lenguaje(self, message):
         id = message.guild.id
