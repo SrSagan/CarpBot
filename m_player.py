@@ -16,8 +16,11 @@ class player:
             'format': "bestaudio"
         }
         ydl = yt_dlp.YoutubeDL(ydl_opts)
-        r = ydl.extract_info(
+        try:
+            r = ydl.extract_info(
             j["playlist"]["songs"][index]["link"], download=False)
+        except:
+            return 0, 0
         
         a.write_json(r, "video")
 

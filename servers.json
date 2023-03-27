@@ -2,9 +2,9 @@
     {
         "id": 1062966247752474654,
         "playlist": {
-            "cplaying": 1,
+            "cplaying": 7,
             "ptime": null,
-            "time": "00:06:49",
+            "time": "15:25:22",
             "status": true,
             "tlenght": 0,
             "looping": 0,
@@ -13,13 +13,55 @@
                 1,
                 1,
                 1,
-                0
+                1
             ],
             "songs": [
                 {
-                    "name": "Oasis - Whatever (Official Video)",
-                    "link": "https://www.youtube.com/watch?v=EHfx9LXzxpw",
-                    "length": "00:06:22",
+                    "name": "[YTPMV] Rolling Down The Street With Pelos",
+                    "link": "https://www.youtube.com/watch?v=6zN1f1ckEaY",
+                    "length": "00:00:48",
+                    "class": "yt"
+                },
+                {
+                    "name": "Oh Klahoma",
+                    "length": "00:03:06",
+                    "link": "https://www.youtube.com/watch?v=6ClTSzOQrkY",
+                    "class": "yt"
+                },
+                {
+                    "name": "Brazil (Aka Aquarela do Brasil)",
+                    "length": "00:07:23",
+                    "link": "https://www.youtube.com/watch?v=8dMuOnST7Yo",
+                    "class": "yt"
+                },
+                {
+                    "name": "Chega De Saudade",
+                    "length": "00:03:54",
+                    "link": "https://www.youtube.com/watch?v=tlp8iY4g--4",
+                    "class": "yt"
+                },
+                {
+                    "name": "Wave - Tom Jobim",
+                    "length": "00:03:04",
+                    "link": "https://www.youtube.com/watch?v=w73hEZKnDeA",
+                    "class": "yt"
+                },
+                {
+                    "name": "Chronic Sunshine",
+                    "length": "00:04:31",
+                    "link": "https://www.youtube.com/watch?v=HJMrjW01ClY",
+                    "class": "yt"
+                },
+                {
+                    "name": "Daft Punk - Pee Is Stored In The Balls (Full Unreleased Demo)",
+                    "length": "00:03:45",
+                    "link": "https://www.youtube.com/watch?v=pKQp61e94VE",
+                    "class": "yt"
+                },
+                {
+                    "name": "Shine On You Crazy Diamond (Parts I-V)",
+                    "length": "00:13:33",
+                    "link": "https://www.youtube.com/watch?v=54W8kktFE_o",
                     "class": "yt"
                 }
             ]

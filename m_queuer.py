@@ -68,7 +68,10 @@ class queuer:
                 'entries'][0]
         else:
             # si no es nombre busca la url
-            video = ydl.extract_info(reqest, download=False)
+            try:
+                video = ydl.extract_info(reqest, download=False)
+            except:
+                await ctx.send("Video unavailable")
 
         # diferencia que tipo de dato le fue dado (playlist, link, nombre)
         if "_type" in video:

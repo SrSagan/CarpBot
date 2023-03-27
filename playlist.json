@@ -1,0 +1,297 @@
+{
+    "id": "PLRxtGOFdaJenQmYWt6KnFSepYWNLdLRdb",
+    "title": "test",
+    "availability": "unlisted",
+    "channel_follower_count": null,
+    "description": "",
+    "tags": [],
+    "thumbnails": [
+        {
+            "url": "https://i.ytimg.com/vi/6zN1f1ckEaY/hqdefault.jpg?sqp=-oaymwEWCKgBEF5IWvKriqkDCQgBFQAAiEIYAQ==&rs=AOn4CLDDMG0aDu7Mfb2J8Zfe2xfrti9QTw",
+            "height": 94,
+            "width": 168,
+            "id": "0",
+            "resolution": "168x94"
+        },
+        {
+            "url": "https://i.ytimg.com/vi/6zN1f1ckEaY/hqdefault.jpg?sqp=-oaymwEWCMQBEG5IWvKriqkDCQgBFQAAiEIYAQ==&rs=AOn4CLA-3jaOrC4ELIxQS6vBQ-6n5frmYw",
+            "height": 110,
+            "width": 196,
+            "id": "1",
+            "resolution": "196x110"
+        },
+        {
+            "url": "https://i.ytimg.com/vi/6zN1f1ckEaY/hqdefault.jpg?sqp=-oaymwEXCPYBEIoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAC3hueq1ouUevnNy0Gs76I5ihpxA",
+            "height": 138,
+            "width": 246,
+            "id": "2",
+            "resolution": "246x138"
+        },
+        {
+            "url": "https://i.ytimg.com/vi/6zN1f1ckEaY/hqdefault.jpg?sqp=-oaymwEXCNACELwBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBI3Uru_qpHPCzuXtb6wfbctIYNpQ",
+            "height": 188,
+            "width": 336,
+            "id": "3",
+            "resolution": "336x188"
+        }
+    ],
+    "modified_date": "20230327",
+    "view_count": 3,
+    "playlist_count": 6,
+    "uploader": "by Sr. Sagan",
+    "uploader_id": "UCRP5J4pCc8p-Giv1tGSpWAQ",
+    "uploader_url": "https://www.youtube.com/@SrSagan-hb5rr",
+    "channel": "by Sr. Sagan",
+    "channel_id": "UCRP5J4pCc8p-Giv1tGSpWAQ",
+    "channel_url": "https://www.youtube.com/@SrSagan-hb5rr",
+    "_type": "playlist",
+    "entries": [
+        {
+            "_type": "url",
+            "ie_key": "Youtube",
+            "id": "6zN1f1ckEaY",
+            "url": "https://www.youtube.com/watch?v=6zN1f1ckEaY",
+            "title": "[YTPMV] Rolling Down The Street With Pelos",
+            "description": null,
+            "duration": 48,
+            "channel_id": "UCXB7RFcefsHDQINf6ZA4OGA",
+            "channel": "NtGm 889",
+            "channel_url": "https://www.youtube.com/channel/UCXB7RFcefsHDQINf6ZA4OGA",
+            "thumbnails": [
+                {
+                    "url": "https://i.ytimg.com/vi/6zN1f1ckEaY/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLCae8NW4rwRADY02EfRGhK6rgf7Dw",
+                    "height": 94,
+                    "width": 168
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/6zN1f1ckEaY/hqdefault.jpg?sqp=-oaymwEbCMQBEG5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLCnI928zuq1-3WRA-u5Fe8bjPyUnQ",
+                    "height": 110,
+                    "width": 196
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/6zN1f1ckEaY/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAotuC2oFcxphQ_WuaLtccdjikxUQ",
+                    "height": 138,
+                    "width": 246
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/6zN1f1ckEaY/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB9CCyGheVsUWpY1qVRayrejyjcHA",
+                    "height": 188,
+                    "width": 336
+                }
+            ],
+            "timestamp": null,
+            "release_timestamp": null,
+            "availability": null,
+            "view_count": 2600000,
+            "live_status": null,
+            "__x_forwarded_for_ip": null
+        },
+        {
+            "_type": "url",
+            "ie_key": "Youtube",
+            "id": "6ClTSzOQrkY",
+            "url": "https://www.youtube.com/watch?v=6ClTSzOQrkY",
+            "title": "Oh Klahoma",
+            "description": null,
+            "duration": 186,
+            "channel_id": "UC8tok5RkspPakg86-qTIggA",
+            "channel": "Jack Stauber Music",
+            "channel_url": "https://www.youtube.com/channel/UC8tok5RkspPakg86-qTIggA",
+            "thumbnails": [
+                {
+                    "url": "https://i.ytimg.com/vi/6ClTSzOQrkY/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLBXPU77mfIw7YBEuzyWPPQcC1rbDA",
+                    "height": 94,
+                    "width": 168
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/6ClTSzOQrkY/hqdefault.jpg?sqp=-oaymwEbCMQBEG5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDN7kzRThHjRYfuxxTLLE4g8F7wAg",
+                    "height": 110,
+                    "width": 196
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/6ClTSzOQrkY/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDnLctlrVmoaQxoW-a6BZwQMFez0A",
+                    "height": 138,
+                    "width": 246
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/6ClTSzOQrkY/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCvDz043gubotqYrM9V3wZzzdNpxw",
+                    "height": 188,
+                    "width": 336
+                }
+            ],
+            "timestamp": null,
+            "release_timestamp": null,
+            "availability": null,
+            "view_count": 42000000,
+            "live_status": null,
+            "__x_forwarded_for_ip": null
+        },
+        {
+            "_type": "url",
+            "ie_key": "Youtube",
+            "id": "8dMuOnST7Yo",
+            "url": "https://www.youtube.com/watch?v=8dMuOnST7Yo",
+            "title": "Brazil (Aka Aquarela do Brasil)",
+            "description": null,
+            "duration": 443,
+            "channel_id": "UCzXA5HkGXQ1KkqKd7s8g_MA",
+            "channel": "Tom Jobim Oficial",
+            "channel_url": "https://www.youtube.com/channel/UCzXA5HkGXQ1KkqKd7s8g_MA",
+            "thumbnails": [
+                {
+                    "url": "https://i.ytimg.com/vi/8dMuOnST7Yo/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLCUJqIaGu7Fon3KgteMWo8v8Ip18A",
+                    "height": 94,
+                    "width": 168
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/8dMuOnST7Yo/hqdefault.jpg?sqp=-oaymwEbCMQBEG5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLCWHoZ-32yyTnXIrLW73p0GOKgFlw",
+                    "height": 110,
+                    "width": 196
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/8dMuOnST7Yo/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAm8Qhp5xu8KqLW447KJGFznie_ag",
+                    "height": 138,
+                    "width": 246
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/8dMuOnST7Yo/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAIXIxgxB1iV_-hkPnnLhUsrXkh4A",
+                    "height": 188,
+                    "width": 336
+                }
+            ],
+            "timestamp": null,
+            "release_timestamp": null,
+            "availability": null,
+            "view_count": 7200000,
+            "live_status": null,
+            "__x_forwarded_for_ip": null
+        },
+        {
+            "_type": "url",
+            "ie_key": "Youtube",
+            "id": "tlp8iY4g--4",
+            "url": "https://www.youtube.com/watch?v=tlp8iY4g--4",
+            "title": "Chega De Saudade",
+            "description": null,
+            "duration": 234,
+            "channel_id": "UCzXA5HkGXQ1KkqKd7s8g_MA",
+            "channel": "Tom Jobim Oficial",
+            "channel_url": "https://www.youtube.com/channel/UCzXA5HkGXQ1KkqKd7s8g_MA",
+            "thumbnails": [
+                {
+                    "url": "https://i.ytimg.com/vi/tlp8iY4g--4/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLB1Mja1v7GObGUkgYstleO8oy3f6g",
+                    "height": 94,
+                    "width": 168
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/tlp8iY4g--4/hqdefault.jpg?sqp=-oaymwEbCMQBEG5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLA-K1fGLCTbxXnQ18YbtiWtPWjPXw",
+                    "height": 110,
+                    "width": 196
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/tlp8iY4g--4/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDpwVw3YZn-1w0DfKrD5iFTleWTwg",
+                    "height": 138,
+                    "width": 246
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/tlp8iY4g--4/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDqo7kI6qFrYt-BzEbuTU5gQLgtMA",
+                    "height": 188,
+                    "width": 336
+                }
+            ],
+            "timestamp": null,
+            "release_timestamp": null,
+            "availability": null,
+            "view_count": 7900000,
+            "live_status": null,
+            "__x_forwarded_for_ip": null
+        },
+        {
+            "_type": "url",
+            "ie_key": "Youtube",
+            "id": "w73hEZKnDeA",
+            "url": "https://www.youtube.com/watch?v=w73hEZKnDeA",
+            "title": "Wave - Tom Jobim",
+            "description": null,
+            "duration": 184,
+            "channel_id": "UC684ahsiDW6sAWDCHguKg_w",
+            "channel": "Darci Severo",
+            "channel_url": "https://www.youtube.com/channel/UC684ahsiDW6sAWDCHguKg_w",
+            "thumbnails": [
+                {
+                    "url": "https://i.ytimg.com/vi/w73hEZKnDeA/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLBiaZjEOls6_TxLHB-KRa7TiMQIzg",
+                    "height": 94,
+                    "width": 168
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/w73hEZKnDeA/hqdefault.jpg?sqp=-oaymwEbCMQBEG5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLAg8ny6BE-Gba0ydRG75LJ4x99Vxg",
+                    "height": 110,
+                    "width": 196
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/w73hEZKnDeA/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBmjUU9Zu2Gs64Xanr-MT-Pktwyhg",
+                    "height": 138,
+                    "width": 246
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/w73hEZKnDeA/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBMZyh55kw38EUHNGFx9GOmsewjIw",
+                    "height": 188,
+                    "width": 336
+                }
+            ],
+            "timestamp": null,
+            "release_timestamp": null,
+            "availability": null,
+            "view_count": 12000000,
+            "live_status": null,
+            "__x_forwarded_for_ip": null
+        },
+        {
+            "_type": "url",
+            "ie_key": "Youtube",
+            "id": "HJMrjW01ClY",
+            "url": "https://www.youtube.com/watch?v=HJMrjW01ClY",
+            "title": "Chronic Sunshine",
+            "description": null,
+            "duration": 271,
+            "channel_id": "UCEHlhgV34u4pHc-Q8RfL-GQ",
+            "channel": "Cosmo Pyke - Topic",
+            "channel_url": "https://www.youtube.com/channel/UCEHlhgV34u4pHc-Q8RfL-GQ",
+            "thumbnails": [
+                {
+                    "url": "https://i.ytimg.com/vi/HJMrjW01ClY/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLBiHuaRDPaog_PXk_6ZiWIzagvYFg",
+                    "height": 94,
+                    "width": 168
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/HJMrjW01ClY/hqdefault.jpg?sqp=-oaymwEbCMQBEG5IVPKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDW4KYNllb7BA8OemqqDV8Pmoh6KA",
+                    "height": 110,
+                    "width": 196
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/HJMrjW01ClY/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBM_k1jMrvO0ZArqO0udFBIYwcfpg",
+                    "height": 138,
+                    "width": 246
+                },
+                {
+                    "url": "https://i.ytimg.com/vi/HJMrjW01ClY/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFTyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCwP44LYQsXNBOi4VRk5q_ew1t8mQ",
+                    "height": 188,
+                    "width": 336
+                }
+            ],
+            "timestamp": null,
+            "release_timestamp": null,
+            "availability": null,
+            "view_count": 811000,
+            "live_status": null,
+            "__x_forwarded_for_ip": null
+        }
+    ],
+    "extractor_key": "YoutubeTab",
+    "extractor": "youtube:tab",
+    "webpage_url": "https://www.youtube.com/playlist?list=PLRxtGOFdaJenQmYWt6KnFSepYWNLdLRdb",
+    "original_url": "https://www.youtube.com/playlist?list=PLRxtGOFdaJenQmYWt6KnFSepYWNLdLRdb",
+    "webpage_url_basename": "playlist",
+    "webpage_url_domain": "youtube.com",
+    "epoch": 1679941191
+}

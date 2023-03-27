@@ -91,29 +91,37 @@ class music:
                     index = index-1
 
                 # si termina la queue frena el loop
-                if j["playlist"]["cplaying"]+1 > len(j["playlist"]["songs"]) or j["playlist"]["status"] == False or int(id) not in self.servers_id:
-                    if j["playlist"]["looping"] != 1 or int(id) not in self.servers_id:
-                        j["playlist"]["status"] = False
-                        embed = discord.Embed(
-                            title=leng.qo[a.get_lenguaje(ctx.message)], color=0x3498DB)
-                        await ctx.send(embed=embed)
+                while True:
+                    if j["playlist"]["cplaying"]+1 > len(j["playlist"]["songs"]) or j["playlist"]["status"] == False or int(id) not in self.servers_id:
+                        if j["playlist"]["looping"] != 1 or int(id) not in self.servers_id:
+                            j["playlist"]["status"] = False
+                            embed = discord.Embed(
+                                title=leng.qo[a.get_lenguaje(ctx.message)], color=0x3498DB)
+                            await ctx.send(embed=embed)
 
-                        json_object = json.dumps(self.servers, indent=4)
-                        # Writing to sample.json
-                        with open("sample.json", "w") as outfile:
-                            outfile.write(json_object)
+                            json_object = json.dumps(self.servers, indent=4)
+                            # Writing to sample.json
+                            with open("sample.json", "w") as outfile:
+                                outfile.write(json_object)
 
-                        break
-                    else:
-                        j["playlist"]["cplaying"] = 0
-                        index = 0
+                            break
+                        else:
+                            j["playlist"]["cplaying"] = 0
+                            index = 0
 
-                #check if class is youtube or other and use correct function
-                if(j["playlist"]["songs"][index]["class"] == "yt"):
-                    vid_thumbnail, url = await p.youtube_player(index, vc, j)
-                elif(j["playlist"]["songs"][index]["class"] == "fl"):
-                    vid_thumbnail = await p.file_player(index, vc, j)
-                    url=None
+                    #check if class is youtube or other and use correct function
+                    if(j["playlist"]["songs"][index]["class"] == "yt"):
+                        vid_thumbnail, url = await p.youtube_player(index, vc, j)
+                        if(vid_thumbnail == 0 and url == 0):
+                            await ctx.send("Video unavailable")
+                            index = index+1  # sube el contador
+                            j["playlist"]["cplaying"] = index
+                        else:
+                            break
+
+                    elif(j["playlist"]["songs"][index]["class"] == "fl"):
+                        vid_thumbnail = await p.file_player(index, vc, j)
+                        url=None
 
                 if(msg_sent == True):
                     if(discord.utils.get(bot.cached_messages, id=msg.id) != None):
