@@ -63,6 +63,7 @@ class music:
     async def play(self, vc, ctx, bot):
         id = ctx.message.guild.id
         msg_sent = False
+        stap = False
 
         while True:  # comienza el loop de reproduccion
             if int(id) in self.servers_id:
@@ -104,6 +105,7 @@ class music:
                             with open("sample.json", "w") as outfile:
                                 outfile.write(json_object)
 
+                            stap = True
                             break
                         else:
                             j["playlist"]["cplaying"] = 0
@@ -122,7 +124,8 @@ class music:
                     elif(j["playlist"]["songs"][index]["class"] == "fl"):
                         vid_thumbnail = await p.file_player(index, vc, j)
                         url=None
-
+                if(stap):
+                    break
                 if(msg_sent == True):
                     if(discord.utils.get(bot.cached_messages, id=msg.id) != None):
                         await msg.delete()
