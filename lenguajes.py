@@ -6,7 +6,7 @@ help={
     - **Leave** Leaves the voice channel
     - **Loop** Loops the queue, loops the song
     - **Move** Moves a song to a place of the queue, use: "move (song numer) (Place to move)
-    - **Next** Goes to the next song or skips to a song on queue, use:"next *(song number)
+    - **Next** Goes to the next song or skips to a song on queue, use:"next (song number)
     - **Pause** Pauses the song
     - **Play** Plays the song, use: "play (name, url or parameter)
 	    - **-f** Plays a file added with the message
@@ -16,7 +16,7 @@ help={
     - **Shuffle** Shuffles the queue
     - **Song** Shows the current song
     - **Stop** Stops the playback
-    - **Videoinfo** Shows you information about the video, use: "videoinfo *(song number) if no number given displays the currently playing
+    - **Videoinfo** Shows you information about the video, use: "videoinfo (song number) if no number given displays the currently playing
 
     ## Links
     - **Addlink** Add links to group with different parameters: 
@@ -60,7 +60,7 @@ help={
     - **Leave** Deja el canal de voz
     - **Loop** Repite la queue, repite la cancion
     - **Move** Mueve la cancion a un lugar en la queue, uso: "move (numero de cancion) (lugar a mover)
-    - **Next** Pasa a la siguiente cancion o skipea a una cancion en la queue, uso: "next *(numero de cancion)
+    - **Next** Pasa a la siguiente cancion o skipea a una cancion en la queue, uso: "next (numero de cancion)
     - **Pause** Pausa la musica
     - **Play** Reproduce una cancion, uso: "play (nombre, url o parametro)
 	    - **-f** Reproduce un archivo agregado con el mensaje
@@ -68,7 +68,7 @@ help={
     - **Shuffle** Mezcla la queue
     - **Song** Muestra la cancion actual
     - **Stop** Detiene la reproduccion
-    - **Videoinfo** Muestra informacion del video, uso: "videoinfo *(numero de cancion)
+    - **Videoinfo** Muestra informacion del video, uso: "videoinfo (numero de cancion)
 
     ## Links
     - **Addlink** Agruega un link a un grupo, tiene diferentes parametros:
@@ -111,7 +111,7 @@ help={
     - **Leave** Sai do canal de voz
     - **Loop** Repete a lista, repete a musica
     - **Move** Move uma música para certo lugar da lista, use: "move (número da música) (lugar onde vai mover)
-    - **Next** Toca a próxima musica ou pula para certa posição na lista de reprodução, use: "next *(número da música)
+    - **Next** Toca a próxima musica ou pula para certa posição na lista de reprodução, use: "next (número da música)
     - **Pause** Pausa a música
     - **Play** Toca a música, use: "play (nome, url ou parâmetro)
 	    - **-f** Toca um arquvio adicionado com a mensagem
@@ -120,7 +120,7 @@ help={
     - **Shuffle** Toca a lista de músicas aleatoriamente
     - **Song** Mostra a música atual
     - **Stop** Para a reprodução
-    - **Videoinfo** Mostra informações do video, use: "videoinfo *(numero da musica)
+    - **Videoinfo** Mostra informações do video, use: "videoinfo (numero da musica)
 
     ## Links
     - **Addlink** Adiciona links para o grupo com diferentes parâmetros

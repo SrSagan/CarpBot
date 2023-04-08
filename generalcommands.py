@@ -6,6 +6,7 @@ import data
 import random
 import lenguajes as leng
 from dotenv import load_dotenv
+import os
 
 devusers=[]
 load_dotenv()
