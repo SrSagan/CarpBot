@@ -5,6 +5,19 @@ from discord.ext import commands
 import data
 import random
 import lenguajes as leng
+from dotenv import load_dotenv
+
+devusers=[]
+load_dotenv()
+dev = os.getenv('DEV_USERS')  # checkea los los dev users
+
+while True:
+    x = dev.find(",")
+    if(x==-1):
+        devusers.append(int(dev))
+        break
+    devusers.append(int(dev[:x]))
+    dev = dev[x+1:]
 
 
 a = data.datos()
@@ -171,7 +184,7 @@ class general(commands.Cog):
         aliases=["cp"],
     )
     async def changeprefix(self, ctx, *args):
-        if(ctx.message.author.guild_permissions.administrator):
+        if(ctx.message.author.guild_permissions.administrator or ctx.message.author.id in devusers):
             print("change prefix usado")
 
             embed = discord.Embed(title=leng.cp[a.get_lenguaje(ctx.message)], color=0x3498DB)
@@ -229,7 +242,7 @@ class general(commands.Cog):
         aliases=["cl"],
     )
     async def change_lenguage(self, ctx, *args):
-        if(ctx.message.author.guild_permissions.administrator):
+        if(ctx.message.author.guild_permissions.administrator or ctx.message.author.id in devusers):
             valid_lenguajes=["EN", "ES", "PT"]
 
             if(len(args) > 0 and args[0].upper() in valid_lenguajes):
