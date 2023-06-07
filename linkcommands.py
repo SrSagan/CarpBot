@@ -61,7 +61,7 @@ class links(commands.Cog):
                 return 0
 
             for grupo in grupos:
-                if(msg.content == grupos[grupos.index(grupo)]["name"]):
+                if(msg.content.lower() == grupos[grupos.index(grupo)]["name"]):
                     selectedGroup = grupo
                     gstate = 1
                     break
@@ -89,6 +89,9 @@ class links(commands.Cog):
                     if(msg.content.lower() == 'end'):
                         await ctx.send(leng.terminado[a.get_lenguaje(ctx.message)])
                         break
+                    
+                    if(msg.content.lower() == 'end'):
+                        return 0
 
                     for c in msg.attachments:
                         img = c.url

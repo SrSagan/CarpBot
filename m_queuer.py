@@ -8,50 +8,56 @@ import shutil
 from tinytag import TinyTag
 import os
 import yt_dlp
+import servermanager as s
+import youtube_dl
 
 a = data.datos()
+sm = s.serverManager()
 
 class queuer:
 
 #-------------QUEUER--------------#
 
-    async def queuer(self, song, id, servers_id, servers):
+    async def queuer(self, song, id):
         server = {
             "id": 0,
-            "playlist":
-            {
-                "cplaying": 0,
-                "ptime": None,
-                "time": None,
-                "status": False,
-                "tlenght": 0,
-                'looping': 0,
-                'pressed' : [1,1,1,1,0],
-                "songs":
-                [{
-                    "name": None,
-                    "link": None,
-                    "length": None,
-                    "class": None,
-                }],
-            }
+            "cplaying": 0,
+            "ptime": None,
+            "time": None,
+            "status": False,
+            "tlenght": 0,
+            'looping': 0,
+            "songs":
+            [{
+                "name": None,
+                "link": None,
+                "length": None,
+                "class": None,
+            }],
         }
-        if(int(id) in servers_id):
-            servers[servers_id.index(int(id))]["playlist"]["songs"].append(song)
-            return servers_id, servers
+        if(sm.exists(id)):
+            if(isinstance(song, list)):
+                s.servers[sm.get_index(id)]["songs"]+=song
+            else:
+                s.servers[sm.get_index(id)]["songs"].append(song)
+            sm.apply()
         else:
-            servers_id.append(int(id))
+            s.servers_id.append(int(id))
             server["id"]=int(id)
-            server["playlist"]["songs"][0]["name"] = song["name"]
-            server["playlist"]["songs"][0]["length"] = song["length"]
-            server["playlist"]["songs"][0]["link"] = song["link"]
-            server["playlist"]["songs"][0]["class"] = song["class"]
-            servers.append(server)
-            return servers_id, servers
+            if(isinstance(song, list)):
+                print("Es nuevo y encima una list")
+                server["songs"] = song
+            else:
+                server["songs"][0]["name"] = song["name"]
+                server["songs"][0]["length"] = song["length"]
+                server["songs"][0]["link"] = song["link"]
+                server["songs"][0]["class"] = song["class"]
+            s.servers.append(server)
+            sm.apply()
 
 #-------------YOUTUBE QUEUER--------------#
 
-    async def youtube_queuer(self, ctx, reqest, servers_id, servers):
+    async def youtube_queuer(self, ctx, request):
         ydl_opts = {
             'quiet': False,
             'extract_flat': 'in_playlist',
@@ -62,14 +68,14 @@ class queuer:
 
         ydl = yt_dlp.YoutubeDL(ydl_opts)
         try:
-            get(reqest)
+            get(request)
         except:
-            video = ydl.extract_info(f"ytsearch:{reqest}", download=False)[  # busca que es por nombre
+            video = ydl.extract_info(f"ytsearch:{request}", download=False)[  # busca que es por nombre
                 'entries'][0]
         else:
             # si no es nombre busca la url
             try:
-                video = ydl.extract_info(reqest, download=False)
+                video = ydl.extract_info(request, download=False)
             except:
                 await ctx.send("Video unavailable")
 
@@ -84,15 +90,15 @@ class queuer:
 
         if type == "playlist":  # si es una playlist agrega cada cancion por separado
 
-            a.write_json(video, "playlist")
+            sm.apply()
         
-            
             title = video["title"]
             if("uploader" in video): author = video["uploader"]
             else: author= "Unknown"
 
             totalLenght = 0
             counter = 0
+            tempSongs=[]
             for entrie in video["entries"]:
                 vid_name = video["entries"][counter]['title']
                 vid_length = video["entries"][counter]['duration']
@@ -109,13 +115,14 @@ class queuer:
                         "link": vid_link,
                         "class": "yt"
                     }
-
-                    servers_id, servers = await self.queuer(song, id, servers_id, servers)
-
+                    if(counter == 0):
+                        await self.queuer(song, id)
+                    else:
+                        tempSongs.append(song)
 
                 counter = counter+1
-            
 
+            s.servers[sm.get_index(id)]["songs"] = s.servers[s.servers_id.index(int(id))]["songs"] + tempSongs
             embed = discord.Embed(
                 title="Queued "+title, color=0x3498DB, description=str(len(video["entries"]))+" "+leng.canciones[a.get_lenguaje(ctx.message)])
             totalLenght = a.get_time(totalLenght)
@@ -150,22 +157,18 @@ class queuer:
                 "class": "yt"
             }
             
-            servers_id, servers = await self.queuer(song, id, servers_id, servers)
+            await self.queuer(song, id)
 
-            if(servers[servers_id.index(int(id))]["playlist"]["status"] == True):
+            if(s.servers[sm.get_index(id)]["status"] == True):
                 embed = discord.Embed(
                     title="Queued", color=0x3498DB, description=str(vid_name))
                 embed.set_image(url=vid_thumbnail)
-                embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(servers[servers_id.index(int(id))]["playlist"]["songs"])))
+                embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(s.servers[s.servers_id.index(int(id))]["songs"])))
                 await ctx.send(embed=embed)
-
-        
-        a.write_json(servers, "servers")
-        return servers_id, servers
 
 #-------------FILE QUEUER--------------#
 
-    async def file_queuer(self, ctx, url, servers_id, servers):
+    async def file_queuer(self, ctx, url):
         id = ctx.message.guild.id
 
         #download the song and get the metadata
@@ -197,12 +200,10 @@ class queuer:
                 "link": url,
                 "class": "fl"
         }
-        servers_id, servers = await self.queuer(song, id, servers_id, servers)
+        await self.queuer(song, id)
         embed = discord.Embed(
             title="Queued", color=0x3498DB, description=str(title))
-        embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(servers[servers_id.index(int(id))]["playlist"]["songs"])))
+        embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(vid_length)+"\n"+leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(len(s.servers[s.servers_id.index(int(id))]["songs"])))
         await ctx.send(embed=embed)
 
         os.remove("temp/"+name)
-
-        return servers_id, servers

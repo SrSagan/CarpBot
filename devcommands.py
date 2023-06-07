@@ -6,6 +6,7 @@ from discord.ext import commands
 import data
 from dotenv import load_dotenv
 import lenguajes as leng
+import yt_dlp
 #from discord_components import DiscordComponents, DiscordButton, Button
 
 a = data.datos()
@@ -39,9 +40,9 @@ class devcommands(commands.Cog):
         print("debug_images usado")
         # checkeea ke sea un dev
         if(ctx.message.author.id in devusers):
-            for j in a.grupos:
-                if arg[0] == grupos[j]["name"]:
-                    for link in grupos[j]["data"]:
+            for j in grupos:
+                if arg[0] == j["name"]:
+                    for link in j["data"]:
                         # imprime todas las img 1 a 1
                         await ctx.send(str(link))
         else:
@@ -73,19 +74,34 @@ class devcommands(commands.Cog):
 
 #-----------------------DEBUG------------------------#
 
-    '''@commands.command(  # DEBUG
+    @commands.command(  # DEBUG
         name='debug',
-    )
-    async def debug(self, ctx):
+        )
+    async def debug(self, ctx, *args):
         # checkeea ke sea un dev
         if(ctx.message.author.id in devusers):
-            #await ctx.send("debug")
-            embed=discord.Embed(title="xd", color=0x3498DB)
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send("Solo devs pueden usar este comando")'''
-    #imma shoot myself one day
-    #and the guy who made this thing is coming with me
+            await ctx.send("'-'",view=control_checker())
 
 async def setup(bot):
     await bot.add_cog(devcommands(bot))
+
+class control_checker(discord.ui.View):
+    def __init__(self, *, timeout=800):
+        super().__init__(timeout=timeout)
+
+    @discord.ui.button(label="◄◄", style=discord.ButtonStyle.gray)
+    async def start(self,interaction:discord.Interaction,button:discord.ui.Button):
+        await interaction.response.edit_message(content=f"This is an edited button response!")
+
+    @discord.ui.button(label="◄", style=discord.ButtonStyle.gray)
+    async def back(self,interaction:discord.Interaction,button:discord.ui.Button):
+        await interaction.response.edit_message(content=f"This is an edited button response!")
+    
+    @discord.ui.button(label="►", style=discord.ButtonStyle.gray)
+    async def forward(self,interaction:discord.Interaction,button:discord.ui.Button):
+        await interaction.response.edit_message(content=f"This is an edited button response!")
+    
+    @discord.ui.button(label="►►", style=discord.ButtonStyle.gray)
+    async def end(self,interaction:discord.Interaction,button:discord.ui.Button):
+        await interaction.response
+        print("Test")

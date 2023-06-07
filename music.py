@@ -2,82 +2,38 @@ import discord
 import time
 import asyncio
 import data
-import json
 import random
 import discord.utils
 import lenguajes as leng
 import m_queuer
 import m_player
 import yt_dlp
+import datetime
+import servermanager as s
 
 a = data.datos()
 q = m_queuer.queuer()
 p = m_player.player()
 
+sm = s.serverManager()
 
-class music:
+class musicManager:
     def __init__(self):
         status = False
         time = ""
-
-        servers = []
-        servers_id = []
-
-        self.servers = servers
-        self.servers_id = servers_id
-
-        self.status = status
-        self.time = time
-
-#-----------------SERVERS-----------------#
-
-    def get_servers(self):
-        return self.servers
-
-    def set_servers(self, servers):
-        self.servers = servers
-
-#----------------SERVERS_ID---------------#
-
-    def get_servers_id(self):
-        return self.servers_id
-
-    def set_servers_id(self, servers_id):
-        self.servers_id = servers_id
-
-#-----------------RESET ALL-----------------#
-
-    def reset_all(self, ctx):
-        id = ctx.message.guild.id
-        if int(id) in self.servers_id:
-            self.servers.pop(self.servers_id.index(int(id)))
-            self.servers_id.pop(self.servers_id.index(int(id)))
-
-        json_object = json.dumps(self.servers, indent=4)
-
-        # Writing to sample.json
-        with open("sample.json", "w") as outfile:
-            outfile.write(json_object)
 
 #--------------MUSIC PLAYER---------------#
     async def play(self, vc, ctx, bot):
         id = ctx.message.guild.id
         msg_sent = False
-        stap = False
 
         while True:  # comienza el loop de reproduccion
-            if int(id) in self.servers_id:
+            if sm.exists(id):
                 
+                server = s.servers[sm.get_index(id)]
+                server["status"] = True
 
-                j = self.servers[self.servers_id.index(int(id))]
-                j["playlist"]["status"] = True
-                index = j["playlist"]["cplaying"]
-
-
-                json_object = json.dumps(self.servers, indent=4)
-                # Writing to sample.json
-                with open("sample.json", "w") as outfile:
-                    outfile.write(json_object)
+                sm.apply()
     
                 #--------------------------REPRODUCIENDO---------------------------#
                 while True:  # si esta reproduciendo no hace nada y espera
@@ -87,147 +43,139 @@ class music:
                     await asyncio.sleep(0.25)
                 #--------------------------REPRODUCIENDO---------------------------#
 
-                index = j["playlist"]["cplaying"]
-                if j["playlist"]["looping"] == 2:
-                    index = index-1
+                if server["looping"] == 2:
+                    server["cplaying"] = server["cplaying"]-1
+                
+                sm.apply()
 
                 # si termina la queue frena el loop
-                while True:
-                    if j["playlist"]["cplaying"]+1 > len(j["playlist"]["songs"]) or j["playlist"]["status"] == False or int(id) not in self.servers_id:
-                        if j["playlist"]["looping"] != 1 or int(id) not in self.servers_id:
-                            j["playlist"]["status"] = False
-                            embed = discord.Embed(
-                                title=leng.qo[a.get_lenguaje(ctx.message)], color=0x3498DB)
-                            await ctx.send(embed=embed)
-
-                            json_object = json.dumps(self.servers, indent=4)
-                            # Writing to sample.json
-                            with open("sample.json", "w") as outfile:
-                                outfile.write(json_object)
-
-                            stap = True
-                            break
-                        else:
-                            j["playlist"]["cplaying"] = 0
-                            index = 0
+                if server["cplaying"]+1 > len(server["songs"]) or server["status"] == False or sm.exists(id) == False:
+                    if server["looping"] != 1 or sm.exists(id) == False:
+                        server["status"] = False
+                        embed = discord.Embed(
+                            title=leng.qo[a.get_lenguaje(ctx.message)], color=0x3498DB)
+                        await ctx.send(embed=embed)
+                        break
+                    else:
+                        server["cplaying"] = 0
 
                     #check if class is youtube or other and use correct function
-                    if(j["playlist"]["songs"][index]["class"] == "yt"):
-                        vid_thumbnail, url = await p.youtube_player(index, vc, j)
+                while True:
+                    if(server["songs"][server["cplaying"]]["class"] == "yt"):
+                        vid_thumbnail, url = await p.youtube_player(vc, id)
                         if(vid_thumbnail == 0 and url == 0):
                             await ctx.send("Video unavailable")
-                            index = index+1  # sube el contador
-                            j["playlist"]["cplaying"] = index
+                            server["cplaying"] = server["cplaying"]+1  # sube el contador
                         else:
                             break
 
-                    elif(j["playlist"]["songs"][index]["class"] == "fl"):
-                        vid_thumbnail = await p.file_player(index, vc, j)
+                    elif(server["songs"][server["cplaying"]]["class"] == "fl"):
+                        vid_thumbnail = await p.file_player(vc, id)
                         url=None
-                if(stap):
-                    break
+
                 if(msg_sent == True):
                     if(discord.utils.get(bot.cached_messages, id=msg.id) != None):
                         await msg.delete()
 
                 # if it is it should be delete
                 embed = discord.Embed(
-                    title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=j["playlist"]["songs"][index]["name"], url=url)
+                    title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=server["songs"][server["cplaying"]]["name"], url=url)
 
                 if(vid_thumbnail!=0):
                     embed.set_image(url=vid_thumbnail)
-                embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(index+1))
+                embed.set_footer(text=leng.posicion[a.get_lenguaje(ctx.message)]+": "+str(server["cplaying"]+1))
 
                 # muestra que esta reproduciendo
                 msg = await ctx.send(embed=embed)
                 msg_sent = True
-                index = index+1  # sube el contador
-                j["playlist"]["cplaying"] = index
+                server["cplaying"] = server["cplaying"]+1  # sube el contador
                 t = time.localtime()
-                j["playlist"]["time"] = time.strftime("%H:%M:%S", t)
+                server["time"] = time.strftime("%H:%M:%S", t)
 
-                a.write_json(self.servers, "servers")
+                sm.apply()
 
 #----------------SHUFFLER-----------------#
 
     def shuffler(self, ctx):
         id = ctx.message.guild.id
 
-        if int(id) in self.servers_id:
-            j = self.servers[self.servers_id.index(int(id))]
+        if(sm.exists(id)):
+            j = s.servers[sm.get_index(id)]
 
             final = []
 
-            cplaying = j["playlist"]["cplaying"]
+            cplaying = j["cplaying"]
             y = range(0, cplaying)
 
             for n in y:
-                final.append(j["playlist"]["songs"][n])
+                final.append(j["songs"][n])
 
-            out = j["playlist"]["songs"]
+            out = j["songs"]
             for n in y:
                 out.pop(0)
             random.shuffle(out)
             final += out
 
-            j["playlist"]["songs"] = final
-
+            j["songs"] = final
+        
 #--------------QUEUER---------------#
     async def queuer(self, ctx, request, type):
         if(type=="yt"):
-            self.servers_id, self.servers = await q.youtube_queuer(ctx, request, self.servers_id, self.servers)
+            await q.youtube_queuer(ctx, request)
         elif(type=="fl"):
             msg = ctx.message
             for b in msg.attachments:
                 url = b.url
-            self.servers_id, self.servers = await q.file_queuer(ctx, url, self.servers_id, self.servers)
+            await q.file_queuer(ctx, url)
 
-#-------------QUEUE CONTROLS--------------#
+#-------------PRINT QUEUE--------------#
 
-    async def control_checker(self, message, controls, bot, ctx):
-        #QUE VIJA X DIOSSS
-        id = ctx.message.guild.id #agarra todo lo necesario
-        if(id in self.servers_id):
-            j = self.servers[self.servers_id.index(int(id))]
-            prev_pressed = j["playlist"]["pressed"]
+    def print_queue(self, playlist, arg, looping, ctx):
 
-            state=prev_pressed[4]
-            if(state==0):
-                state=1
+        if(looping != -1):
+            vc = ctx.voice_client
+            start_time = playlist["time"]
+            cplaying = playlist["cplaying"]
+            time_left = self.calculate_queue_time(start_time, playlist, cplaying, vc)
+            Cpage = int((cplaying-1)/10)
+        else:
+            cplaying=-1
+            Cpage=0
+
+        counter=0
+        pages=[]
+        page=[]
+
+        for j in playlist["songs"]:
+            counter+=1
+            page.append(j)
+            if(counter == 10):
+                pages.append(page)
+                page=[]
+                counter=0
+
+        pages.append(page)
+        
+        if(arg <= len(pages) and arg > 0):
+            Cpage=arg-1
+
+        text=''
+        for song in pages[Cpage]:
+            index = playlist["songs"].index(song)
+            if(index+1 == cplaying):
+                text+="**"+str(index+1)+") "+song["name"]+"** • *"+leng.tr[a.get_lenguaje(ctx.message)]+" "+time_left+"*\n"
             else:
-                state=0
-            j["playlist"]["pressed"][4]=state
-            prev_pressed = prev_pressed[0:3]
+                text+="**"+str(index+1)+")** "+song["name"]+" • *"+leng.duracion[a.get_lenguaje(ctx.message)]+": "+song["length"]+"*\n"
+        embed = discord.Embed(title="**Queue**", color=0x3498DB, description=text)
 
-            pressed = [0,0,0,0, state]
-            out=[0,0,0,0]
-            for i in range(0, 60): #timer de 1min
+        if(len(playlist["songs"])-(Cpage+1)*10 > 0 and looping != -1):
+            embed.add_field(name="Songs left",value=str(len(playlist["songs"])-(Cpage+1)*10) ,inline=True)
+        
+        if(looping != 2 and looping != -1):
+            embed.add_field(name="Looping",value=leng.arlq_ca_d[a.get_lenguaje(ctx.message)][looping], inline=True)
+        embed.set_footer(text="Page: "+str(Cpage+1)+"/"+str(len(pages)))
 
-                cache_msg = discord.utils.get(bot.cached_messages, id=message.id) #hace todo un tema con cached messages pq ds es una vija y no retorna los msg al toque
-                reactions = cache_msg.reactions
-
-                for emoji in controls:
-                    reaction = discord.utils.get(reactions, emoji=emoji)
-                    pressed[controls.index(emoji)]=reaction.count #los cuenta
-
-                counter=0 #los compara
-                for press in prev_pressed:
-                    if(press == pressed[counter]):
-                        out[counter]=0
-                    else:
-                        out[counter]=1
-                    counter=counter+1
-                if(j["playlist"]["pressed"][4] == state):
-                    pressed[4]=state
-                    j["playlist"]["pressed"]=pressed #los guarda
-                else:
-                    return "no"
-
-                if(1 in out): #envia las diferencias
-                    return out
-
-                await asyncio.sleep(1)
-            return "no"
+        return embed  
 
 #-------------VIDEO INFO--------------#
 
@@ -236,8 +184,8 @@ class music:
         #info to give:
         #name, author, length, url, views, thumbnail_link, codec, bitrate
         #if possible track release year album artist
-        if int(id) in self.servers_id:
-            j = self.servers[self.servers_id.index(int(id))]
+        if(sm.exists(id)):
+            j = s.servers[sm.get_index(id)]
             ydl_opts = {
                 'quiet': False,
                 'youtube_include_dash_manifest': False,
@@ -249,27 +197,27 @@ class music:
             if(len(index) != 0):
                 index = int(index[0])
 
-                if(index <= len(j["playlist"]["songs"])):
-                    video = yt.extract_info(j["playlist"]["songs"][index-1]["link"], download=False)
+                if(index <= len(j["songs"])):
+                    video = yt.extract_info(j["songs"][index-1]["link"], download=False)
                 else:
                     return leng.cfdr[a.get_lenguaje(ctx.message)]
 
             else:
-                video = yt.extract_info(j["playlist"]["songs"][j["playlist"]["cplaying"]-1]["link"], download=False)
+                video = yt.extract_info(j["songs"][j["cplaying"]-1]["link"], download=False)
             
             final_text=''
             
             #convert time myself cuz datetime is a piece of crap fact
             date = "/"+video["upload_date"][0:4]
             date = "/"+video["upload_date"][4:6]+date
-            date = video["upload_date"][6:8]+date
+            date = video["upload_date"][6:]+date
 
             youtube_info="**Youtube Information**\n"
-            youtube_info+="-**Title:** "+video["fulltitle"]+"\n"
+            youtube_info+="-**Title:** "+video["title"]+"\n"
             youtube_info+="-**Uploader:** "+video["uploader"]+"\n"
-            youtube_info+="-**Views:** "+str(video["view_count"])+"\n"
+            youtube_info+="-**Views:** "+str(round(video["view_count"]/1000,1))+"K\n"
             youtube_info+="-**Length:** "+video["duration_string"]+"\n"
-            youtube_info+="-**Likes:** "+str(video["like_count"])+"\n"
+            youtube_info+="-**Likes:** "+str(round(video["like_count"]/1000,1))+"K\n"
             youtube_info+="-**Uploaded:** "+date+"\n"
             youtube_info+="-**Link:** "+video["webpage_url"]+"\n"
             youtube_info+="-**Channel Link:** "+video["channel_url"]+"\n"
@@ -284,20 +232,85 @@ class music:
                 if(video["release_year"] == None):
                     release_year="Unknown"
                 else:
-                    release_year=video["release_year"]
+                    release_year=str(video["release_year"])
                 music_info+="-**Release year:** "+release_year+"\n\n"
                 final_text+=music_info
 
             file_info="**File information**\n"
             file_info+="-**Audio codec**: "+video["acodec"]+"\n"
             file_info+="-**Sample rate**: "+str(video["asr"]/1000)+"Khz\n"
-            file_info+="-**Size**: "+str(video["filesize"]/1000000)+"MB\n"
+            file_info+="-**Size**: "+str(round(video["filesize"]/1000000,2))+"MB\n"
             file_info+="-**Channels**: "+str(video["audio_channels"])+"\n"
             file_info+="-**Youtube format**: "+video["format"]+"\n"
             final_text+=file_info
             
             embed = discord.Embed(
-               title="Video Information", color=0x3498DB, description=final_text, )
+               title="Video Information", color=0x3498DB, description=final_text)
             embed.set_thumbnail(url=video["thumbnail"])
             return embed
 
+#-------------CALCULATE QUEUE TIME--------------#
+
+    def calculate_queue_time(self, start_time, playlist, cplaying, vc):
+         
+        x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
+        # convierte el timepo comienzo a segundos
+        start_time = datetime.timedelta(
+            hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+        x = time.strptime(playlist["songs"][cplaying-1]["length"].split(',')[0], '%H:%M:%S')
+        # lo mismo pero del largo del video
+        length = datetime.timedelta(
+            hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+        # checkeea tiempo actual
+
+        if(vc.is_paused() == True and playlist["status"] == True):
+            x = time.strptime(
+                playlist["ptime"].split(',')[0], '%H:%M:%S')
+            current_time = datetime.timedelta(hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+        else:
+            t = time.localtime()
+            current_time = time.strftime("%H:%M:%S", t)
+            x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
+            current_time = datetime.timedelta(hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+            
+        time_elapsed = current_time - start_time  # resta los tiempos
+        time_left = time.strftime("%H:%M:%S", time.gmtime(length-time_elapsed))
+
+        return time_left
+    
+#-------------CONTROL CHECKER--------------#
+
+class control_checker(discord.ui.View):
+    def __init__(self, *, timeout=800, playlist, arg, looping, ctx):
+        super().__init__(timeout=timeout)
+        self.playlist = playlist
+        self.arg = arg
+        self.looping = looping
+        self.ctx = ctx
+        self.a = musicManager()
+
+    @discord.ui.button(label="◄◄", style=discord.ButtonStyle.gray)
+    async def start(self,interaction:discord.Interaction,button:discord.ui.Button):
+        self.arg=1
+        embed=self.a.print_queue(self.playlist, self.arg, self.looping, self.ctx)
+        await interaction.response.edit_message(view=self, embed=embed)
+
+    @discord.ui.button(label="◄", style=discord.ButtonStyle.gray)
+    async def back(self,interaction:discord.Interaction,button:discord.ui.Button):
+        self.arg=self.arg-1
+        if(self.arg < 1):
+            self.arg=1
+        embed=self.a.print_queue(self.playlist, self.arg, self.looping, self.ctx)
+        await interaction.response.edit_message(view=self, embed=embed)
+    
+    @discord.ui.button(label="►", style=discord.ButtonStyle.gray)
+    async def forward(self,interaction:discord.Interaction,button:discord.ui.Button):
+        self.arg=self.arg+1
+        embed=self.a.print_queue(self.playlist, self.arg, self.looping, self.ctx)
+        await interaction.response.edit_message(view=self, embed=embed)
+    
+    @discord.ui.button(label="►►", style=discord.ButtonStyle.gray)
+    async def end(self,interaction:discord.Interaction,button:discord.ui.Button):
+        self.arg=int(len(self.playlist["songs"])/10)+1
+        embed=self.a.print_queue(self.playlist, self.arg, self.looping, self.ctx)
+        await interaction.response.edit_message(view=self, embed=embed)
