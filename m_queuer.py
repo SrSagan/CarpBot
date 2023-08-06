@@ -40,7 +40,6 @@ class queuer:
                 s.servers[sm.get_index(id)]["songs"]+=song
             else:
                 s.servers[sm.get_index(id)]["songs"].append(song)
-            sm.apply()
         else:
             s.servers_id.append(int(id))
             server["id"]=int(id)
@@ -53,7 +52,7 @@ class queuer:
                 server["songs"][0]["link"] = song["link"]
                 server["songs"][0]["class"] = song["class"]
             s.servers.append(server)
-            sm.apply()
+        sm.apply()
 
 #-------------YOUTUBE QUEUER--------------#
 

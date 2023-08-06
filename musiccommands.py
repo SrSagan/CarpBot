@@ -48,7 +48,6 @@ class music(commands.Cog):
         logger.debug("Leave runned")
         vc = ctx.voice_client
         author = ctx.message.author
-        await ctx.voice_client.disconnect()
 
         try:
             channel = author.voice.channel
@@ -63,6 +62,7 @@ class music(commands.Cog):
         if(status == True):
             vc.stop()
             sm.clear(ctx.message.guild.id)
+            await ctx.voice_client.disconnect()
 
 #-----------------------------------------------------estrelheinhas--------------------------------------------------------------#
 
@@ -83,10 +83,12 @@ class music(commands.Cog):
             status = True
             
         if voice_client != None:
+
             await b.queuer(ctx, "https://www.youtube.com/playlist?list=PLT5RzA2p1DMdJSacPMujx1qaFXqMgxnHe", "yt")
             vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
             if vc.is_playing() == False:
                  await b.play(vc, ctx, self.bot)
+
         elif status == True:
             await b.queuer(ctx, "https://www.youtube.com/playlist?list=PLT5RzA2p1DMdJSacPMujx1qaFXqMgxnHe", "yt")
                  
@@ -103,7 +105,7 @@ class music(commands.Cog):
                       name='play',
                       )
     async def play(self, ctx, *request):
-    
+        id = ctx.message.guild.id
         # cosas a hacer:
         # Se tiene que checkear por problemas, checkear si el client esta en un canal de voz DONE
         if len(request) > 0:
@@ -135,8 +137,12 @@ class music(commands.Cog):
                     await b.queuer(ctx, texto, "fl")
                 else:
                     await b.queuer(ctx, texto, "yt")
+
                 vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
                 if vc.is_playing() == False:
+                    server = s.servers[sm.get_index(id)]
+                    if(server["cplaying"] == -1):
+                        server["cplaying"] = len(server["songs"])-1
                     await b.play(vc, ctx, self.bot)
 
             # SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:(((((((((( uuh acabo de caer si esta conectado y no esta reproduciendo si ;-;
@@ -400,8 +406,8 @@ class music(commands.Cog):
             playlist = s.servers[sm.get_index(id)]
             vc = ctx.voice_client
 
-            if playlist["status"] == False:
-                playlist["cplaying"] = playlist["cplaying"]-2
+            if playlist["status"] == False and playlist["cplaying"] == -1:
+                playlist["cplaying"] = len(playlist["songs"])-1
                 await b.play(vc, ctx, self.bot)
 
             else:
@@ -420,54 +426,55 @@ class music(commands.Cog):
 
         if(sm.exists(id)):
             playlist = s.servers[sm.get_index(id)]
-            start_time = playlist["time"]
-            lengths = []
-            names = []
-            index = playlist["cplaying"]
-            for j in playlist["songs"]:
-                lengths.append(j["length"])
-                names.append(j["name"])
-
-            x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
-            # convierte el timepo comienzo a segundos
-
-            start_time = datetime.timedelta(
-                hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-            x = time.strptime(lengths[index-1].split(',')[0], '%H:%M:%S')
-
-            # lo mismo pero del largo del video
-            length = datetime.timedelta(
-                hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-
-            # checkeea tiempo actual
-
-            if vc.is_paused() == True and playlist["status"] == True:
-                x = time.strptime(
-                    playlist["ptime"].split(',')[0], '%H:%M:%S')
-                current_time = datetime.timedelta(
+            if(playlist["cplaying"] != -1):
+                start_time = playlist["time"]
+                lengths = []
+                names = []
+                index = playlist["cplaying"]
+                for j in playlist["songs"]:
+                    lengths.append(j["length"])
+                    names.append(j["name"])
+    
+                x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
+                # convierte el timepo comienzo a segundos
+    
+                start_time = datetime.timedelta(
                     hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-            else:
-                t = time.localtime()
-                current_time = time.strftime("%H:%M:%S", t)
-
-                x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
-                current_time = datetime.timedelta(
+                x = time.strptime(lengths[index-1].split(',')[0], '%H:%M:%S')
+    
+                # lo mismo pero del largo del video
+                length = datetime.timedelta(
                     hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-
-            time_elapsed = current_time - start_time  # resta los tiempos
-            time_left = time.strftime("%H:%M:%S", time.gmtime(
-                length-time_elapsed))
-
-            # lo conviernet
-            # amigo alto bardo hacer la pija esta
-            embed = discord.Embed(
-                title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index)+"- "+(str(names[index-1])))
-            embed.set_footer(text=leng.duracion[a.get_lenguaje(
-                ctx.message)]+str(lengths[index-1]))
-            embed.set_footer(
-                text=leng.tr[a.get_lenguaje(ctx.message)]+": "+time_left)
-            await ctx.send(embed=embed)
-            sm.apply()
+    
+                # checkeea tiempo actual
+    
+                if vc.is_paused() == True and playlist["status"] == True:
+                    x = time.strptime(
+                        playlist["ptime"].split(',')[0], '%H:%M:%S')
+                    current_time = datetime.timedelta(
+                        hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+                else:
+                    t = time.localtime()
+                    current_time = time.strftime("%H:%M:%S", t)
+    
+                    x = time.strptime(current_time.split(',')[0], '%H:%M:%S')
+                    current_time = datetime.timedelta(
+                        hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+    
+                time_elapsed = current_time - start_time  # resta los tiempos
+                time_left = time.strftime("%H:%M:%S", time.gmtime(
+                    length-time_elapsed))
+    
+                # lo conviernet
+                # amigo alto bardo hacer la pija esta
+                embed = discord.Embed(
+                    title=leng.ar[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(index)+"- "+(str(names[index-1])))
+                embed.set_footer(text=leng.duracion[a.get_lenguaje(
+                    ctx.message)]+str(lengths[index-1]))
+                embed.set_footer(
+                    text=leng.tr[a.get_lenguaje(ctx.message)]+": "+time_left)
+                await ctx.send(embed=embed)
+                sm.apply()
 
 #---------------------------------------------------------CLEAR----------------------------------------------------------#
 

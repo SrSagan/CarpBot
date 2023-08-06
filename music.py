@@ -53,7 +53,7 @@ class musicManager:
                 if server["cplaying"]+1 > len(server["songs"]) or server["status"] == False or sm.exists(id) == False:
                     if server["looping"] != 1 or sm.exists(id) == False:
                         server["status"] = False
-                        server["cplaying"] += 1
+                        server["cplaying"] = -1
                         sm.apply()
                         embed = discord.Embed(
                             title=leng.qo[a.get_lenguaje(ctx.message)], color=0x3498DB)
@@ -306,7 +306,8 @@ class control_checker(discord.ui.View):
     async def start(self,interaction:discord.Interaction,button:discord.ui.Button):
         self.arg=1
         embed=self.a.print_queue(self.playlist, self.arg, self.looping, self.ctx)
-        await interaction.response.edit_message(view=self, embed=embed)
+        if(embed != 0):
+            await interaction.response.edit_message(view=self, embed=embed)
 
     @discord.ui.button(label="◄", style=discord.ButtonStyle.gray)
     async def back(self,interaction:discord.Interaction,button:discord.ui.Button):
@@ -314,16 +315,19 @@ class control_checker(discord.ui.View):
         if(self.arg < 1):
             self.arg=1
         embed=self.a.print_queue(self.playlist, self.arg, self.looping, self.ctx)
-        await interaction.response.edit_message(view=self, embed=embed)
+        if(embed != 0):
+            await interaction.response.edit_message(view=self, embed=embed)
     
     @discord.ui.button(label="►", style=discord.ButtonStyle.gray)
     async def forward(self,interaction:discord.Interaction,button:discord.ui.Button):
         self.arg=self.arg+1
         embed=self.a.print_queue(self.playlist, self.arg, self.looping, self.ctx)
-        await interaction.response.edit_message(view=self, embed=embed)
+        if(embed != 0):
+            await interaction.response.edit_message(view=self, embed=embed)
     
     @discord.ui.button(label="►►", style=discord.ButtonStyle.gray)
     async def end(self,interaction:discord.Interaction,button:discord.ui.Button):
         self.arg=int(len(self.playlist["songs"])/10)+1
         embed=self.a.print_queue(self.playlist, self.arg, self.looping, self.ctx)
-        await interaction.response.edit_message(view=self, embed=embed)
+        if(embed != 0):
+            await interaction.response.edit_message(view=self, embed=embed)

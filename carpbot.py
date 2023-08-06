@@ -17,14 +17,11 @@ bot = commands.Bot(command_prefix=d.get_prefix, case_insensitive=True, help_comm
 extensions=["linkcommands", "imagecommands", "devcommands", "generalcommands", "musiccommands"] #una array con todos los archivos
 
 async def main():
-	async with bot:
-		for extension in extensions:
-			await bot.load_extension(extension)
-		print("Bot iniciado")
-		await bot.start(TOKEN)
+	for extension in extensions:
+		await bot.load_extension(extension)
+	print("Bot iniciado")
+	#await bot.start(TOKEN)
 		
 
-try:
-	asyncio.run(main())
-except Exception as e:
-	print(e)
+asyncio.run(main())
+bot.run(TOKEN)
