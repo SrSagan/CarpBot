@@ -138,7 +138,7 @@ class musicManager:
         if(looping != -1):
             vc = ctx.voice_client
             start_time = playlist["time"]
-            cplaying = arg
+            cplaying = playlist["cplaying"]
             time_left = self.calculate_queue_time(start_time, playlist, cplaying, vc)
             Cpage = int((cplaying-1)/10)
         else:
@@ -169,12 +169,13 @@ class musicManager:
             Cpage=len(pages)-1
 
         text=''
+        index=0+10*Cpage
         for song in pages[Cpage]:
-            index = playlist["songs"].index(song)
             if(index+1 == cplaying):
                 text+="**"+str(index+1)+") "+song["name"]+"** • *"+leng.tr[a.get_lenguaje(ctx.message)]+" "+time_left+"*\n"
             else:
                 text+="**"+str(index+1)+")** "+song["name"]+" • *"+leng.duracion[a.get_lenguaje(ctx.message)]+": "+song["length"]+"*\n"
+            index+=1
         embed = discord.Embed(title="**Queue**", color=0x3498DB, description=text)
 
         if(len(playlist["songs"])-(Cpage+1)*10 > 0 and looping != -1):
@@ -262,7 +263,7 @@ class musicManager:
 
     def calculate_queue_time(self, start_time, playlist, cplaying, vc):
 
-        if(cplaying == -1):
+        if(cplaying > len(playlist["songs"])-1):
             return "Done"
          
         x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
