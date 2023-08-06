@@ -10,6 +10,7 @@ import m_player
 import yt_dlp
 import datetime
 import servermanager as s
+from loguru import logger
 
 a = data.datos()
 q = m_queuer.queuer()
@@ -52,6 +53,8 @@ class musicManager:
                 if server["cplaying"]+1 > len(server["songs"]) or server["status"] == False or sm.exists(id) == False:
                     if server["looping"] != 1 or sm.exists(id) == False:
                         server["status"] = False
+                        server["cplaying"] += 1
+                        sm.apply()
                         embed = discord.Embed(
                             title=leng.qo[a.get_lenguaje(ctx.message)], color=0x3498DB)
                         await ctx.send(embed=embed)
@@ -135,7 +138,7 @@ class musicManager:
         if(looping != -1):
             vc = ctx.voice_client
             start_time = playlist["time"]
-            cplaying = playlist["cplaying"]
+            cplaying = arg
             time_left = self.calculate_queue_time(start_time, playlist, cplaying, vc)
             Cpage = int((cplaying-1)/10)
         else:
@@ -155,9 +158,15 @@ class musicManager:
                 counter=0
 
         pages.append(page)
+        logger.debug(str(arg)+ "page")
         
-        if(arg <= len(pages) and arg > 0):
+        if(arg <= len(pages) and arg != 0):
             Cpage=arg-1
+        else:
+            return 0
+        
+        if(arg==-1):
+            Cpage=len(pages)-1
 
         text=''
         for song in pages[Cpage]:
@@ -252,6 +261,9 @@ class musicManager:
 #-------------CALCULATE QUEUE TIME--------------#
 
     def calculate_queue_time(self, start_time, playlist, cplaying, vc):
+
+        if(cplaying == -1):
+            return "Done"
          
         x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
         # convierte el timepo comienzo a segundos

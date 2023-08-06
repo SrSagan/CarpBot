@@ -24,4 +24,7 @@ async def main():
 		await bot.start(TOKEN)
 		
 
-asyncio.run(main())
+try:
+	asyncio.run(main())
+except Exception as e:
+	print(e)

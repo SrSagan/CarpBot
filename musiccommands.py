@@ -6,13 +6,12 @@ import data
 import music as f
 import datetime
 import time
-import json
-import asyncio
 from dotenv import load_dotenv
 import lenguajes as leng
 from lyricsgenius import Genius
 import servermanager as s
 import m_queuer
+from loguru import logger
 
 a = data.datos()
 b = f.musicManager()
@@ -46,8 +45,10 @@ class music(commands.Cog):
         name='leave',
     )
     async def leave(self, ctx):
+        logger.debug("Leave runned")
         vc = ctx.voice_client
         author = ctx.message.author
+        await ctx.voice_client.disconnect()
 
         try:
             channel = author.voice.channel
@@ -61,7 +62,6 @@ class music(commands.Cog):
 
         if(status == True):
             vc.stop()
-            await ctx.voice_client.disconnect()
             sm.clear(ctx.message.guild.id)
 
 #-----------------------------------------------------estrelheinhas--------------------------------------------------------------#
@@ -168,6 +168,7 @@ class music(commands.Cog):
         name='queue',
     )
     async def queue(self, ctx, *args):
+        logger.debug("Queue runned")
         id = ctx.message.guild.id
         
         #paginas
@@ -194,14 +195,23 @@ class music(commands.Cog):
             elif(looping == 2):
                 looping=1
             
-            arg=1
+            arg=int(playlist["cplaying"]/10)
+            if(arg < 1):
+                arg=1
+            if(playlist["cplaying"] > len(playlist["songs"])-1):
+                arg=-1
+
+
             if(len(args) != 0):
+                print(len(args))
                 if(args[0].isnumeric()):
-                    arg = args[0]
+                    arg = int(args[0])
 
             embed = b.print_queue(playlist, arg, looping, ctx)
-            
-            await ctx.send(embed=embed, view=f.control_checker(playlist=playlist, arg=arg, looping=looping, ctx=ctx))
+            if(embed != 0):
+                await ctx.send(embed=embed, view=f.control_checker(playlist=playlist, arg=arg, looping=looping, ctx=ctx))
+            else:
+                await ctx.send("Page out of range")
 
 #---------------------------------------------------------STOP----------------------------------------------------------#
 
@@ -349,7 +359,7 @@ class music(commands.Cog):
 
             if len(args) != 0:
                 if args[0].isnumeric():
-                    if int(args[0]) <= len(songs):
+                    if int(args[0]) <= len(songs) and int(args[0]) > 0:
                         index = int(args[0])-1
                         playlist["cplaying"] = index
                         vc.stop()
@@ -391,7 +401,7 @@ class music(commands.Cog):
             vc = ctx.voice_client
 
             if playlist["status"] == False:
-                playlist["cplaying"] = playlist["cplaying"]-1
+                playlist["cplaying"] = playlist["cplaying"]-2
                 await b.play(vc, ctx, self.bot)
 
             else:
@@ -881,7 +891,6 @@ class music(commands.Cog):
             await ctx.send("No playlist has that name")
         else:
             await ctx.send("Playlist "+args[0]+" removida")
-
                     
 #---------------------------------------------------------SEARCH----------------------------------------------------------#
 
@@ -915,6 +924,5 @@ class music(commands.Cog):
         else:
             await ctx.send("Type something to search")
                     
-
 async def setup(bot):
     await bot.add_cog(music(bot))

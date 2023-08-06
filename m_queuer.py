@@ -9,7 +9,7 @@ from tinytag import TinyTag
 import os
 import yt_dlp
 import servermanager as s
-import youtube_dl
+from loguru import logger
 
 a = data.datos()
 sm = s.serverManager()
@@ -89,9 +89,9 @@ class queuer:
             type = "link"
 
         if type == "playlist":  # si es una playlist agrega cada cancion por separado
-
+            logger.debug("Downloading playlist")
             sm.apply()
-        
+            logger.debug("I made it past here??'")
             title = video["title"]
             if("uploader" in video): author = video["uploader"]
             else: author= "Unknown"
@@ -124,7 +124,7 @@ class queuer:
 
             s.servers[sm.get_index(id)]["songs"] = s.servers[s.servers_id.index(int(id))]["songs"] + tempSongs
             embed = discord.Embed(
-                title="Queued "+title, color=0x3498DB, description=str(len(video["entries"]))+" "+leng.canciones[a.get_lenguaje(ctx.message)])
+                title="Queued "+title, color=0x3498DB, description=str(len(tempSongs)+1)+" "+leng.canciones[a.get_lenguaje(ctx.message)])
             totalLenght = a.get_time(totalLenght)
             embed.set_footer(text=leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(totalLenght)+"\n"+author)
             await ctx.send(embed=embed)
