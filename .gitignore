@@ -6,3 +6,5 @@ sources/
 video.json
 songs.json
 servers.json
+savedplaylists/
+logs/
