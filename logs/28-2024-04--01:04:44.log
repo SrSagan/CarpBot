@@ -1,0 +1,53 @@
+2024-04-28 01:27:44,541 [MainThread  ] [INFO ]  logging in using static token
+2024-04-28 01:27:45,467 [MainThread  ] [INFO ]  Shard ID None has connected to Gateway (Session ID: 29a75c41e11a85409e9abf5b6a22b2f9).
+2024-04-28 01:27:55,804 [MainThread  ] [ERROR]  Ignoring exception in command estrelheinhas
+Traceback (most recent call last):
+  File "/home/santi/.local/lib/python3.11/site-packages/discord/ext/commands/core.py", line 235, in wrapped
+    ret = await coro(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/santi/CarpBot/musiccommands.py", line 95, in estrelheinhas
+    await channel.connect()
+          ^^^^^^^
+UnboundLocalError: cannot access local variable 'channel' where it is not associated with a value
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/santi/.local/lib/python3.11/site-packages/discord/ext/commands/bot.py", line 1350, in invoke
+    await ctx.command.invoke(ctx)
+  File "/home/santi/.local/lib/python3.11/site-packages/discord/ext/commands/core.py", line 1029, in invoke
+    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/santi/.local/lib/python3.11/site-packages/discord/ext/commands/core.py", line 244, in wrapped
+    raise CommandInvokeError(exc) from exc
+discord.ext.commands.errors.CommandInvokeError: Command raised an exception: UnboundLocalError: cannot access local variable 'channel' where it is not associated with a value
+2024-04-28 01:28:02,365 [MainThread  ] [ERROR]  Ignoring exception in command leave
+Traceback (most recent call last):
+  File "/home/santi/.local/lib/python3.11/site-packages/discord/ext/commands/core.py", line 235, in wrapped
+    ret = await coro(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/santi/CarpBot/musiccommands.py", line 63, in leave
+    vc.stop()
+    ^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'stop'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/santi/.local/lib/python3.11/site-packages/discord/ext/commands/bot.py", line 1350, in invoke
+    await ctx.command.invoke(ctx)
+  File "/home/santi/.local/lib/python3.11/site-packages/discord/ext/commands/core.py", line 1029, in invoke
+    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/santi/.local/lib/python3.11/site-packages/discord/ext/commands/core.py", line 244, in wrapped
+    raise CommandInvokeError(exc) from exc
+discord.ext.commands.errors.CommandInvokeError: Command raised an exception: AttributeError: 'NoneType' object has no attribute 'stop'
+2024-04-28 01:28:07,394 [MainThread  ] [INFO ]  Connecting to voice...
+2024-04-28 01:28:07,394 [MainThread  ] [INFO ]  Starting voice handshake... (connection attempt 1)
+2024-04-28 01:28:07,662 [MainThread  ] [INFO ]  Voice handshake complete. Endpoint found buenos-aires483.discord.media
+2024-04-28 01:28:11,848 [Thread-3    ] [INFO ]  ffmpeg process 57891 has not terminated. Waiting to terminate...
+2024-04-28 01:28:11,852 [Thread-3    ] [INFO ]  ffmpeg process 57891 should have terminated with a return code of -9.
+2024-04-28 01:28:26,167 [MainThread  ] [INFO ]  The voice handshake is being terminated for Channel ID 1062966247752474658 (Guild ID 1062966247752474654)
+2024-04-28 01:28:26,167 [MainThread  ] [INFO ]  Disconnecting from voice normally, close code 1000.
+2024-04-28 01:28:26,183 [Thread-4    ] [INFO ]  ffmpeg process 57910 has not terminated. Waiting to terminate...
+2024-04-28 01:28:26,187 [Thread-4    ] [INFO ]  ffmpeg process 57910 should have terminated with a return code of -9.

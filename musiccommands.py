@@ -201,7 +201,7 @@ class music(commands.Cog):
             elif(looping == 2):
                 looping=1
             
-            arg=int(playlist["cplaying"]/10)
+            arg=int((playlist["cplaying"]-1)/10)+1
             if(arg < 1):
                 arg=1
             if(playlist["cplaying"] > len(playlist["songs"])-1):

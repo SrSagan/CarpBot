@@ -148,7 +148,6 @@ class musicManager:
         counter=0
         pages=[]
         page=[]
-
         for j in playlist["songs"]:
             counter+=1
             page.append(j)
@@ -160,7 +159,7 @@ class musicManager:
         pages.append(page)
         logger.debug(str(arg)+ "page")
         
-        if(arg <= len(pages) and arg != 0):
+        if((arg <= len(pages)) and (arg != 0)):
             Cpage=arg-1
         else:
             return 0
@@ -169,7 +168,7 @@ class musicManager:
             Cpage=len(pages)-1
 
         text=''
-        index=0+10*Cpage
+        index=10*Cpage
         for song in pages[Cpage]:
             if(index+1 == cplaying):
                 text+="**"+str(index+1)+") "+song["name"]+"** • *"+leng.tr[a.get_lenguaje(ctx.message)]+" "+time_left+"*\n"
@@ -263,7 +262,7 @@ class musicManager:
 
     def calculate_queue_time(self, start_time, playlist, cplaying, vc):
 
-        if(cplaying > len(playlist["songs"])-1):
+        if(cplaying > len(playlist["songs"])):
             return "Done"
          
         x = time.strptime(start_time.split(',')[0], '%H:%M:%S')

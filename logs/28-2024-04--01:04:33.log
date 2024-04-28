@@ -1,0 +1,17 @@
+2024-04-28 01:28:33,985 [MainThread  ] [INFO ]  logging in using static token
+2024-04-28 01:28:34,899 [MainThread  ] [INFO ]  Shard ID None has connected to Gateway (Session ID: 2db9b8ffe9104cce5f0164b1aec30a98).
+2024-04-28 01:28:39,741 [MainThread  ] [INFO ]  Connecting to voice...
+2024-04-28 01:28:39,741 [MainThread  ] [INFO ]  Starting voice handshake... (connection attempt 1)
+2024-04-28 01:28:40,014 [MainThread  ] [INFO ]  Voice handshake complete. Endpoint found buenos-aires483.discord.media
+2024-04-28 01:28:43,612 [Thread-3    ] [INFO ]  ffmpeg process 57955 has not terminated. Waiting to terminate...
+2024-04-28 01:28:43,617 [Thread-3    ] [INFO ]  ffmpeg process 57955 should have terminated with a return code of -9.
+2024-04-28 01:28:51,138 [Thread-4    ] [INFO ]  ffmpeg process 57974 has not terminated. Waiting to terminate...
+2024-04-28 01:28:51,141 [Thread-4    ] [INFO ]  ffmpeg process 57974 should have terminated with a return code of -9.
+2024-04-28 01:28:55,192 [MainThread  ] [ERROR]  Ignoring exception in command None
+discord.ext.commands.errors.CommandNotFound: Command "qq" is not found
+2024-04-28 01:29:00,819 [Thread-5    ] [INFO ]  ffmpeg process 57994 has not terminated. Waiting to terminate...
+2024-04-28 01:29:00,824 [Thread-5    ] [INFO ]  ffmpeg process 57994 should have terminated with a return code of -9.
+2024-04-28 01:29:06,976 [Thread-6    ] [INFO ]  ffmpeg process 58011 has not terminated. Waiting to terminate...
+2024-04-28 01:29:06,976 [MainThread  ] [INFO ]  The voice handshake is being terminated for Channel ID 1062966247752474658 (Guild ID 1062966247752474654)
+2024-04-28 01:29:06,976 [MainThread  ] [INFO ]  Disconnecting from voice normally, close code 1000.
+2024-04-28 01:29:06,981 [Thread-6    ] [INFO ]  ffmpeg process 58011 should have terminated with a return code of -9.

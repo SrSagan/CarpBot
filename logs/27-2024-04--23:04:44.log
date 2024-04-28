@@ -1,0 +1,9 @@
+2024-04-27 23:58:45,116 [MainThread  ] [INFO ]  logging in using static token
+2024-04-27 23:58:46,031 [MainThread  ] [INFO ]  Shard ID None has connected to Gateway (Session ID: 4895ec5aa41aa4783a15c30e1c06a330).
+2024-04-27 23:59:19,704 [MainThread  ] [INFO ]  Connecting to voice...
+2024-04-27 23:59:19,704 [MainThread  ] [INFO ]  Starting voice handshake... (connection attempt 1)
+2024-04-27 23:59:20,011 [MainThread  ] [INFO ]  Voice handshake complete. Endpoint found buenos-aires9019.discord.media
+2024-04-28 00:00:54,068 [MainThread  ] [INFO ]  The voice handshake is being terminated for Channel ID 1062966247752474658 (Guild ID 1062966247752474654)
+2024-04-28 00:00:54,068 [MainThread  ] [INFO ]  Disconnecting from voice normally, close code 1000.
+2024-04-28 00:00:54,081 [Thread-3    ] [INFO ]  ffmpeg process 54241 has not terminated. Waiting to terminate...
+2024-04-28 00:00:54,085 [Thread-3    ] [INFO ]  ffmpeg process 54241 should have terminated with a return code of -9.

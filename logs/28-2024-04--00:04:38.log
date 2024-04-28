@@ -1,0 +1,33 @@
+2024-04-28 00:18:39,039 [MainThread  ] [INFO ]  logging in using static token
+2024-04-28 00:18:39,867 [MainThread  ] [INFO ]  Shard ID None has connected to Gateway (Session ID: fe78a4461d714257bee5573b0b9b87a8).
+2024-04-28 00:18:45,563 [MainThread  ] [INFO ]  Connecting to voice...
+2024-04-28 00:18:45,564 [MainThread  ] [INFO ]  Starting voice handshake... (connection attempt 1)
+2024-04-28 00:18:45,830 [MainThread  ] [INFO ]  Voice handshake complete. Endpoint found buenos-aires9019.discord.media
+2024-04-28 00:18:50,127 [Thread-3    ] [INFO ]  ffmpeg process 55472 has not terminated. Waiting to terminate...
+2024-04-28 00:18:50,131 [Thread-3    ] [INFO ]  ffmpeg process 55472 should have terminated with a return code of -9.
+2024-04-28 00:18:59,861 [Thread-4    ] [INFO ]  ffmpeg process 55493 has not terminated. Waiting to terminate...
+2024-04-28 00:18:59,864 [Thread-4    ] [INFO ]  ffmpeg process 55493 should have terminated with a return code of -9.
+2024-04-28 00:19:07,303 [Thread-5    ] [INFO ]  ffmpeg process 55510 has not terminated. Waiting to terminate...
+2024-04-28 00:19:07,306 [Thread-5    ] [INFO ]  ffmpeg process 55510 should have terminated with a return code of -9.
+2024-04-28 00:22:35,265 [Thread-6    ] [INFO ]  ffmpeg process 55552 successfully terminated with return code of 0.
+2024-04-28 00:27:51,423 [Thread-7    ] [INFO ]  ffmpeg process 55629 successfully terminated with return code of 0.
+2024-04-28 00:31:35,653 [Thread-8    ] [INFO ]  ffmpeg process 55764 successfully terminated with return code of 0.
+2024-04-28 00:35:14,375 [Thread-9    ] [INFO ]  ffmpeg process 55918 successfully terminated with return code of 0.
+2024-04-28 00:38:43,182 [Thread-10   ] [INFO ]  ffmpeg process 56046 successfully terminated with return code of 0.
+2024-04-28 00:42:08,229 [Thread-11   ] [INFO ]  ffmpeg process 56120 successfully terminated with return code of 0.
+2024-04-28 00:44:58,825 [Thread-12   ] [INFO ]  ffmpeg process 56262 successfully terminated with return code of 0.
+2024-04-28 00:49:25,873 [Thread-13   ] [INFO ]  ffmpeg process 56372 successfully terminated with return code of 0.
+2024-04-28 00:53:28,209 [Thread-14   ] [INFO ]  ffmpeg process 56506 successfully terminated with return code of 0.
+2024-04-28 00:56:59,875 [Thread-15   ] [INFO ]  ffmpeg process 56616 successfully terminated with return code of 0.
+2024-04-28 00:59:06,718 [Thread-16   ] [INFO ]  ffmpeg process 56732 successfully terminated with return code of 0.
+2024-04-28 01:02:07,706 [Thread-17   ] [INFO ]  ffmpeg process 56808 successfully terminated with return code of 0.
+2024-04-28 01:05:11,939 [Thread-18   ] [INFO ]  ffmpeg process 56916 successfully terminated with return code of 0.
+2024-04-28 01:08:59,292 [Thread-19   ] [INFO ]  ffmpeg process 57017 successfully terminated with return code of 0.
+2024-04-28 01:12:56,426 [Thread-20   ] [INFO ]  ffmpeg process 57107 successfully terminated with return code of 0.
+2024-04-28 01:16:12,973 [Thread-21   ] [INFO ]  ffmpeg process 57248 successfully terminated with return code of 0.
+2024-04-28 01:18:24,547 [Thread-22   ] [INFO ]  ffmpeg process 57361 successfully terminated with return code of 0.
+2024-04-28 01:22:07,785 [Thread-23   ] [INFO ]  ffmpeg process 57439 successfully terminated with return code of 0.
+2024-04-28 01:22:49,237 [MainThread  ] [INFO ]  The voice handshake is being terminated for Channel ID 1062966247752474658 (Guild ID 1062966247752474654)
+2024-04-28 01:22:49,237 [MainThread  ] [INFO ]  Disconnecting from voice normally, close code 1000.
+2024-04-28 01:22:49,244 [Thread-24   ] [INFO ]  ffmpeg process 57563 has not terminated. Waiting to terminate...
+2024-04-28 01:22:49,249 [Thread-24   ] [INFO ]  ffmpeg process 57563 should have terminated with a return code of -9.
