@@ -12,6 +12,7 @@ from lyricsgenius import Genius
 import servermanager as s
 import m_queuer
 from loguru import logger
+import server as sv
 
 a = data.datos()
 b = f.musicManager()
@@ -140,9 +141,9 @@ class music(commands.Cog):
 
                 vc = ctx.voice_client  # si no esta reproduciendo, comienza a reproducir
                 if vc.is_playing() == False:
-                    server = s.servers[sm.get_index(id)]
-                    if(server["cplaying"] == -1):
-                        server["cplaying"] = len(server["songs"])-1
+                    server = sm.get_server(id)
+                    if(server.cplaying == -1):
+                        server.cplaying = len(server.songs)-1
                     await b.play(vc, ctx, self.bot)
 
             # SI NO ESTA CONECTADO SE TIENE QUE CONECTAR Y REPRODUCIR >:(((((((((( uuh acabo de caer si esta conectado y no esta reproduciendo si ;-;
@@ -190,8 +191,8 @@ class music(commands.Cog):
         #once the page is done it's saved and only changed if something changed the playlist
 
         if(sm.exists(id)):
-            playlist = s.servers[sm.get_index(id)]
-            looping = playlist["looping"]
+            playlist = sm.get_server(id)
+            looping = playlist.looping
 
             #correct looping
             if(looping == 0):
@@ -201,10 +202,10 @@ class music(commands.Cog):
             elif(looping == 2):
                 looping=1
             
-            arg=int(playlist["cplaying"]/10)
+            arg=int((playlist.cplaying-1)/10)+1
             if(arg < 1):
                 arg=1
-            if(playlist["cplaying"] > len(playlist["songs"])-1):
+            if(playlist.cplaying > len(playlist.songs)-1):
                 arg=-1
 
 
@@ -241,11 +242,11 @@ class music(commands.Cog):
             status = True
 
         if sm.exists(id) and status == True:
-            playlist = playlist = s.servers[sm.get_index(id)]
+            playlist = sm.get_server(id)
             vc = ctx.voice_client
-            playlist["status"] = False
+            playlist.status = False
             vc.stop()
-            sm.apply()
+            
 
 #---------------------------------------------------------PAUSE----------------------------------------------------------#
 
@@ -260,7 +261,7 @@ class music(commands.Cog):
         id = ctx.message.guild.id
 
         if(sm.exists(id)):
-            playlist = playlist = s.servers[sm.get_index(id)]
+            playlist = sm.get_server(id)
             try:
                 channel = author.voice.channel
                 status = True
@@ -275,12 +276,11 @@ class music(commands.Cog):
                 await ctx.send(leng.eayep[a.get_lenguaje(ctx.message)])
             else:
                 t = time.localtime()
-                playlist["ptime"] = time.strftime("%H:%M:%S", t)
+                playlist.ptime = time.strftime("%H:%M:%S", t)
                 vc.pause()
                 embed = discord.Embed(
                     title=leng.pausado[a.get_lenguaje(ctx.message)], color=0x3498DB)
                 await ctx.send(embed=embed)
-            sm.apply()
 
 #---------------------------------------------------------RESUME----------------------------------------------------------#
 
@@ -293,7 +293,7 @@ class music(commands.Cog):
         author = ctx.message.author
         id = ctx.message.guild.id
         if(sm.exists(id)):
-            playlist = s.servers[sm.get_index(id)]
+            playlist = sm.get_server(id)
 
             try:
                 channel = author.voice.channel
@@ -319,22 +319,22 @@ class music(commands.Cog):
                     hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
 
                 x = time.strptime(
-                    playlist["time"].split(',')[0], '%H:%M:%S')
+                    playlist.time.split(',')[0], '%H:%M:%S')
                 tiempo = datetime.timedelta(
                     hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
 
                 x = time.strptime(
-                    playlist["ptime"].split(',')[0], '%H:%M:%S')
+                    playlist.ptime.split(',')[0], '%H:%M:%S')
                 ptime = datetime.timedelta(
                     hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
 
                 time_paused = resume_time-ptime
-                playlist["time"] = time.strftime("%H:%M:%S", time.gmtime(
+                playlist.time = time.strftime("%H:%M:%S", time.gmtime(
                     tiempo+time_paused))
 
             else:
                 await ctx.send(leng.eanep[a.get_lenguaje(ctx.message)])
-            sm.apply()
+
 
 #---------------------------------------------------------NEXT----------------------------------------------------------#
 
@@ -358,28 +358,27 @@ class music(commands.Cog):
             status = True
 
         if sm.exists(id) and status == True:
-
-            playlist = s.servers[sm.get_index(id)]
-            songs = playlist["songs"]
+            playlist = sm.get_server(id)
+            songs = playlist.songs
             vc = ctx.voice_client
 
             if len(args) != 0:
                 if args[0].isnumeric():
                     if int(args[0]) <= len(songs) and int(args[0]) > 0:
                         index = int(args[0])-1
-                        playlist["cplaying"] = index
+                        playlist.cplaying = index
                         vc.stop()
                     else:
                         await ctx.send(leng.cfdr[a.get_lenguaje(ctx.message)])
                 else:
                     await ctx.send(leng.eenduc[a.get_lenguaje(ctx.message)])
             else:
-                if playlist["looping"] == 2:
-                    playlist["cplaying"] = playlist["cplaying"]+1
+                if playlist.looping == 2:
+                    playlist.cplaying = playlist.cplaying+1
                     vc.stop()
                 else:
                     vc.stop()
-            sm.apply()
+            
 
 #---------------------------------------------------------BACK----------------------------------------------------------#
 
@@ -403,17 +402,17 @@ class music(commands.Cog):
             status = True
 
         if sm.exists(id) and status == True:
-            playlist = s.servers[sm.get_index(id)]
+            playlist = sm.get_server(id)
             vc = ctx.voice_client
 
-            if playlist["status"] == False and playlist["cplaying"] == -1:
-                playlist["cplaying"] = len(playlist["songs"])-1
+            if playlist.status == False and playlist.cplaying == -1:
+                playlist.cplaying = len(playlist.songs)-1
                 await b.play(vc, ctx, self.bot)
 
-            else:
-                playlist["cplaying"] = playlist["cplaying"]-2
+            elif(playlist.cplaying > 0):
+                playlist.cplaying = playlist.cplaying-2
                 vc.stop()
-            sm.apply()
+            
 
 #---------------------------------------------------------SONG----------------------------------------------------------#
 
@@ -425,15 +424,15 @@ class music(commands.Cog):
         vc = ctx.voice_client
 
         if(sm.exists(id)):
-            playlist = s.servers[sm.get_index(id)]
-            if(playlist["cplaying"] != -1):
-                start_time = playlist["time"]
+            playlist = sm.get_server(id)
+            if(playlist.cplaying != -1):
+                start_time = playlist.time
                 lengths = []
                 names = []
-                index = playlist["cplaying"]
-                for j in playlist["songs"]:
-                    lengths.append(j["length"])
-                    names.append(j["name"])
+                index = playlist.cplaying
+                for j in playlist.songs:
+                    lengths.append(j.length)
+                    names.append(j.name)
     
                 x = time.strptime(start_time.split(',')[0], '%H:%M:%S')
                 # convierte el timepo comienzo a segundos
@@ -448,9 +447,9 @@ class music(commands.Cog):
     
                 # checkeea tiempo actual
     
-                if vc.is_paused() == True and playlist["status"] == True:
+                if vc.is_paused() == True and playlist.status == True:
                     x = time.strptime(
-                        playlist["ptime"].split(',')[0], '%H:%M:%S')
+                        playlist.ptime.split(',')[0], '%H:%M:%S')
                     current_time = datetime.timedelta(
                         hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
                 else:
@@ -474,7 +473,7 @@ class music(commands.Cog):
                 embed.set_footer(
                     text=leng.tr[a.get_lenguaje(ctx.message)]+": "+time_left)
                 await ctx.send(embed=embed)
-                sm.apply()
+                
 
 #---------------------------------------------------------CLEAR----------------------------------------------------------#
 
@@ -524,15 +523,15 @@ class music(commands.Cog):
             status = True
 
         if sm.exists(id) and status == True:
-            playlist = s.servers[sm.get_index(id)]
+            playlist = sm.get_server(id)
             if len(args) != 0:
                 if args[0].isnumeric():
-                    if int(args[0]) <= len(playlist["songs"]):
+                    if int(args[0]) <= len(playlist.songs):
 
                         embed = discord.Embed(
-                            title=leng.removido[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(playlist["songs"][int(args[0])-1]["name"]))
+                            title=leng.removido[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(playlist.songs[int(args[0])-1].songs))
                         embed.set_footer(
-                            text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist["songs"][int(args[0])-1]["length"]))
+                            text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist.songs[int(args[0])-1].length))
                         await ctx.send(embed=embed)
                         deleted = int(args[0])-1
                     else:
@@ -540,31 +539,31 @@ class music(commands.Cog):
                 else:
                     if args[0] == "last":
                         embed = discord.Embed(
-                            title=leng.removido[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(playlist["songs"][len(playlist["songs"])-1]["name"]))
+                            title=leng.removido[a.get_lenguaje(ctx.message)], color=0x3498DB, description=str(playlist.songs[len(playlist.songs)-1].name))
                         embed.set_footer(
-                            text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist["songs"][len(playlist["songs"])-1]["length"]))
+                            text=leng.duracion[a.get_lenguaje(ctx.message)]+str(playlist.songs[len(playlist.songs)-1].length))
                         await ctx.send(embed=embed)
 
-                        deleted = len(playlist["songs"])-1
+                        deleted = len(playlist.songs)-1
                     else:
                         await ctx.send(leng.eenduc[a.get_lenguaje(ctx.message)])
                     
-                playlist["songs"].pop(deleted)
+                playlist.songs.pop(deleted)
 
-                if(deleted == playlist["cplaying"]-1):
-                    if(deleted == len(playlist["songs"])): #si es la ultima cancion de la playlist vuelve una para atras
+                if(deleted == playlist.cplaying-1):
+                    if(deleted == len(playlist.songs)): #si es la ultima cancion de la playlist vuelve una para atras
                         await self.back(ctx)
                     else:
                         vc.stop() #sino reproduce la siguiente
-                        playlist["cplaying"] = playlist["cplaying"]-1 #la siguiente cambia a ser la que estabamos reproduciendo 
+                        playlist.cplaying= playlist.cplaying-1 #la siguiente cambia a ser la que estabamos reproduciendo 
                         #ya que se shiftea toda la playlist
                 
-                if(deleted < playlist["cplaying"]):
-                    playlist["cplaying"]-= 1
+                if(deleted < playlist.cplaying):
+                    playlist.cplaying-= 1
 
             else:
                 await ctx.send(leng.eenducar[a.get_lenguaje(ctx.message)])
-            sm.apply()
+            
 
 #---------------------------------------------------------MOVE----------------------------------------------------------#
 
@@ -588,21 +587,21 @@ class music(commands.Cog):
             status = True
 
         if sm.exists(id) and status == True:
-            playlist = s.servers[sm.get_index(id)]
+            playlist = sm.get_server(id)
             if len(args) > 0:
                 if args[0].isnumeric():
-                    if int(args[0]) <= len(playlist["songs"]) and int(args[1]) <= len(playlist["songs"]):
-                        moving_song = playlist["songs"][int(
+                    if int(args[0]) <= len(playlist.songs) and int(args[1]) <= len(playlist.songs):
+                        moving_song = playlist.songs[int(
                             args[0])-1]
                         if args[1].isnumeric():
-                            playlist["songs"].pop(int(args[0])-1)
-                            playlist["songs"].insert(int(args[1])-1, moving_song)
+                            playlist.songs.pop(int(args[0])-1)
+                            playlist.songs.insert(int(args[1])-1, moving_song)
 
-                            if(int(args[1]) <= playlist["cplaying"]):
-                                playlist["cplaying"] = playlist["cplaying"]+1
+                            if(int(args[1]) <= playlist.cplaying):
+                                playlist.cplaying = playlist.cplaying+1
 
                             embed = discord.Embed(title="Song moved", color=0x3498DB, description=str(
-                                playlist["songs"][int(args[1])-1]["name"])+" moved to position "+str(args[1]))
+                                playlist.songs[int(args[1])-1].name)+" moved to position "+str(args[1]))
                             await ctx.send(embed=embed)
 
                         else:
@@ -613,7 +612,7 @@ class music(commands.Cog):
                     await ctx.send(leng.eqcpmyadm[a.get_lenguaje(ctx.message)])
             else:
                 await ctx.send(leng.ecyl[a.get_lenguaje(ctx.message)])
-            sm.apply()
+            
 
 #---------------------------------------------------------LOOP----------------------------------------------------------#
 
@@ -626,26 +625,25 @@ class music(commands.Cog):
         id = ctx.message.guild.id
 
         if(sm.exists(id)):
-            playlist = s.servers[sm.get_index(id)]
-
-            if playlist["looping"] == 0:
-                playlist["looping"] = 1
+            playlist = sm.get_server(id)
+            if playlist.looping == 0:
+                playlist.looping = 1
                 embed = discord.Embed(
                     description=leng.arlq_ca_d[a.get_lenguaje(ctx.message)][0], color=0x3498DB)
                 await ctx.send(embed=embed)
 
-            elif playlist["looping"] == 1:
-                playlist["looping"] = 2
+            elif playlist.looping == 1:
+                playlist.looping = 2
                 embed = discord.Embed(
                     description=leng.arlq_ca_d[a.get_lenguaje(ctx.message)][1], color=0x3498DB)
                 await ctx.send(embed=embed)
 
-            elif playlist["looping"] == 2:
-                playlist["looping"] = 0
+            elif playlist.looping == 2:
+                playlist.looping = 0
                 embed = discord.Embed(
                     description=leng.arlq_ca_d[a.get_lenguaje(ctx.message)][2], color=0x3498DB)
                 await ctx.send(embed=embed)
-            sm.apply()
+            
 
 #---------------------------------------------------------SHUFFLE----------------------------------------------------------#
 
@@ -674,9 +672,9 @@ class music(commands.Cog):
             songs = gn.search_songs(texto)  #find a way to search more than 10 songs
 
         else:
-            playlist = s.servers[sm.get_index(id)]
-            index = playlist["cplaying"]
-            songs = gn.search_songs(playlist["songs"][index-1]["name"])
+            playlist = sm.get_server(id)            
+            index = playlist.cplaying
+            songs = gn.search_songs(playlist.songs[index-1].name)
 
         songs = songs["hits"]
         out=[]
@@ -873,7 +871,7 @@ class music(commands.Cog):
             text=''
             for playlist in playlists:
                 text+="**"+playlist["name"]+"**\n"
-                text+=str(len(playlist["songs"]))+" songs\n"
+                text+=str(len(playlist.songs))+" songs\n"
                 embed = discord.Embed(title="Playlists:", color=0x3498DB, description=text)
             await ctx.send(embed=embed)
 
@@ -897,7 +895,7 @@ class music(commands.Cog):
         if(found == 0):
             await ctx.send("No playlist has that name")
         else:
-            await ctx.send("Playlist "+args[0]+" removida")
+            await ctx.send("Playlist "+args[0]+" removed")
                     
 #---------------------------------------------------------SEARCH----------------------------------------------------------#
 
@@ -910,14 +908,14 @@ class music(commands.Cog):
 
         if(len(args) != 0):
             if(sm.exists(id)):
-                playlist = s.servers[sm.get_index(id)]
+                playlist = sm.get_server(id)                
                 arg = args[0].lower()
                 counter=0
                 text=""
-                for song in playlist["songs"]:
-                    name = song["name"].lower()
+                for song in playlist.songs:
+                    name = song.name.lower()
                     if(name.find(arg) != -1):
-                        text = text+"\n**"+str(playlist["songs"].index(song)+1)+")** " +str(song["name"])+" *"+leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(song["length"])+"*"
+                        text = text+"\n**"+str(playlist.songs.index(song)+1)+")** " +str(song.name)+" *"+leng.duracion[a.get_lenguaje(ctx.message)]+": "+str(song.length)+"*"
                         counter+=1
                     if(counter == 10):
                         break

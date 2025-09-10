@@ -1,8 +1,8 @@
 import json
 import os
 import data
+#import server as sv
 
-SERVERPATH="./servers/"
 SAVEDPLAYLIST="./savedplaylists/"
 servers=[]
 servers_id=[]
@@ -11,33 +11,12 @@ a = data.datos()
 
 class serverManager():
     def __init__(self):
-        self.get_servers()
-    
-#-----------------------GET SERVERS------------------------#
-    def get_servers(self):
+        self
+
+    def get_server(self, id):
+        index = self.get_index(id)
         global servers
-        global servers_id
-
-        if(os.path.exists(SERVERPATH) == False): #check for file existance and folder
-            os.makedirs(SERVERPATH)
-            with open(SERVERPATH+"servers.json", "w") as f:
-                json.dump(servers, f) #create it
- 
-        with open(SERVERPATH+"servers.json", "r") as f: 
-            servers = json.load(f) #read the file
-            f.close() 
-        for server in servers:
-            servers_id.append(server["id"])
-        
-        if(os.path.exists(SAVEDPLAYLIST) == False): #check for file existance and folder
-            os.makedirs(SAVEDPLAYLIST)
-
-#-----------------------APPLY------------------------#
-    def apply(self):
-        global servers #save to file
-        with open(SERVERPATH+"servers.json", "w") as f:
-            json.dump(servers, f, indent=4)
-
+        return servers[index]
 #-----------------------CLEAR SERVER------------------------#
     def clear(self, id):
         #clear a server from servers
@@ -49,7 +28,6 @@ class serverManager():
             if(id == server):
                 servers.pop(servers_id.index(server))
                 servers_id.pop(servers_id.index(server)) #index should be the same in both
-                self.apply()
 
 #-----------------------GET INDEX------------------------#
     def get_index(self, id):
@@ -57,9 +35,10 @@ class serverManager():
         id = int(id)
         global servers
         global servers_id
-
         for server in servers:
-            if(server["id"] == id):
+            print(server.id)
+            print(id)
+            if(server.id == id):
                 return servers.index(server)
 
 #-----------------------EXISTS------------------------#
@@ -121,7 +100,6 @@ class serverManager():
                             return 1
                         else:
                             return playlist["songs"]
-        self.apply()
         return 0
 
 #-----------------------SHOW PLAYLIST------------------------#
@@ -150,4 +128,3 @@ class serverManager():
                 return 1
 
         return 0
-        

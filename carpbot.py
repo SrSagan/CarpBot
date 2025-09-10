@@ -13,16 +13,16 @@ import time
 
 timestr = time.strftime("%d-%Y-%m--%H:%m:%S")
 
-logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
-rootLogger = logging.getLogger()
+#logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
+#rootLogger = logging.getLogger()
 
-fileHandler = logging.FileHandler("{0}/{1}.log".format("logs", timestr))
-fileHandler.setFormatter(logFormatter)
-rootLogger.addHandler(fileHandler)
+#fileHandler = logging.FileHandler("{0}/{1}.log".format("logs", timestr))
+#fileHandler.setFormatter(logFormatter)
+#rootLogger.addHandler(fileHandler)
 
-consoleHandler = logging.StreamHandler(sys.stdout)
-consoleHandler.setFormatter(logFormatter)
-rootLogger.addHandler(consoleHandler)
+#consoleHandler = logging.StreamHandler(sys.stdout)
+#consoleHandler.setFormatter(logFormatter)
+#rootLogger.addHandler(consoleHandler)
 
 #till here
 
