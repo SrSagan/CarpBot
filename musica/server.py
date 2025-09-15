@@ -1,9 +1,9 @@
 import json
 import os
 import data
-import servermanager
+import musica.servermanager
 
-sm = servermanager.serverManager()
+sm = musica.servermanager.serverManager()
 
 class song():
     def __init__(self, name, link, length, type):

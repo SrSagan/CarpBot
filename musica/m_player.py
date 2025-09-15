@@ -2,7 +2,7 @@ import discord
 import discord.utils
 import yt_dlp
 import data
-import servermanager as s
+import musica.servermanager as s
 
 a = data.datos()
 sm = s.serverManager()

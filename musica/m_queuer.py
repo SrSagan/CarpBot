@@ -8,9 +8,9 @@ import shutil
 from tinytag import TinyTag
 import os
 import yt_dlp
-import servermanager as s
+import musica.servermanager as s
 from loguru import logger
-import server as sv
+import musica.server as sv
 
 a = data.datos()
 sm = s.serverManager()

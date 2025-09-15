@@ -5,17 +5,17 @@ import data
 import random
 import discord.utils
 import lenguajes as leng
-import m_queuer
-import m_player
+import musica.m_queuer
+import musica.m_player
 import yt_dlp
 import datetime
-import servermanager as s
+import musica.servermanager as s
 from loguru import logger
-from server import server as sv
+import musica.server as sv
 
 a = data.datos()
-q = m_queuer.queuer()
-p = m_player.player()
+q = musica.m_queuer.queuer()
+p = musica.m_player.player()
 
 sm = s.serverManager()
 

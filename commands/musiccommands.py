@@ -3,20 +3,20 @@ import os
 import discord
 from discord.ext import commands
 import data
-import music as f
+import musica.music as f
 import datetime
 import time
 from dotenv import load_dotenv
 import lenguajes as leng
 from lyricsgenius import Genius
-import servermanager as s
-import m_queuer
+import musica.servermanager as s
+import musica.m_queuer
 from loguru import logger
-import server as sv
+import musica.server as sv
 
 a = data.datos()
 b = f.musicManager()
-c = m_queuer.queuer()
+c = musica.m_queuer.queuer()
 devusers = []
 load_dotenv()
 dev = os.getenv('DEV_USERS')  # checkea los los dev users

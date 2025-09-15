@@ -34,7 +34,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 
 bot = commands.Bot(command_prefix=d.get_prefix, case_insensitive=True, help_command=None, intents=intents) #pone el prefix del comando
 
-extensions=["linkcommands", "imagecommands", "devcommands", "generalcommands", "musiccommands"] #una array con todos los archivos
+extensions=["commands.linkcommands", "commands.imagecommands", "commands.devcommands", "commands.generalcommands", "commands.musiccommands"] #una array con todos los archivos
 
 async def main():
 	for extension in extensions:
