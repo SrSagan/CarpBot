@@ -524,3 +524,8 @@ pv={
     "ES":"Playlist vaciada",
     "PT":"Playlist limpa"
 }
+namereq={
+    "EN":"You need to provide a name for the playlist",
+    "ES":"Necesitas proporcionar un nombre para la playlist",
+    "PT":"Você precisa fornecer um nome para a playlist"
+}

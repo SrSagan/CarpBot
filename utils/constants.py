@@ -1,5 +1,6 @@
 LINKS_FOLDER = "sources/links/"
 SOURCES_FOLDER = "sources/"
+SAVED_PLAYLIST = 'savedplaylists/'
 
 SUPPORTED_FORMATS = [
     '.jpg', '.jpeg', '.png', '.gif', '.webp',
