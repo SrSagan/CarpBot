@@ -28,19 +28,19 @@ data_manager = data.datos()  # Crea una instancia de la clase datos
 
 # ========== Funciones de configuración ==========
 def get_prefix(bot, message):
-	"""
-	Obtiene el prefix dinámico para cada servidor.
-	Permite usar el prefix configurado o mencionar al bot.
+    """
+    Obtiene el prefix dinámico para cada servidor.
+    Permite usar el prefix configurado o mencionar al bot.
 
-	Args:
-		bot: Instancia del bot de Discord.
-		message: Mensaje recibido.
+    Args:
+            bot: Instancia del bot de Discord.
+            message: Mensaje recibido.
 
-	Returns:
-		Función que acepta el prefix dinámico.
-	"""
-	server_prefix = data_manager.get_prefix(message.guild.id)
-	return commands.when_mentioned_or(*server_prefix)(bot, message)
+    Returns:
+            Función que acepta el prefix dinámico.
+    """
+    server_prefix = data_manager.get_prefix(message.guild.id)
+    return commands.when_mentioned_or(*server_prefix)(bot, message)
 
 
 # ========== Inicialización del bot ==========
@@ -52,10 +52,10 @@ intents.members = True  # Acceder a la lista de miembros del servidor
 
 # Crear instancia del bot
 bot = commands.Bot(
-	command_prefix=get_prefix,
-	case_insensitive=True,
-	help_command=None,
-	intents=intents,
+    command_prefix=get_prefix,
+    case_insensitive=True,
+    help_command=None,
+    intents=intents,
 )  # pone el prefix del comando
 
 # ========== Eventos del bot ==========
@@ -63,68 +63,96 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-	"""Evento que se ejecuta cuando el bot se conecta exitosamente."""
-	logger.success(f"Conectado como: {bot.user.name} (ID: {bot.user.id})")
-	try:
-		activity = discord.Game(name="Soy carpincho, no carpintero: no arreglo nada.")
-		await bot.change_presence(activity=activity, status=discord.Status.online)
-		logger.info("Estado del bot actualizado.")
-	except Exception as e:
-		logger.error(f"Error al actualizar el estado del bot: {e}")
+    """Evento que se ejecuta cuando el bot se conecta exitosamente."""
+    logger.success(f"Conectado como: {bot.user.name} (ID: {bot.user.id})")
+    try:
+        activity = discord.Game(name="Soy carpincho, no carpintero: no arreglo nada.")
+        await bot.change_presence(activity=activity, status=discord.Status.online)
+        logger.info("Estado del bot actualizado.")
+    except Exception as e:
+        logger.error(f"Error al actualizar el estado del bot: {e}")
 
 
 # ========== Carga de extensiones y ejecución del bot ==========
 
 
 async def load_extensions():
-	"""Carga todos los módulos de comandos desde la carpeta commands/"""
-	commands_dir = "./commands"
-	if not os.path.exists(commands_dir):
-		logger.error(f"La carpeta {commands_dir} no existe.")
-		return
+    """Carga todos los módulos de comandos desde la carpeta commands/"""
+    commands_dir = "./commands"
+    if not os.path.exists(commands_dir):
+        logger.error(f"La carpeta {commands_dir} no existe.")
+        return
 
-	for filename in os.listdir(commands_dir):
-		# Ignorar archivos que no son .py o empiecen con _
-		if not filename.endswith(".py") or filename.startswith("_"):
-			continue
+    # Cargar archivos .py en la carpeta principal commands/
+    for filename in os.listdir(commands_dir):
+        # Ignorar archivos que no son .py o empiecen con _
+        if not filename.endswith(".py") or filename.startswith("_"):
+            continue
 
-		module_name = filename[:-3]  # Eliminar la extensión .py
+        module_name = filename[:-3]  # Eliminar la extensión .py
 
-		try:
-			await bot.load_extension(f"commands.{module_name}")
-			logger.success(f"Modulo cargado: {module_name}")
-		except Exception as e:
-			logger.error(f"Error al cargar el modulo {module_name}: {e}")
+        try:
+            await bot.load_extension(f"commands.{module_name}")
+            logger.success(f"Modulo cargado: {module_name}")
+        except Exception as e:
+            logger.error(f"Error al cargar el modulo {module_name}: {e}")
+
+    # Cargar archivos .py en subcarpetas (music/, general/, etc.)
+    for subdir_name in os.listdir(commands_dir):
+        subdir_path = os.path.join(commands_dir, subdir_name)
+
+        # Solo procesar subcarpetas, ignorar 'base' y nombres con '_'
+        if (
+            not os.path.isdir(subdir_path)
+            or subdir_name.startswith("_")
+            or subdir_name == "base"
+        ):
+            continue
+
+        for filename in os.listdir(subdir_path):
+            # Ignorar archivos que no son .py o empiecen con _
+            if not filename.endswith(".py") or filename.startswith("_"):
+                continue
+
+            module_name = filename[:-3]  # Eliminar la extensión .py
+
+            try:
+                await bot.load_extension(f"commands.{subdir_name}.{module_name}")
+                logger.success(f"Modulo cargado: {subdir_name}.{module_name}")
+            except Exception as e:
+                logger.error(
+                    f"Error al cargar el modulo {subdir_name}.{module_name}: {e}"
+                )
 
 
 # ========== Función principal ==========
 
 
 async def main():
-	"""Función principal para iniciar el bot."""
-	if not TOKEN:
-		logger.error("El token de Discord no está configurado.")
-		return
+    """Función principal para iniciar el bot."""
+    if not TOKEN:
+        logger.error("El token de Discord no está configurado.")
+        return
 
-	try:
-		logger.error("Iniciando la carga de extensiones...")
-		await load_extensions()
+    try:
+        logger.error("Iniciando la carga de extensiones...")
+        await load_extensions()
 
-		logger.info("Iniciando el bot...")
-		await bot.start(TOKEN)
-	except discord.LoginFailure:
-		logger.error("Fallo de inicio de sesión: Token inválido.")
-	except Exception as e:
-		logger.error(f"Error al iniciar el bot: {e}")
+        logger.info("Iniciando el bot...")
+        await bot.start(TOKEN)
+    except discord.LoginFailure:
+        logger.error("Fallo de inicio de sesión: Token inválido.")
+    except Exception as e:
+        logger.error(f"Error al iniciar el bot: {e}")
 
 
 # ========== Punto de entrada ==========
 
 if __name__ == "__main__":
-	"""Solo ejecuta si este archivo se ejecuta directamente."""
-	try:
-		asyncio.run(main())
-	except KeyboardInterrupt:
-		logger.warning("Bot detenido por el usuario (CTRL+C).")
-	except Exception as e:
-		logger.error(f"Error inesperado: {e}")
+    """Solo ejecuta si este archivo se ejecuta directamente."""
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.warning("Bot detenido por el usuario (CTRL+C).")
+    except Exception as e:
+        logger.error(f"Error inesperado: {e}")
