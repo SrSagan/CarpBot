@@ -71,3 +71,8 @@ class BaseMusicCommand(UserCommand):
         server = self.server_manager.get_server(guild_id)
 
         return server, voice_client, lang
+
+
+async def setup(bot):
+    """Configura la base de comandos de música."""
+    await bot.add_cog(BaseMusicCommand(bot))

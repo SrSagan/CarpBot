@@ -36,3 +36,8 @@ class EightBallCommand(UserCommand):
         )
 
         await ctx.send(embed=embed)
+
+
+async def setup(bot):
+    """Configura el comando de bola 8."""
+    await bot.add_cog(EightBallCommand(bot))

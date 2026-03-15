@@ -14,6 +14,7 @@ class DiceCommand(UserCommand):
         result = random.randrange(1, 6)
         await ctx.send(f"🎲 Has lanzado un dado y ha salido: **{result}**")
 
-    async def setup(self, bot: commands.Bot):
-        """Configura el comando de dados."""
-        await bot.add_cog(DiceCommand(bot))
+
+async def setup(bot):
+    """Configura el comando de dados."""
+    await bot.add_cog(DiceCommand(bot))
