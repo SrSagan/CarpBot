@@ -125,6 +125,39 @@ async def load_extensions():
                 )
 
 
+def validate_command_collisions(bot_instance: commands.Bot):
+    """Valida que no existan colisiones entre nombres y aliases de comandos."""
+    command_owner_by_token = {}
+    collisions = []
+
+    for command in bot_instance.commands:
+        owner = command.qualified_name
+        tokens = [command.name, *command.aliases]
+
+        for token in tokens:
+            normalized = token.lower().strip()
+            if not normalized:
+                continue
+
+            previous_owner = command_owner_by_token.get(normalized)
+
+            # Si el token ya lo usa otro comando, es una colisión real.
+            if previous_owner and previous_owner != owner:
+                collisions.append((normalized, previous_owner, owner))
+                continue
+
+            command_owner_by_token[normalized] = owner
+
+    if collisions:
+        formatted = ", ".join(
+            [
+                f"'{token}' entre '{left}' y '{right}'"
+                for token, left, right in sorted(set(collisions))
+            ]
+        )
+        raise RuntimeError(f"Se detectaron colisiones de comandos: {formatted}")
+
+
 # ========== Función principal ==========
 
 
@@ -137,6 +170,7 @@ async def main():
     try:
         logger.error("Iniciando la carga de extensiones...")
         await load_extensions()
+        validate_command_collisions(bot)
 
         logger.info("Iniciando el bot...")
         await bot.start(TOKEN)
