@@ -1,0 +1,11 @@
+services:
+    carpbot:
+        build: .
+        container_name: carpbot
+        restart: unless-stopped
+        env_file:
+            - .env
+        volumes:
+            - ./sources:/app/sources
+            - ./savedplaylists:/app/savedplaylists
+            - ./temp:/app/temp
