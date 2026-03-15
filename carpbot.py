@@ -5,6 +5,7 @@ Punto de entrada principal de la aplicación.
 
 # First: Librerías estándar
 import asyncio
+import ast
 import os
 
 # Second: Librerías de terceros
@@ -48,7 +49,7 @@ def get_prefix(bot, message):
 # Configurar permisos del bot (Discord Intents)
 intents = discord.Intents.default()
 intents.message_content = True  # Leer contenido de mensajes
-intents.members = True  # Acceder a la lista de miembros del servidor
+intents.members = os.getenv("DISCORD_MEMBERS_INTENT", "false").lower() == "true"
 
 # Crear instancia del bot
 bot = commands.Bot(
@@ -76,26 +77,64 @@ async def on_ready():
 # ========== Carga de extensiones y ejecución del bot ==========
 
 
+def has_setup_function(file_path: str) -> bool:
+    """Retorna True solo si el módulo define setup(bot), sync o async."""
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            source_code = file.read()
+    except OSError as e:
+        logger.error(f"No se pudo leer el archivo {file_path}: {e}")
+        return False
+
+    try:
+        syntax_tree = ast.parse(source_code)
+    except SyntaxError as e:
+        logger.error(f"Archivo con error de sintaxis {file_path}: {e}")
+        return False
+
+    for node in syntax_tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "setup":
+            return True
+
+    return False
+
+
+def iter_python_modules(directory: str):
+    """Itera nombres de archivo .py válidos para carga de extensiones."""
+    for filename in os.listdir(directory):
+        if filename.endswith(".py") and not filename.startswith("_"):
+            yield filename
+
+
+async def try_load_extension(module_path: str):
+    """Intenta cargar una extensión y deja trazas del resultado."""
+    try:
+        await bot.load_extension(module_path)
+        logger.success(f"Modulo cargado: {module_path.removeprefix('commands.')}")
+    except Exception as e:
+        logger.error(
+            f"Error al cargar el modulo {module_path.removeprefix('commands.')}: {e}"
+        )
+
+
 async def load_extensions():
     """Carga todos los módulos de comandos desde la carpeta commands/"""
+
     commands_dir = "./commands"
     if not os.path.exists(commands_dir):
         logger.error(f"La carpeta {commands_dir} no existe.")
         return
 
     # Cargar archivos .py en la carpeta principal commands/
-    for filename in os.listdir(commands_dir):
-        # Ignorar archivos que no son .py o empiecen con _
-        if not filename.endswith(".py") or filename.startswith("_"):
+    for filename in iter_python_modules(commands_dir):
+
+        file_path = os.path.join(commands_dir, filename)
+        if not has_setup_function(file_path):
+            logger.info(f"Modulo omitido (sin setup): {filename}")
             continue
 
         module_name = filename[:-3]  # Eliminar la extensión .py
-
-        try:
-            await bot.load_extension(f"commands.{module_name}")
-            logger.success(f"Modulo cargado: {module_name}")
-        except Exception as e:
-            logger.error(f"Error al cargar el modulo {module_name}: {e}")
+        await try_load_extension(f"commands.{module_name}")
 
     # Cargar archivos .py en subcarpetas (music/, general/, etc.)
     for subdir_name in os.listdir(commands_dir):
@@ -109,20 +148,17 @@ async def load_extensions():
         ):
             continue
 
-        for filename in os.listdir(subdir_path):
-            # Ignorar archivos que no son .py o empiecen con _
-            if not filename.endswith(".py") or filename.startswith("_"):
+        for filename in iter_python_modules(subdir_path):
+
+            file_path = os.path.join(subdir_path, filename)
+            if not has_setup_function(file_path):
+                logger.info(
+                    f"Modulo omitido (sin setup): {subdir_name}.{filename[:-3]}"
+                )
                 continue
 
             module_name = filename[:-3]  # Eliminar la extensión .py
-
-            try:
-                await bot.load_extension(f"commands.{subdir_name}.{module_name}")
-                logger.success(f"Modulo cargado: {subdir_name}.{module_name}")
-            except Exception as e:
-                logger.error(
-                    f"Error al cargar el modulo {subdir_name}.{module_name}: {e}"
-                )
+            await try_load_extension(f"commands.{subdir_name}.{module_name}")
 
 
 def validate_command_collisions(bot_instance: commands.Bot):
@@ -178,6 +214,9 @@ async def main():
         logger.error("Fallo de inicio de sesión: Token inválido.")
     except Exception as e:
         logger.error(f"Error al iniciar el bot: {e}")
+    finally:
+        if not bot.is_closed():
+            await bot.close()
 
 
 # ========== Punto de entrada ==========

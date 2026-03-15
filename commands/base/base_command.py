@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABCMeta
 import discord
 from discord.ext import commands
 
@@ -8,7 +8,13 @@ import lenguajes as leng
 from utils.permissions import is_admin_or_dev, is_dev_user
 
 
-class BaseCommand(commands.Cog, ABC):
+class CogABCMeta(commands.CogMeta, ABCMeta):
+	"""Metaclase compatible entre comandos.Cog y clases abstractas."""
+
+	pass
+
+
+class BaseCommand(commands.Cog, metaclass=CogABCMeta):
 	"""Clase base abstracta para todos los comandos del bot."""
 
 	def __init__(self, bot: commands.Bot):
