@@ -37,8 +37,8 @@ class images(commands.Cog):
 #-----------------------------IMAGES-----------------------------#
 
 	@commands.command(
-		aliases=aliases,
-		name='carpincho',
+		aliases=['legacy_carpincho'],
+		name='legacy_carpincho',
     	)
 	async def images(self, ctx):
 		command = ctx.message.content
@@ -66,8 +66,8 @@ class images(commands.Cog):
 #-----------------------------GROUPS-----------------------------#
 
 	@commands.command( #todos hacen lo mismo
-		aliases=['groups'],
-    	name='grupos',
+		aliases=['legacy_groups'],
+    	name='legacy_grupos',
     	)
 	async def grupos(self, ctx):
 		a = data.datos()

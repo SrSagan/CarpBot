@@ -34,7 +34,7 @@ class general(commands.Cog):
 #-----------------------------DADO-----------------------------#
 
     @commands.command(  # dado....
-        name="dado",
+        name="legacy_dado",
     )
     async def dado(self, ctx, *args):
         print("dado usado")
@@ -57,8 +57,8 @@ class general(commands.Cog):
 
 #-----------------------------8BALL-----------------------------#
     @commands.command(
-        aliases=['8b'],  # 8ball responde con si o no
-        name="8ball",
+        aliases=['legacy_8b'],  # 8ball responde con si o no
+        name="legacy_8ball",
     )
     async def eightball(self, ctx, *args):
 
@@ -81,8 +81,8 @@ class general(commands.Cog):
 #-----------------------------ADDFRASE-----------------------------#
 
     @commands.command(
-        aliases=["af"],
-        name="addfrase",
+        aliases=["legacy_af"],
+        name="legacy_addfrase",
     )
     async def addfrase(self, ctx, *args):
         print("addfrase usado")
@@ -118,8 +118,8 @@ class general(commands.Cog):
 #-----------------------------FRASEFILOSOFICA-----------------------------#
 
     @commands.command(
-        aliases=["ff"],
-        name="frasefilosofica",
+        aliases=["legacy_ff"],
+        name="legacy_frasefilosofica",
     )
     async def frasefilosofica(self, ctx, *args):
         print("Frase Filosofica usado")
@@ -161,8 +161,8 @@ class general(commands.Cog):
 #-----------------------------REMOVEFRASE-----------------------------#
 
     @commands.command(
-        name="removefrase",
-        aliases=["rf"],
+        name="legacy_removefrase",
+        aliases=["legacy_rf"],
     )
     async def removefrase(self, ctx, *args):
         print("removefrase usado")
@@ -181,8 +181,8 @@ class general(commands.Cog):
 #-----------------------------CHANGEPREFIX-----------------------------#
 
     @commands.command(
-        name="changeprefix",
-        aliases=["cp"],
+        name="legacy_changeprefix",
+        aliases=["legacy_cp"],
     )
     async def changeprefix(self, ctx, *args):
         if(ctx.message.author.guild_permissions.administrator or ctx.message.author.id in devusers):
@@ -209,8 +209,8 @@ class general(commands.Cog):
 #-----------------------------HELP-----------------------------#
 
     @commands.command(
-        name="help",
-        aliases=["h"],
+        name="legacy_help",
+        aliases=["legacy_h"],
     )
     async def help(self, ctx, *args):
 
@@ -239,8 +239,8 @@ class general(commands.Cog):
 #-----------------------------CHANGE LENGUAJE-----------------------------#
 
     @commands.command(
-        name="changelenguage",
-        aliases=["cl"],
+        name="legacy_changelenguage",
+        aliases=["legacy_cl"],
     )
     async def change_lenguage(self, ctx, *args):
         if(ctx.message.author.guild_permissions.administrator or ctx.message.author.id in devusers):

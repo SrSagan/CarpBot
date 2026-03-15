@@ -16,8 +16,8 @@ class links(commands.Cog):
 #-----------------------------ADDLINK-----------------------------#
 
     @commands.command(  # para agregar un link codigo LARGOOOOOOOOOOOOOOOOOOOOOO
-        aliases=['al'],
-        name='addlink',
+        aliases=['legacy_al'],
+        name='legacy_addlink',
     )
     async def add_link(self, ctx, *args):
         a = data.datos()
@@ -115,8 +115,8 @@ class links(commands.Cog):
 #-----------------------------REMOVELINK-----------------------------#
 
     @commands.command(  # comando de removelink para remover links....
-        aliases=['rl'],
-        name='removelink',
+        aliases=['legacy_rl'],
+        name='legacy_removelink',
     )
     async def removelink(self, ctx, *args):
         a = data.datos()

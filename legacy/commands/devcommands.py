@@ -32,8 +32,8 @@ class devcommands(commands.Cog):
 #-----------------------DEBUG IMAGES------------------------#
 
     @commands.command(  # muestra todas las img de X grupo
-        aliases=["di"],
-        name='debug_images',
+        aliases=["legacy_di"],
+        name='legacy_debug_images',
     )
     async def debug_images(self, ctx, *arg):
         grupos = a.get_data()
@@ -51,7 +51,7 @@ class devcommands(commands.Cog):
 #-----------------------IP------------------------#
 
     @commands.command(  # Muestra la ip
-        name='ip',
+        name='legacy_ip',
     )
     async def ip(self, ctx):
         import subprocess
@@ -75,7 +75,7 @@ class devcommands(commands.Cog):
 #-----------------------DEBUG------------------------#
 
     @commands.command(  # DEBUG
-        name='debug',
+        name='legacy_debug',
         )
     async def debug(self, ctx, *args):
         # checkeea ke sea un dev

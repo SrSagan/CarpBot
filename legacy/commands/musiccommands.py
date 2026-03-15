@@ -42,8 +42,8 @@ class music(commands.Cog):
 
 
     @commands.command(
-        aliases=['l', 'lv', 'fuckoff'],
-        name='leave',
+        aliases=['legacy_l', 'legacy_lv', 'legacy_fuckoff'],
+        name='legacy_leave',
     )
     async def leave(self, ctx):
         logger.debug("Leave runned")
@@ -68,8 +68,8 @@ class music(commands.Cog):
 #-----------------------------------------------------estrelheinhas--------------------------------------------------------------#
 
     @commands.command(pass_context=True,  #a command for the one no longer with us to remember her as she will always be in my heart
-                      aliases=['es', 'juli'],#she came back lmao
-                      name='estrelheinhas',
+                      aliases=['legacy_es', 'legacy_juli'],#she came back lmao
+                      name='legacy_estrelheinhas',
                       )
     async def estrelheinhas(self, ctx):
         voice_client = discord.utils.get(
@@ -102,8 +102,8 @@ class music(commands.Cog):
 #---------------------------------------------------------PLAY----------------------------------------------------------#
 
     @commands.command(pass_context=True,  # reproduce musica
-                      aliases=['p', 'pl'],
-                      name='play',
+                      aliases=['legacy_p', 'legacy_pl'],
+                      name='legacy_play',
                       )
     async def play(self, ctx, *request):
         id = ctx.message.guild.id
@@ -171,8 +171,8 @@ class music(commands.Cog):
 #---------------------------------------------------------QUEUE----------------------------------------------------------#
 
     @commands.command(
-        aliases=['q'],
-        name='queue',
+        aliases=['legacy_q'],
+        name='legacy_queue',
     )
     async def queue(self, ctx, *args):
         logger.debug("Queue runned")
@@ -223,8 +223,8 @@ class music(commands.Cog):
 #---------------------------------------------------------STOP----------------------------------------------------------#
 
     @commands.command(
-        aliases=['s'],
-        name='stop',
+        aliases=['legacy_s'],
+        name='legacy_stop',
     )
     async def stop(self, ctx):
         # chekear si el client esta en canal de voz sino no usar done
@@ -251,8 +251,8 @@ class music(commands.Cog):
 #---------------------------------------------------------PAUSE----------------------------------------------------------#
 
     @commands.command(
-        aliases=['ps'],
-        name='pause',
+        aliases=['legacy_ps'],
+        name='legacy_pause',
     )
     async def pause(self, ctx):
         # chekear si el client esta en canal de voz sino no usar
@@ -285,8 +285,8 @@ class music(commands.Cog):
 #---------------------------------------------------------RESUME----------------------------------------------------------#
 
     @commands.command(
-        aliases=['r'],
-        name='resume',
+        aliases=['legacy_r'],
+        name='legacy_resume',
     )
     async def resume(self, ctx):
         # chekear si el client esta en canal de voz sino no usar
@@ -339,8 +339,8 @@ class music(commands.Cog):
 #---------------------------------------------------------NEXT----------------------------------------------------------#
 
     @commands.command(
-        aliases=['n', 'skip'],
-        name='next',
+        aliases=['legacy_n', 'legacy_skip'],
+        name='legacy_next',
     )
     async def next(self, ctx, *args):
         # chekear si el client esta en canal de voz sino no usar
@@ -383,8 +383,8 @@ class music(commands.Cog):
 #---------------------------------------------------------BACK----------------------------------------------------------#
 
     @commands.command(
-        aliases=['b'],
-        name='back',
+        aliases=['legacy_b'],
+        name='legacy_back',
     )
     async def back(self, ctx):
         # chekear si el client esta en canal de voz sino no usar
@@ -417,7 +417,7 @@ class music(commands.Cog):
 #---------------------------------------------------------SONG----------------------------------------------------------#
 
     @commands.command(
-        name='song',
+        name='legacy_song',
     )
     async def song(self, ctx):
         id = ctx.message.guild.id
@@ -478,8 +478,8 @@ class music(commands.Cog):
 #---------------------------------------------------------CLEAR----------------------------------------------------------#
 
     @commands.command(
-        aliases=['c'],
-        name='clear',
+        aliases=['legacy_c'],
+        name='legacy_clear',
     )
     async def clear(self, ctx):
         vc = ctx.voice_client
@@ -504,8 +504,8 @@ class music(commands.Cog):
 #---------------------------------------------------------REMOVE----------------------------------------------------------#
 
     @commands.command(
-        aliases=['rm'],
-        name='remove',
+        aliases=['legacy_rm'],
+        name='legacy_remove',
     )
     async def remove(self, ctx, *args):
         vc = ctx.voice_client
@@ -568,8 +568,8 @@ class music(commands.Cog):
 #---------------------------------------------------------MOVE----------------------------------------------------------#
 
     @commands.command(
-        aliases=['m'],
-        name='move',
+        aliases=['legacy_m'],
+        name='legacy_move',
     )
     async def move(self, ctx, *args):
         vc = ctx.voice_client
@@ -617,8 +617,8 @@ class music(commands.Cog):
 #---------------------------------------------------------LOOP----------------------------------------------------------#
 
     @commands.command(
-        aliases=['lup'],
-        name='loop',
+        aliases=['legacy_lup'],
+        name='legacy_loop',
     )
     async def loop(self, ctx, *args):
         vc = ctx.voice_client
@@ -648,8 +648,8 @@ class music(commands.Cog):
 #---------------------------------------------------------SHUFFLE----------------------------------------------------------#
 
     @commands.command(
-        aliases=['sh'],
-        name='shuffle',
+        aliases=['legacy_sh'],
+        name='legacy_shuffle',
     )
     async def shuffle(self, ctx):
         b.shuffler(ctx)
@@ -658,8 +658,8 @@ class music(commands.Cog):
 #---------------------------------------------------------LYRICS----------------------------------------------------------#
 
     @commands.command(
-        aliases=['letra', 'lyr'],
-        name='lyrics',
+        aliases=['legacy_letra', 'legacy_lyr'],
+        name='legacy_lyrics',
     )
     async def lyrics(self, ctx, *args):
         #TODO: Give a list of pages of lyrics and make the user select before spamming the whole freaking chat with scott pirigrim movie
@@ -743,8 +743,8 @@ class music(commands.Cog):
 #---------------------------------------------------------VIDEO INFO----------------------------------------------------------#
 
     @commands.command(
-        aliases=['vi', 'vinf'],
-        name='videoinfo',
+        aliases=['legacy_vi', 'legacy_vinf'],
+        name='legacy_videoinfo',
     )
     async def videoinfo(self, ctx, *args):
         print("videoinfo usado")
@@ -765,8 +765,8 @@ class music(commands.Cog):
 #---------------------------------------------------------SAVE PLAYLIST----------------------------------------------------------#
 
     @commands.command(
-        aliases=["svp"],
-        name="save_playlist"
+        aliases=["legacy_svp"],
+        name="legacy_save_playlist"
     )
     async def save_playlist(self, ctx, *args):
         id = ctx.message.guild.id
@@ -796,8 +796,8 @@ class music(commands.Cog):
 #---------------------------------------------------------LOAD PLAYLIST----------------------------------------------------------#
 
     @commands.command(
-        aliases=["lp", "ldp"],
-        name="load_playlist"
+        aliases=["legacy_lp", "legacy_ldp"],
+        name="legacy_load_playlist"
     )
     async def load_playlist(self, ctx, *args):
         #TODO if it's alr in vc it doesn't start playing (make it start playing :gun:)
@@ -849,8 +849,8 @@ class music(commands.Cog):
 
 #---------------------------------------------------------SHOW PLAYLIST----------------------------------------------------------#
     @commands.command(
-        aliases=["sp", "shp"],
-        name="show_playlist"
+        aliases=["legacy_sp", "legacy_shp"],
+        name="legacy_show_playlist"
     )
     async def show_playlist(self, ctx, *args):
         userid = ctx.message.author.id
@@ -878,8 +878,8 @@ class music(commands.Cog):
 #---------------------------------------------------------REMOVE PLAYLIST----------------------------------------------------------#
 
     @commands.command(
-            aliases=["rp","rmpl"],
-            name="remove_playlist"
+            aliases=["legacy_rp","legacy_rmpl"],
+            name="legacy_remove_playlist"
     )
     async def remove_playlist(self, ctx, *args):
         userid = ctx.message.author.id
@@ -900,8 +900,8 @@ class music(commands.Cog):
 #---------------------------------------------------------SEARCH----------------------------------------------------------#
 
     @commands.command(
-        aliases=["sr", "srch"],
-        name="search"
+        aliases=["legacy_sr", "legacy_srch"],
+        name="legacy_search"
     )
     async def search(self, ctx, *args):
         id = ctx.message.guild.id
