@@ -213,7 +213,7 @@ async def main():
     except discord.LoginFailure:
         logger.error("Fallo de inicio de sesión: Token inválido.")
     except Exception as e:
-        logger.error(f"Error al iniciar el bot: {e}")
+        logger.exception(f"Error al iniciar el bot: {e}")
     finally:
         if not bot.is_closed():
             await bot.close()

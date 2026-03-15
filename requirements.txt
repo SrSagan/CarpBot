@@ -1,4 +1,4 @@
-discord.py==2.1.0
+discord.py==2.5.2
 loguru==0.7.2
 lyricsgenius==3.0.1
 python-dotenv==0.21.0
