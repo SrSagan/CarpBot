@@ -29,6 +29,9 @@ docker compose down
 ### Notes
 
 - The image installs ffmpeg for voice playback.
+- Prefix commands require enabling Message Content Intent in the Discord Developer Portal:
+    - Bot > Privileged Gateway Intents > Message Content Intent = ON
+    - Save changes and restart the bot
 - The following folders are mounted as volumes to persist data:
     - sources
     - savedplaylists

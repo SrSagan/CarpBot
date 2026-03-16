@@ -73,12 +73,44 @@ bot = commands.Bot(
 async def on_ready():
     """Evento que se ejecuta cuando el bot se conecta exitosamente."""
     logger.success(f"Conectado como: {bot.user.name} (ID: {bot.user.id})")
+    logger.info(f"Comandos cargados: {len(bot.commands)}")
     try:
         activity = discord.Game(name="Soy carpincho, no carpintero: no arreglo nada.")
         await bot.change_presence(activity=activity, status=discord.Status.online)
         logger.info("Estado del bot actualizado.")
     except Exception as e:
         logger.error(f"Error al actualizar el estado del bot: {e}")
+
+
+@bot.event
+async def on_message(message: discord.Message):
+    """Diagnóstico de recepción de mensajes y procesamiento de comandos."""
+    if message.author.bot:
+        return
+
+    content_preview = message.content.replace("\n", " ")[:120]
+    if not message.content and message.guild is not None:
+        logger.warning(
+            "Mensaje recibido sin contenido en guild. "
+            "Probable falta de Message Content Intent en el portal de Discord. "
+            f"(guild={message.guild.id}, user={message.author.id})"
+        )
+    elif content_preview.startswith('"'):
+        logger.info(
+            f"Mensaje con prefijo detectado: '{content_preview}' "
+            f"(guild={getattr(message.guild, 'id', None)}, user={message.author.id})"
+        )
+
+    await bot.process_commands(message)
+
+
+@bot.event
+async def on_command(ctx: commands.Context):
+    """Trazas al iniciar ejecución de comandos."""
+    logger.info(
+        f"Ejecutando comando '{ctx.command}' "
+        f"(guild={getattr(ctx.guild, 'id', None)}, user={ctx.author.id})"
+    )
 
 
 @bot.event
