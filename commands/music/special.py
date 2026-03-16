@@ -1,8 +1,8 @@
 import discord
 from commands.music.base_music import BaseMusicCommand
 from discord.ext import commands
-from musica.music import musicManager
-import musica.servermanager as sm
+from musica.managers.server_manager import ServerManager
+from musica.services.music_service import MusicService
 
 
 class SpecialCommand(BaseMusicCommand):
@@ -10,8 +10,8 @@ class SpecialCommand(BaseMusicCommand):
 
     def __init__(self, bot):
         super().__init__(bot)
-        self.music_manager = musicManager()
-        self.server_manager = sm.serverManager()
+        self.music_manager = MusicService()
+        self.server_manager = ServerManager()
 
     @commands.command(
         name="estrelheinhas",

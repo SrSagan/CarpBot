@@ -2,8 +2,8 @@ import discord
 from commands.music.base_music import BaseMusicCommand
 from discord.ext import commands
 import lenguajes as leng
-from musica.music import musicManager
-import musica.servermanager as sm
+from musica.managers.server_manager import ServerManager
+from musica.services.music_service import MusicService
 import time
 from loguru import logger
 from utils.formatters import parse_time_to_seconds
@@ -14,17 +14,17 @@ class PlaybackCommand(BaseMusicCommand):
 
     def __init__(self, bot):
         super().__init__(bot)
-        self.music_manager = musicManager()
-        self.server_manager = sm.serverManager()
+        self.music_manager = MusicService()
+        self.server_manager = ServerManager()
 
     def _calculate_remaining_time(self, server, current_song, voice_client) -> str:
         """Calcula el tiempo restante de la canción actual."""
-        start_seconds = parse_time_to_seconds(server.time)
+        start_seconds = parse_time_to_seconds(server.started_at)
         length_seconds = parse_time_to_seconds(current_song.length)
 
         # Tiempo actual
-        if voice_client.is_paused() and server.status:
-            current_seconds = parse_time_to_seconds(server.ptime)
+        if voice_client.is_paused() and server.is_active:
+            current_seconds = parse_time_to_seconds(server.paused_at)
         else:
             current_time = time.strftime("%H:%M:%S", time.localtime())
             current_seconds = parse_time_to_seconds(current_time)
@@ -57,8 +57,6 @@ class PlaybackCommand(BaseMusicCommand):
         # Obtener voice channel si existe
         voice_client = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
 
-        # TODO: Refactorizar musicManager para usar servicios modernos
-        # TODO: Separar lógica de queue del reproductor
         # Agregar a la cola
         await self.music_manager.queuer(ctx, texto, queue_type)
 
@@ -77,12 +75,11 @@ class PlaybackCommand(BaseMusicCommand):
 
         # Si no está reproduciendo, iniciar
         if not voice_client.is_playing():
-            # TODO: Refactorizar esta lógica al servicio de música
             # Verificar si hay un índice válido
             if self.server_manager.exists(guild_id):
                 server = self.server_manager.get_server(guild_id)
-                if server.cplaying == -1:
-                    server.cplaying = len(server.songs) - 1
+                if server.current_song_index == -1:
+                    server.current_song_index = len(server.songs) - 1
 
             await self.music_manager.play(voice_client, ctx, self.bot)
 
@@ -112,7 +109,7 @@ class PlaybackCommand(BaseMusicCommand):
             await ctx.send(leng.eayep[lang])
             return
 
-        server.ptime = time.strftime("%H:%M:%S", time.localtime())
+        server.paused_at = time.strftime("%H:%M:%S", time.localtime())
         voice_client.pause()
 
         embed = discord.Embed(title=leng.pausado[lang], color=0x3498DB)
@@ -138,11 +135,11 @@ class PlaybackCommand(BaseMusicCommand):
         # Calcular tiempo pausado
         resume_time = time.strftime("%H:%M:%S", time.localtime())
         resume_seconds = parse_time_to_seconds(resume_time)
-        tiempo_seconds = parse_time_to_seconds(server.time)
-        ptime_seconds = parse_time_to_seconds(server.ptime)
+        tiempo_seconds = parse_time_to_seconds(server.started_at)
+        ptime_seconds = parse_time_to_seconds(server.paused_at)
 
         time_paused = resume_seconds - ptime_seconds
-        server.time = time.strftime(
+        server.started_at = time.strftime(
             "%H:%M:%S", time.gmtime(tiempo_seconds + time_paused)
         )
 
@@ -159,7 +156,7 @@ class PlaybackCommand(BaseMusicCommand):
             return
 
         server, voice_client, _ = state
-        server.status = False
+        server.is_active = False
         voice_client.stop()
 
     @commands.command(name="leave", aliases=["l", "lv", "fuckoff"])
@@ -187,8 +184,8 @@ class PlaybackCommand(BaseMusicCommand):
         if self.server_manager.exists(guild_id):
             server = self.server_manager.get_server(guild_id)
             server.songs = []
-            server.cplaying = -1
-            server.status = False
+            server.current_song_index = -1
+            server.is_active = False
 
         await voice_client.disconnect()
 
@@ -210,7 +207,7 @@ class PlaybackCommand(BaseMusicCommand):
             if args[0].isnumeric():
                 index = int(args[0])
                 if 0 < index <= len(server.songs):
-                    server.cplaying = index - 1
+                    server.current_song_index = index - 1
                     voice_client.stop()
                 else:
                     await ctx.send(leng.cfdr[lang])
@@ -218,8 +215,8 @@ class PlaybackCommand(BaseMusicCommand):
                 await ctx.send(leng.eenduc[lang])
         else:
             # Siguiente canción normal
-            if server.looping == 2:  # Si está en loop de canción
-                server.cplaying += 1
+            if server.loop_mode == 2:  # Si está en loop de canción
+                server.current_song_index += 1
             voice_client.stop()
 
     @commands.command(name="back", aliases=["b"])
@@ -234,12 +231,12 @@ class PlaybackCommand(BaseMusicCommand):
         server, voice_client, _ = state
 
         # Si la reproducción se detuvo y está al final
-        if not server.status and server.cplaying == -1:
-            server.cplaying = len(server.songs) - 1
+        if not server.is_active and server.current_song_index == -1:
+            server.current_song_index = len(server.songs) - 1
             await self.music_manager.play(voice_client, ctx, self.bot)
         # Si puede retroceder
-        elif server.cplaying > 0:
-            server.cplaying -= 2
+        elif server.current_song_index > 0:
+            server.current_song_index -= 2
             voice_client.stop()
 
     @commands.command(name="song")
@@ -253,10 +250,10 @@ class PlaybackCommand(BaseMusicCommand):
 
         server, voice_client, lang = state
 
-        if server.cplaying == -1:
+        if server.current_song_index == -1:
             return
 
-        index = server.cplaying
+        index = server.current_song_index
         current_song = server.songs[index - 1]
 
         # Calcular tiempo restante usando helper

@@ -2,9 +2,10 @@ import discord
 from commands.music.base_music import BaseMusicCommand
 from discord.ext import commands
 import lenguajes as leng
-from musica.music import musicManager
-import musica.servermanager as sm
-import musica.m_queuer
+from musica.managers.playlist_manager import PlayListManager
+from musica.managers.server_manager import ServerManager
+from musica.services.queuer_service import Queuer
+from musica.services.music_service import ControlChecker, MusicService
 
 
 class PlaylistCommand(BaseMusicCommand):
@@ -12,9 +13,10 @@ class PlaylistCommand(BaseMusicCommand):
 
     def __init__(self, bot):
         super().__init__(bot)
-        self.music_manager = musicManager()
-        self.server_manager = sm.serverManager()
-        self.queuer = musica.m_queuer.queuer()
+        self.music_manager = MusicService()
+        self.server_manager = ServerManager()
+        self.playlist_manager = PlayListManager(self.server_manager.get_server_store())
+        self.queuer = Queuer()
 
     @commands.command(name="save_playlist", aliases=["svp"])
     async def save_playlist(self, ctx: commands.Context, *args):
@@ -35,8 +37,7 @@ class PlaylistCommand(BaseMusicCommand):
 
         playlist_name = " ".join(args).strip()
 
-        # TODO: Refactorizar sm.save_playlist para usar servicios modernos
-        work = self.server_manager.save_playlist(guild_id, user_id, playlist_name)
+        work = self.playlist_manager.save_playlist(guild_id, user_id, playlist_name)
 
         if work == 0:
             await ctx.send("No tienes espacio para más playlists")
@@ -68,12 +69,11 @@ class PlaylistCommand(BaseMusicCommand):
         playlist_name = " ".join(args).strip()
         voice_client = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
 
-        # TODO: Refactorizar sm.load_playlist para usar servicios modernos
-        work = self.server_manager.load_playlist(guild_id, user_id, playlist_name)
+        work = self.playlist_manager.load_playlist(guild_id, user_id, playlist_name)
 
         if isinstance(work, list):
             # Se cargó la playlist correctamente
-            await self.queuer.queuer(work, guild_id)
+            self.queuer.queuer(work, guild_id)
             await ctx.send(f"Playlist **{playlist_name}** cargada en la cola ✓")
 
             # Si el bot ya está conectado
@@ -100,8 +100,7 @@ class PlaylistCommand(BaseMusicCommand):
 
         user_id = ctx.author.id
 
-        # TODO: Refactorizar sm.show_playlist para usar servicios modernos
-        playlists = self.server_manager.show_playlist(user_id)
+        playlists = self.playlist_manager.show_playlist(user_id)
 
         if not playlists or playlists == 0:
             await ctx.send("No tienes playlists guardadas")
@@ -123,12 +122,9 @@ class PlaylistCommand(BaseMusicCommand):
             if found_playlist:
                 embed = self.music_manager.print_queue(found_playlist, 1, -1, ctx)
                 if embed != 0:
-                    # TODO: Mover control_checker a un módulo apropiado
-                    import musica.music as f
-
                     await ctx.send(
                         embed=embed,
-                        view=f.control_checker(
+                        view=ControlChecker(
                             playlist=found_playlist, arg=1, looping=-1, ctx=ctx
                         ),
                     )
@@ -163,14 +159,13 @@ class PlaylistCommand(BaseMusicCommand):
 
         playlist_name = " ".join(args).strip()
 
-        # TODO: Refactorizar sm.remove_playlist para usar servicios modernos
-        playlists = self.server_manager.show_playlist(user_id)
+        playlists = self.playlist_manager.show_playlist(user_id)
 
         if not playlists or playlists == 0:
             await ctx.send("No tienes playlists guardadas")
             return
 
-        found = self.server_manager.remove_playlist(user_id, playlist_name)
+        found = self.playlist_manager.remove_playlist(user_id, playlist_name)
 
         if found == 0:
             await ctx.send(f"No existe una playlist llamada **{playlist_name}**")
