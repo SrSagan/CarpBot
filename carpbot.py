@@ -57,6 +57,8 @@ def get_prefix(bot, message):
 intents = discord.Intents.default()
 intents.message_content = True  # Leer contenido de mensajes
 intents.members = os.getenv("DISCORD_MEMBERS_INTENT", "false").lower() == "true"
+intents.guild_messages = True
+intents.dm_messages = True
 
 # Crear instancia del bot
 bot = commands.Bot(
@@ -87,38 +89,47 @@ async def on_message(message: discord.Message):
     """Diagnóstico de recepción de mensajes y procesamiento de comandos."""
     if message.author.bot:
         return
+    try:
+        content_preview = message.content.replace("\n", " ")[:120]
+        configured_prefix = None
+        if message.guild is not None:
+            configured_prefix = config_service.get_prefix(message.guild.id)
 
-    content_preview = message.content.replace("\n", " ")[:120]
-    configured_prefix = None
-    if message.guild is not None:
-        configured_prefix = config_service.get_prefix(message.guild.id)
-
-    prefixes = await bot.get_prefix(message)
-    if isinstance(prefixes, str):
-        prefixes = [prefixes]
-
-    if not message.content and message.guild is not None:
-        logger.warning(
-            "Mensaje recibido sin contenido en guild. "
-            "Probable falta de Message Content Intent en el portal de Discord. "
-            f"(guild={message.guild.id}, user={message.author.id})"
-        )
-    elif configured_prefix and content_preview.startswith(configured_prefix):
         logger.info(
-            f"Mensaje con prefijo detectado: '{content_preview}' "
-            f"(prefix={configured_prefix!r}, guild={getattr(message.guild, 'id', None)}, "
-            f"user={message.author.id})"
+            "Mensaje recibido: "
+            f"len={len(message.content or '')}, guild={getattr(message.guild, 'id', None)}, "
+            f"channel={getattr(message.channel, 'id', None)}, user={message.author.id}"
         )
 
-    ctx = await bot.get_context(message)
-    logger.info(
-        "Resultado parser comando: "
-        f"prefix={ctx.prefix!r}, invoked_with={ctx.invoked_with!r}, "
-        f"command={getattr(ctx.command, 'qualified_name', None)!r}, "
-        f"known_prefixes={prefixes!r}"
-    )
+        if not message.content and message.guild is not None:
+            logger.warning(
+                "Mensaje recibido sin contenido en guild. "
+                "Probable falta de Message Content Intent en el portal de Discord. "
+                f"(guild={message.guild.id}, user={message.author.id})"
+            )
+        elif configured_prefix and content_preview.startswith(configured_prefix):
+            logger.info(
+                f"Mensaje con prefijo detectado: '{content_preview}' "
+                f"(prefix={configured_prefix!r}, guild={getattr(message.guild, 'id', None)}, "
+                f"user={message.author.id})"
+            )
 
-    await bot.invoke(ctx)
+        ctx = await bot.get_context(message)
+        logger.info(
+            "Resultado parser comando: "
+            f"prefix={ctx.prefix!r}, invoked_with={ctx.invoked_with!r}, "
+            f"command={getattr(ctx.command, 'qualified_name', None)!r}"
+        )
+
+        await bot.invoke(ctx)
+    except Exception as e:
+        logger.exception(f"Fallo en on_message: {e}")
+
+
+@bot.event
+async def on_error(event: str, *args, **kwargs):
+    """Captura errores no manejados de eventos de Discord."""
+    logger.exception(f"Excepcion no manejada en evento '{event}'")
 
 
 @bot.event
