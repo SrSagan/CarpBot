@@ -16,6 +16,8 @@ from loguru import logger
 
 # Third: Módulos locales
 import data
+from services.server_config_service import ServerConfigService
+from utils.constants import DEFAULT_PREFIX
 
 # ========== Configuración del bot ==========
 
@@ -25,6 +27,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 # Gestor de datos del bot
 data_manager = data.datos()  # Crea una instancia de la clase datos
+config_service = ServerConfigService()
 
 
 # ========== Funciones de configuración ==========
@@ -40,8 +43,12 @@ def get_prefix(bot, message):
     Returns:
             Función que acepta el prefix dinámico.
     """
-    server_prefix = data_manager.get_prefix(message.guild.id)
-    return commands.when_mentioned_or(*server_prefix)(bot, message)
+    # En DMs no hay guild; mantener prefijo por defecto + mención.
+    if message.guild is None:
+        return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, message)
+
+    server_prefix = config_service.get_prefix(message.guild.id)
+    return commands.when_mentioned_or(server_prefix)(bot, message)
 
 
 # ========== Inicialización del bot ==========
@@ -74,6 +81,15 @@ async def on_ready():
         logger.error(f"Error al actualizar el estado del bot: {e}")
 
 
+@bot.event
+async def on_command_error(ctx: commands.Context, error: Exception):
+    """Loggea errores de comandos para facilitar diagnóstico en producción."""
+    logger.exception(
+        f"Error ejecutando comando '{ctx.command}': {error} "
+        f"(guild={getattr(ctx.guild, 'id', None)}, user={ctx.author.id})"
+    )
+
+
 # ========== Carga de extensiones y ejecución del bot ==========
 
 
@@ -93,7 +109,10 @@ def has_setup_function(file_path: str) -> bool:
         return False
 
     for node in syntax_tree.body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "setup":
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name == "setup"
+        ):
             return True
 
     return False
@@ -127,7 +146,6 @@ async def load_extensions():
 
     # Cargar archivos .py en la carpeta principal commands/
     for filename in iter_python_modules(commands_dir):
-
         file_path = os.path.join(commands_dir, filename)
         if not has_setup_function(file_path):
             logger.info(f"Modulo omitido (sin setup): {filename}")
@@ -149,7 +167,6 @@ async def load_extensions():
             continue
 
         for filename in iter_python_modules(subdir_path):
-
             file_path = os.path.join(subdir_path, filename)
             if not has_setup_function(file_path):
                 logger.info(
