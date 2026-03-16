@@ -9,16 +9,19 @@ from utils.constants import SAVED_PLAYLIST
 
 class PlayListManager:
 	def __init__(self, servers: Optional[Dict[int, Server]] = None):
-		self._servers = Dict[int, Server] = servers or {}
+		self._servers: Dict[int, Server] = servers or {}
 		self.json_repository = JsonRepository(SAVED_PLAYLIST)
 
 	def regsiter_servers_dict(self, servers: Dict[int, Server]) -> None:
 		self._servers = servers
 
+	def register_servers_dict(self, servers: Dict[int, Server]) -> None:
+		self._servers = servers
+
 	def add_playlist(self, playlist: Playlist, server: Server, user_id: int):
 		if server.id not in self._servers:
 			raise ValueError("Server does not exist")
-		self._playlist[user_id] = playlist
+		server.playlists.append(playlist)
 
 	def save_playlist(self, server_id: int, user_id: int, name: str) -> int:
 		"""
@@ -76,12 +79,16 @@ class PlayListManager:
 
 		return 0  # not found
 
-	def show_playlis(self, user_id: int):
+	def show_playlist(self, user_id: int):
 		path = os.path.join(SAVED_PLAYLIST, f"{user_id}.json")
 		if not os.path.exists(path):
 			return 0  # no file
 
 		return self.json_repository.read(path)
+
+	def show_playlis(self, user_id: int):
+		# Legacy typo alias for compatibility.
+		return self.show_playlist(user_id)
 
 	def remove_playlist(self, user_id: int, name: str) -> int:
 		path = os.path.join(SAVED_PLAYLIST, f"{user_id}.json")
