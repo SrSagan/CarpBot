@@ -43,11 +43,30 @@ class Queuer(QueuerInterface):
         server = self._server_manager.ensure_server(guild_id)
         self._save_from_type(songs, server)
 
+    def _normalize_song(self, song) -> Song:
+        if isinstance(song, Song):
+            return song
+
+        if isinstance(song, dict):
+            return Song(
+                name=song.get("name", "Unknown"),
+                link=song.get("link", ""),
+                length=song.get("length", "00:00:00"),
+                type=song.get("type", "yt"),
+            )
+
+        return Song(
+            name=getattr(song, "name", "Unknown"),
+            link=getattr(song, "link", ""),
+            length=getattr(song, "length", "00:00:00"),
+            type=getattr(song, "type", "yt"),
+        )
+
     def _save_from_type(self, songs, server: Server):
         if isinstance(songs, list):
-            server.songs += songs
+            server.songs += [self._normalize_song(song) for song in songs]
         else:
-            server.songs.append(songs)
+            server.songs.append(self._normalize_song(songs))
 
     @staticmethod
     def _is_url(value: str) -> bool:
