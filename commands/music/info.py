@@ -1,8 +1,8 @@
 import discord
 from commands.music.base_music import BaseMusicCommand
 from discord.ext import commands
-from musica.music import musicManager
-import musica.servermanager as sm
+from musica.managers.server_manager import ServerManager
+from musica.services.music_service import MusicService
 import os
 from dotenv import load_dotenv
 from lyricsgenius import Genius
@@ -13,8 +13,8 @@ class InfoCommand(BaseMusicCommand):
 
     def __init__(self, bot):
         super().__init__(bot)
-        self.music_manager = musicManager()
-        self.server_manager = sm.serverManager()
+        self.music_manager = MusicService()
+        self.server_manager = ServerManager()
         
         # Inicializar Genius para búsqueda de letras
         load_dotenv()
@@ -42,11 +42,11 @@ class InfoCommand(BaseMusicCommand):
                 return
 
             server = self.server_manager.get_server(guild_id)
-            if server.cplaying == -1:
+            if server.current_song_index == -1:
                 await ctx.send("No hay canción actual seleccionada")
                 return
 
-            current_song = server.songs[server.cplaying - 1]
+            current_song = server.songs[server.current_song_index - 1]
             search_term = current_song.name
 
         try:
@@ -175,9 +175,8 @@ class InfoCommand(BaseMusicCommand):
                 return
 
             server = self.server_manager.get_server(guild_id)
-            song_index = server.cplaying
+            song_index = server.current_song_index
 
-        # TODO: Refactorizar b.get_video_info para usar servicios modernos
         embed = await self.music_manager.get_video_info(guild_id, ctx, song_index)
 
         if isinstance(embed, str):

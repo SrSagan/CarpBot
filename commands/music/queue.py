@@ -2,8 +2,8 @@ import discord
 from commands.music.base_music import BaseMusicCommand
 from discord.ext import commands
 import lenguajes as leng
-from musica.music import musicManager
-import musica.servermanager as sm
+from musica.managers.server_manager import ServerManager
+from musica.services.music_service import ControlChecker, MusicService
 
 
 class QueueCommand(BaseMusicCommand):
@@ -11,8 +11,8 @@ class QueueCommand(BaseMusicCommand):
 
     def __init__(self, bot):
         super().__init__(bot)
-        self.music_manager = musicManager()
-        self.server_manager = sm.serverManager()
+        self.music_manager = MusicService()
+        self.server_manager = ServerManager()
 
     @commands.command(name="queue", aliases=["q"])
     async def queue(self, ctx: commands.Context, *args):
@@ -25,7 +25,7 @@ class QueueCommand(BaseMusicCommand):
             return
 
         playlist = self.server_manager.get_server(guild_id)
-        looping = playlist.looping
+        looping = playlist.loop_mode
 
         # Corregir looping para display
         if looping == 0:
@@ -36,26 +36,22 @@ class QueueCommand(BaseMusicCommand):
             looping = 1
 
         # Calcular página actual
-        arg = int((playlist.cplaying - 1) / 10) + 1
+        arg = int((playlist.current_song_index - 1) / 10) + 1
         if arg < 1:
             arg = 1
-        if playlist.cplaying > len(playlist.songs) - 1:
+        if playlist.current_song_index > len(playlist.songs) - 1:
             arg = -1
 
         # Si se especifica una página
         if args and args[0].isnumeric():
             arg = int(args[0])
 
-        # TODO: Refactorizar print_queue para que esté en un servicio
         embed = self.music_manager.print_queue(playlist, arg, looping, ctx)
 
         if embed != 0:
-            # TODO: Importar control_checker desde el módulo correcto
-            import musica.music as f
-
             await ctx.send(
                 embed=embed,
-                view=f.control_checker(
+                view=ControlChecker(
                     playlist=playlist, arg=arg, looping=looping, ctx=ctx
                 ),
             )
@@ -135,20 +131,19 @@ class QueueCommand(BaseMusicCommand):
         server.songs.pop(deleted)
 
         # Ajustar índice de reproducción
-        if deleted == server.cplaying - 1:
+        if deleted == server.current_song_index - 1:
             # Si es la canción actual
             if deleted == len(server.songs):
                 # Si es la última, retroceder
-                # TODO: Considerar usar el método back
-                server.cplaying = max(0, server.cplaying - 2)
+                server.current_song_index = max(0, server.current_song_index - 2)
                 voice_client.stop()
             else:
                 # Reproducir la siguiente (que ahora está en la posición actual)
-                server.cplaying -= 1
+                server.current_song_index -= 1
                 voice_client.stop()
-        elif deleted < server.cplaying:
+        elif deleted < server.current_song_index:
             # Si se elimina antes de la canción actual, ajustar índice
-            server.cplaying -= 1
+            server.current_song_index -= 1
 
     @commands.command(name="move", aliases=["m"])
     async def move(self, ctx: commands.Context, *args):
@@ -186,8 +181,8 @@ class QueueCommand(BaseMusicCommand):
         server.songs.insert(to_index - 1, moving_song)
 
         # Ajustar índice de reproducción si es necesario
-        if to_index <= server.cplaying:
-            server.cplaying += 1
+        if to_index <= server.current_song_index:
+            server.current_song_index += 1
 
         embed = discord.Embed(
             title="Song moved",
@@ -201,7 +196,6 @@ class QueueCommand(BaseMusicCommand):
         """Mezcla aleatoriamente la cola de reproducción."""
         self.log_command_user(ctx, "shuffle")
 
-        # TODO: Mover la lógica de shuffler a un servicio
         self.music_manager.shuffler(ctx)
 
         lang = self.get_language(ctx)
@@ -221,14 +215,14 @@ class QueueCommand(BaseMusicCommand):
         server = self.server_manager.get_server(guild_id)
 
         # Rotar entre modos de loop: 0 (ninguno) → 1 (canción) → 2 (lista) → 0
-        if server.looping == 0:
-            server.looping = 1
+        if server.loop_mode == 0:
+            server.loop_mode = 1
             index = 0  # Loop en canción actual
-        elif server.looping == 1:
-            server.looping = 2
+        elif server.loop_mode == 1:
+            server.loop_mode = 2
             index = 1  # Loop en toda la lista
-        elif server.looping == 2:
-            server.looping = 0
+        elif server.loop_mode == 2:
+            server.loop_mode = 0
             index = 2  # Sin loop
 
         embed = discord.Embed(description=leng.arlq_ca_d[lang][index], color=0x3498DB)
