@@ -89,19 +89,36 @@ async def on_message(message: discord.Message):
         return
 
     content_preview = message.content.replace("\n", " ")[:120]
+    configured_prefix = None
+    if message.guild is not None:
+        configured_prefix = config_service.get_prefix(message.guild.id)
+
+    prefixes = await bot.get_prefix(message)
+    if isinstance(prefixes, str):
+        prefixes = [prefixes]
+
     if not message.content and message.guild is not None:
         logger.warning(
             "Mensaje recibido sin contenido en guild. "
             "Probable falta de Message Content Intent en el portal de Discord. "
             f"(guild={message.guild.id}, user={message.author.id})"
         )
-    elif content_preview.startswith('"'):
+    elif configured_prefix and content_preview.startswith(configured_prefix):
         logger.info(
             f"Mensaje con prefijo detectado: '{content_preview}' "
-            f"(guild={getattr(message.guild, 'id', None)}, user={message.author.id})"
+            f"(prefix={configured_prefix!r}, guild={getattr(message.guild, 'id', None)}, "
+            f"user={message.author.id})"
         )
 
-    await bot.process_commands(message)
+    ctx = await bot.get_context(message)
+    logger.info(
+        "Resultado parser comando: "
+        f"prefix={ctx.prefix!r}, invoked_with={ctx.invoked_with!r}, "
+        f"command={getattr(ctx.command, 'qualified_name', None)!r}, "
+        f"known_prefixes={prefixes!r}"
+    )
+
+    await bot.invoke(ctx)
 
 
 @bot.event
