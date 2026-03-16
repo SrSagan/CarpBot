@@ -21,9 +21,9 @@ class Player(PlayerInterface):
 
     def _get_current_song_link(self, guild_id: int) -> Optional[str]:
         server = self._server_manager.get_server(guild_id)
-        if server.cplaying < 0 or server.cplaying >= len(server.songs):
+        if server.current_song_index < 0 or server.current_song_index >= len(server.songs):
             return None
-        return server.songs[server.cplaying].link
+        return server.songs[server.current_song_index].link
 
     async def youtube_player(
         self, voice_client: Any, id: int
