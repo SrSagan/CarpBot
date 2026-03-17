@@ -6,6 +6,6 @@ services:
         env_file:
             - .env
         volumes:
-            - ./sources:/app/sources
-            - ./savedplaylists:/app/savedplaylists
-            - ./temp:/app/temp
+            - ${DATA_PATH_SOURCES}:/app/sources
+            - ${DATA_PATH_SAVEDPLAYLISTS}:/app/savedplaylists
+            - ${DATA_PATH_TEMP}:/app/temp
