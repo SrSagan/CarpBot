@@ -7,3 +7,4 @@ requests
 tinytag
 youtube_dl
 yt_dlp
+PyNaCl
