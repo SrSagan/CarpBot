@@ -1,3 +1,6 @@
+### ---- VS CODE ---- ###
+.vscode/
+
 .env
 __pycache__
 sample.json
@@ -6,7 +9,3 @@ sources/
 video.json
 songs.json
 servers.json
-savedplaylists/
-logs/
-logs
-savedplaylists
