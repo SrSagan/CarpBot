@@ -8,3 +8,4 @@ tinytag
 youtube_dl
 yt_dlp
 PyNaCl
+loguru
